@@ -20,24 +20,26 @@ export default async function seedAdmin({ container }) {
     }
     
     // Create admin user
-    const adminUser = await userModule.createUser({
+    const adminUsers = await userModule.createUsers([{
       email: adminEmail,
       password: adminPassword,
       first_name: "Admin",
       last_name: "User",
       role: "admin"
-    });
+    }]);
     
+    const adminUser = adminUsers[0];
     logger.info(`Admin user created: ${adminEmail}`);
     
     // Create auth identity
     const authModule = container.resolve(Modules.AUTH);
-    await authModule.createAuthIdentity({
-      provider_identities: [{
-        entity_id: adminUser.id,
-        provider: "emailpass"
-      }]
-    });
+    await authModule.createAuthIdentities([{
+      entity_id: adminUser.id,
+      provider: "emailpass",
+      provider_metadata: {
+        email: adminEmail
+      }
+    }]);
     
     logger.info("Admin user authentication identity created");
     

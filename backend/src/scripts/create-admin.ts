@@ -20,23 +20,24 @@ export default async function createAdmin({ container }: ExecArgs) {
     }
     
     // Create admin user
-    const user = await userService.createUser({
+    const users = await userService.createUsers([{
       email: adminEmail,
       password: adminPassword,
       first_name: "Admin",
       last_name: "User"
-    });
+    }]);
     
+    const user = users[0];
     console.log("Admin user created successfully");
     
     // Create auth identity for the user
-    await authService.createAuthIdentity({
+    await authService.createAuthIdentities([{
       entity_id: user.id,
       provider: "emailpass",
       provider_metadata: {
         email: adminEmail
       }
-    });
+    }]);
     
     console.log("Auth identity created successfully");
     console.log(`You can now login with email: ${adminEmail} and your configured password`);
