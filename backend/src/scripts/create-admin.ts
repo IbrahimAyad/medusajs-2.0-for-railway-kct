@@ -12,31 +12,33 @@ export default async function createAdmin({ container }: ExecArgs) {
   
   try {
     // Check if user exists
-    const users = await userService.listUsers({ email: adminEmail });
+    const existingUsers = await userService.listUsers({ email: adminEmail });
     
-    if (users?.length > 0) {
+    if (existingUsers?.length > 0) {
       console.log("Admin user already exists");
       return;
     }
     
     // Create admin user
-    const users = await userService.createUsers([{
+    const createdUsers = await userService.createUsers([{
       email: adminEmail,
-      password: adminPassword,
       first_name: "Admin",
       last_name: "User"
     }]);
     
-    const user = users[0];
+    const user = createdUsers[0];
     console.log("Admin user created successfully");
     
-    // Create auth identity for the user
-    await authService.createAuthIdentities([{
-      entity_id: user.id,
-      provider: "emailpass",
-      provider_metadata: {
-        email: adminEmail
-      }
+    // Create auth provider for the user using the correct method signature
+    const authIdentities = await authService.createAuthIdentities([{
+      provider_identities: [{
+        entity_id: user.id,
+        provider: "emailpass",
+        user_metadata: {
+          email: adminEmail,
+          password: adminPassword
+        }
+      }]
     }]);
     
     console.log("Auth identity created successfully");
