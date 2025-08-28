@@ -97,7 +97,8 @@ venv/
 
 # Medusa specific
 medusa-db.sql
-medusa-config.js
+# medusa-config.js  # Don't ignore this - needed for deployment
+!medusa-config.js
 !medusa-config.js.template
 
 # Custom admin build
