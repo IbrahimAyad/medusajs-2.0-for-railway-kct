@@ -19,7 +19,7 @@
     "create:admin": "medusa exec ./src/scripts/create-admin-proper.ts",
     "init:db": "medusa exec ./src/scripts/init-database.ts",
     "ib": "init-backend",
-    "start": "init-backend && cd .medusa/server && medusa start --verbose",
+    "start": "init-backend && ./start-medusa.sh",
     "dev": "medusa develop",
     "email:dev": "email dev --dir=./src/modules/email-notifications/templates --port=3002"
   },
