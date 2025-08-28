@@ -12,8 +12,9 @@
     "verify:products": "node scripts/verify-import.js"
   },
   "dependencies": {
-    "@medusajs/medusa": "^2.8.8",
-    "@medusajs/admin": "^2.8.8",
+    "@medusajs/medusa": "2.8.8",
+    "@medusajs/framework": "2.8.8",
+    "@medusajs/admin-sdk": "2.8.8",
     "dotenv": "^16.0.0",
     "uuid": "^9.0.0"
   },

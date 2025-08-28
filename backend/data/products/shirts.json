@@ -1,0 +1,226 @@
+{
+  "products": [
+    {
+      "title": "Slim Cut White Dress Shirt",
+      "handle": "slim-cut-white-dress-shirt",
+      "description": "Essential slim cut white dress shirt perfect for business and formal occasions. Features premium cotton construction and modern tailoring.",
+      "status": "published",
+      "type": {
+        "value": "Dress Shirt"
+      },
+      "collection_ids": ["coll_dress_shirts", "coll_business_essentials"],
+      "tags": ["dress-shirt", "white", "slim-cut", "business", "essential"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/shirts/slim-white-dress-shirt.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Slim Cut White Dress Shirt L",
+          "sku": "KCT-SHIRT-WHITE-SLIM-L",
+          "prices": [{"amount": 3999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 2499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 20
+        }
+      ],
+      "metadata": {
+        "seo_title": "Slim Cut White Dress Shirt | Business Shirts | KCT Menswear",
+        "seo_description": "Essential slim cut white dress shirt perfect for business and formal occasions. Premium cotton construction.",
+        "material": "Premium cotton",
+        "care_instructions": "Machine washable, iron if needed"
+      }
+    },
+    {
+      "title": "Slim Cut Black Dress Shirt",
+      "handle": "slim-cut-black-dress-shirt",
+      "description": "Sophisticated slim cut black dress shirt for modern professionals. Perfect for evening events and contemporary business attire.",
+      "status": "published",
+      "type": {
+        "value": "Dress Shirt"
+      },
+      "collection_ids": ["coll_dress_shirts", "coll_business_essentials"],
+      "tags": ["dress-shirt", "black", "slim-cut", "sophisticated", "evening"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/shirts/slim-black-dress-shirt.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Slim Cut Black Dress Shirt L",
+          "sku": "KCT-SHIRT-BLACK-SLIM-L",
+          "prices": [{"amount": 3999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 2499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 15
+        }
+      ],
+      "metadata": {
+        "seo_title": "Slim Cut Black Dress Shirt | Professional Shirts | KCT Menswear",
+        "seo_description": "Sophisticated slim cut black dress shirt for modern professionals and evening events.",
+        "material": "Premium cotton",
+        "care_instructions": "Machine washable, iron if needed"
+      }
+    },
+    {
+      "title": "Royal Blue Satin Dress Shirt",
+      "handle": "royal-blue-satin-dress-shirt",
+      "description": "Regal elegance meets modern sophistication in this stunning royal blue satin dress shirt. Perfect for formal events and special occasions.",
+      "status": "published",
+      "type": {
+        "value": "Dress Shirt"
+      },
+      "collection_ids": ["coll_dress_shirts", "coll_wedding_formal"],
+      "tags": ["dress-shirt", "royal-blue", "satin", "luxury", "formal"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/shirts/royal-blue-satin.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Royal Blue Satin Dress Shirt L",
+          "sku": "KCT-SHIRT-ROYAL-SATIN-L",
+          "prices": [{"amount": 6999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 2499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 12
+        }
+      ],
+      "metadata": {
+        "seo_title": "Royal Blue Satin Dress Shirt | Luxury Shirts | KCT Menswear",
+        "seo_description": "Regal elegance in royal blue satin. Perfect for formal events and special occasions.",
+        "material": "Premium satin",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Aqua Satin Dress Shirt",
+      "handle": "aqua-satin-dress-shirt",
+      "description": "Cool elegance for formal wear. This aqua satin dress shirt exudes sophistication and modern style for the discerning gentleman.",
+      "status": "published",
+      "type": {
+        "value": "Dress Shirt"
+      },
+      "collection_ids": ["coll_dress_shirts", "coll_wedding_formal"],
+      "tags": ["dress-shirt", "aqua", "satin", "cool", "elegance"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/shirts/aqua-satin.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Aqua Satin Dress Shirt L",
+          "sku": "KCT-SHIRT-AQUA-SATIN-L",
+          "prices": [{"amount": 6999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 2499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 10
+        }
+      ],
+      "metadata": {
+        "seo_title": "Aqua Satin Dress Shirt | Cool Elegance | KCT Menswear",
+        "seo_description": "Cool elegance for formal wear. Aqua satin dress shirt for the discerning gentleman.",
+        "material": "Premium satin",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Lavender Satin Dress Shirt",
+      "handle": "lavender-satin-dress-shirt",
+      "description": "Soft elegance in lavender satin. This chic dress shirt is ideal for formal events and adds a touch of sophistication to any ensemble.",
+      "status": "published",
+      "type": {
+        "value": "Dress Shirt"
+      },
+      "collection_ids": ["coll_dress_shirts", "coll_wedding_formal"],
+      "tags": ["dress-shirt", "lavender", "satin", "soft", "chic"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/shirts/lavender-satin.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Lavender Satin Dress Shirt L",
+          "sku": "KCT-SHIRT-LAVENDER-SATIN-L",
+          "prices": [{"amount": 6999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 2499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 8
+        }
+      ],
+      "metadata": {
+        "seo_title": "Lavender Satin Dress Shirt | Soft Elegance | KCT Menswear",
+        "seo_description": "Soft elegance in lavender satin. Chic dress shirt ideal for formal events.",
+        "material": "Premium satin",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "White Shiny Dress Shirt",
+      "handle": "white-shiny-dress-shirt",
+      "description": "Sophisticated white shiny dress shirt with sleek design and glossy fabric. Perfect for making a statement at formal gatherings.",
+      "status": "published",
+      "type": {
+        "value": "Dress Shirt"
+      },
+      "collection_ids": ["coll_dress_shirts", "coll_wedding_formal"],
+      "tags": ["dress-shirt", "white", "shiny", "statement", "formal"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/shirts/white-shiny.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "White Shiny Dress Shirt L",
+          "sku": "KCT-SHIRT-WHITE-SHINY-L",
+          "prices": [{"amount": 6999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 2499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 15
+        }
+      ],
+      "metadata": {
+        "seo_title": "White Shiny Dress Shirt | Statement Shirts | KCT Menswear",
+        "seo_description": "Sophisticated white shiny dress shirt with sleek design. Perfect for making a statement.",
+        "material": "Shiny fabric blend",
+        "care_instructions": "Dry clean recommended"
+      }
+    }
+  ]
+}

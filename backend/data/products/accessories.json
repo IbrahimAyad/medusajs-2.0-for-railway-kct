@@ -1,0 +1,261 @@
+{
+  "products": [
+    {
+      "title": "Royal Blue Skinny Tie",
+      "handle": "royal-blue-skinny-tie",
+      "description": "Premium royal blue skinny tie perfect for modern formal wear. Adds a contemporary touch to business and formal attire.",
+      "status": "published",
+      "type": {
+        "value": "Tie"
+      },
+      "collection_ids": ["coll_business_essentials"],
+      "tags": ["tie", "royal-blue", "skinny", "modern", "business"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/accessories/royal-blue-skinny-tie.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Style",
+          "values": ["Skinny"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Royal Blue Skinny Tie",
+          "sku": "KCT-TIE-ROYAL-SKINNY",
+          "prices": [{"amount": 2499, "currency_code": "USD"}],
+          "options": [{"value": "Skinny"}],
+          "manage_inventory": true,
+          "inventory_quantity": 25
+        }
+      ],
+      "metadata": {
+        "seo_title": "Royal Blue Skinny Tie | Modern Ties | KCT Menswear",
+        "seo_description": "Premium royal blue skinny tie for modern formal wear and business attire.",
+        "material": "Premium silk blend",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Red Skinny Tie",
+      "handle": "red-skinny-tie",
+      "description": "Bold red skinny tie that makes a statement. Perfect for business meetings and formal events where you want to stand out.",
+      "status": "published",
+      "type": {
+        "value": "Tie"
+      },
+      "collection_ids": ["coll_business_essentials"],
+      "tags": ["tie", "red", "skinny", "bold", "statement"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/accessories/red-skinny-tie.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Style",
+          "values": ["Skinny"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Red Skinny Tie",
+          "sku": "KCT-TIE-RED-SKINNY",
+          "prices": [{"amount": 2499, "currency_code": "USD"}],
+          "options": [{"value": "Skinny"}],
+          "manage_inventory": true,
+          "inventory_quantity": 20
+        }
+      ],
+      "metadata": {
+        "seo_title": "Red Skinny Tie | Bold Ties | KCT Menswear",
+        "seo_description": "Bold red skinny tie perfect for business meetings and formal events.",
+        "material": "Premium silk blend",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Black Skinny Tie",
+      "handle": "black-skinny-tie",
+      "description": "Classic black skinny tie - a versatile essential for any formal wardrobe. Works perfectly with all suit colors and formal occasions.",
+      "status": "published",
+      "type": {
+        "value": "Tie"
+      },
+      "collection_ids": ["coll_business_essentials", "coll_wedding_formal"],
+      "tags": ["tie", "black", "skinny", "classic", "versatile"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/accessories/black-skinny-tie.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Style",
+          "values": ["Skinny"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Black Skinny Tie",
+          "sku": "KCT-TIE-BLACK-SKINNY",
+          "prices": [{"amount": 1500, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 2499, "currency_code": "USD"}],
+          "options": [{"value": "Skinny"}],
+          "manage_inventory": true,
+          "inventory_quantity": 30
+        }
+      ],
+      "metadata": {
+        "seo_title": "Black Skinny Tie | Classic Ties | KCT Menswear",
+        "seo_description": "Classic black skinny tie - versatile essential for any formal wardrobe.",
+        "material": "Premium silk blend",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Royal Turtleneck With Black Design",
+      "handle": "royal-turtleneck-black-design",
+      "description": "Sophisticated royal blue turtleneck featuring elegant black design elements. Perfect for modern formal and semi-formal occasions.",
+      "status": "published",
+      "type": {
+        "value": "Turtleneck"
+      },
+      "collection_ids": ["coll_business_essentials"],
+      "tags": ["turtleneck", "royal-blue", "black-design", "sophisticated", "modern"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/accessories/royal-turtleneck-black-design.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Royal Turtleneck With Black Design L",
+          "sku": "KCT-TURTLE-ROYAL-BLACK-L",
+          "prices": [{"amount": 6999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 6499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 12
+        }
+      ],
+      "metadata": {
+        "seo_title": "Royal Turtleneck With Black Design | Modern Formal Wear | KCT Menswear",
+        "seo_description": "Sophisticated royal blue turtleneck with elegant black design elements.",
+        "material": "Premium cotton blend",
+        "care_instructions": "Machine washable, gentle cycle"
+      }
+    },
+    {
+      "title": "Black Cardigan",
+      "handle": "black-cardigan",
+      "description": "Elegant black cardigan perfect for layering over dress shirts. Adds sophisticated warmth and style to any formal or business outfit.",
+      "status": "published",
+      "type": {
+        "value": "Cardigan"
+      },
+      "collection_ids": ["coll_business_essentials"],
+      "tags": ["cardigan", "black", "elegant", "layering", "sophisticated"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/accessories/black-cardigan.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Black Cardigan L",
+          "sku": "KCT-CARDIGAN-BLACK-L",
+          "prices": [{"amount": 14999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 16499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 8
+        }
+      ],
+      "metadata": {
+        "seo_title": "Black Cardigan | Elegant Layering | KCT Menswear",
+        "seo_description": "Elegant black cardigan perfect for layering. Adds sophisticated warmth to formal outfits.",
+        "material": "Premium wool blend",
+        "care_instructions": "Dry clean recommended"
+      }
+    },
+    {
+      "title": "Red Turtleneck",
+      "handle": "red-turtleneck",
+      "description": "Bold red turtleneck that adds a pop of color to your wardrobe. Perfect for casual formal occasions and contemporary styling.",
+      "status": "published",
+      "type": {
+        "value": "Turtleneck"
+      },
+      "collection_ids": ["coll_business_essentials"],
+      "tags": ["turtleneck", "red", "bold", "contemporary", "casual-formal"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/accessories/red-turtleneck.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Red Turtleneck L",
+          "sku": "KCT-TURTLE-RED-L",
+          "prices": [{"amount": 4999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 6499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 10
+        }
+      ],
+      "metadata": {
+        "seo_title": "Red Turtleneck | Bold Colors | KCT Menswear",
+        "seo_description": "Bold red turtleneck perfect for casual formal occasions and contemporary styling.",
+        "material": "Premium cotton blend",
+        "care_instructions": "Machine washable, gentle cycle"
+      }
+    },
+    {
+      "title": "Black Turtleneck",
+      "handle": "black-turtleneck",
+      "description": "Classic black turtleneck - a versatile essential that works with suits, blazers, or on its own. Perfect for modern professional styling.",
+      "status": "published",
+      "type": {
+        "value": "Turtleneck"
+      },
+      "collection_ids": ["coll_business_essentials"],
+      "tags": ["turtleneck", "black", "classic", "versatile", "professional"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/accessories/black-turtleneck.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["S", "M", "L", "XL", "XXL"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Black Turtleneck L",
+          "sku": "KCT-TURTLE-BLACK-L",
+          "prices": [{"amount": 4999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 6499, "currency_code": "USD"}],
+          "options": [{"value": "L"}],
+          "manage_inventory": true,
+          "inventory_quantity": 18
+        }
+      ],
+      "metadata": {
+        "seo_title": "Black Turtleneck | Professional Essentials | KCT Menswear",
+        "seo_description": "Classic black turtleneck perfect for modern professional styling and versatile wear.",
+        "material": "Premium cotton blend",
+        "care_instructions": "Machine washable, gentle cycle"
+      }
+    }
+  ]
+}

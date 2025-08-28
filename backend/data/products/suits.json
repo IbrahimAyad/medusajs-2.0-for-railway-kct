@@ -1,0 +1,258 @@
+{
+  "products": [
+    {
+      "title": "Charcoal Grey Three Piece Suit",
+      "handle": "charcoal-grey-three-piece-suit",
+      "description": "Elegant three-piece suit in classic charcoal grey. Perfect for business meetings, formal events, and special occasions. Features premium wool construction with modern tailoring.",
+      "status": "published",
+      "type": {
+        "value": "Suit"
+      },
+      "collection_ids": ["coll_business_essentials", "coll_wedding_formal"],
+      "tags": ["suits", "charcoal", "three-piece", "business", "formal"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/suits/charcoal-grey-three-piece.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R", "48R"]
+        },
+        {
+          "title": "Fit",
+          "values": ["Slim", "Classic"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Charcoal Grey Three Piece Suit 42R Slim",
+          "sku": "KCT-SUIT-CHARCOAL-3P-42R-SLIM",
+          "prices": [{"amount": 15999, "currency_code": "USD"}],
+          "options": [
+            {"value": "42R"},
+            {"value": "Slim"}
+          ],
+          "manage_inventory": true,
+          "inventory_quantity": 8
+        },
+        {
+          "title": "Charcoal Grey Three Piece Suit 42R Classic",
+          "sku": "KCT-SUIT-CHARCOAL-3P-42R-CLASSIC",
+          "prices": [{"amount": 15999, "currency_code": "USD"}],
+          "options": [
+            {"value": "42R"},
+            {"value": "Classic"}
+          ],
+          "manage_inventory": true,
+          "inventory_quantity": 12
+        }
+      ],
+      "metadata": {
+        "seo_title": "Charcoal Grey Three Piece Suit | Business Suits | KCT Menswear",
+        "seo_description": "Shop our elegant Charcoal Grey Three Piece Suit. Perfect for business and formal occasions. Premium wool construction with expert tailoring.",
+        "material": "Premium wool blend",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Mauve Stretch Travelers Suit",
+      "handle": "mauve-stretch-travelers-suit",
+      "description": "Modern mauve stretch suit designed for the traveling businessman. Wrinkle-resistant fabric with contemporary fit, perfect for business travel and professional meetings.",
+      "status": "published",
+      "type": {
+        "value": "Suit"
+      },
+      "collection_ids": ["coll_business_essentials"],
+      "tags": ["suits", "mauve", "stretch", "travelers", "business", "modern"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/suits/mauve-stretch-travelers.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R", "48R"]
+        },
+        {
+          "title": "Piece Count",
+          "values": ["2-Piece"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Mauve Stretch Travelers Suit 42R 2-Piece",
+          "sku": "KCT-SUIT-MAUVE-STRETCH-2P-42R",
+          "prices": [{"amount": 24999, "currency_code": "USD"}],
+          "options": [
+            {"value": "42R"},
+            {"value": "2-Piece"}
+          ],
+          "manage_inventory": true,
+          "inventory_quantity": 10
+        }
+      ],
+      "metadata": {
+        "seo_title": "Mauve Stretch Travelers Suit | Business Travel Suits | KCT Menswear",
+        "seo_description": "Modern mauve stretch suit perfect for business travel. Wrinkle-resistant fabric with contemporary fit.",
+        "material": "Stretch fabric blend",
+        "care_instructions": "Machine washable, hang to dry"
+      }
+    },
+    {
+      "title": "Black Suit with Vest",
+      "handle": "black-suit-with-vest",
+      "description": "Classic black three-piece suit including jacket, pants, and vest. Timeless elegance for formal events, business meetings, and special occasions.",
+      "status": "published",
+      "type": {
+        "value": "Suit"
+      },
+      "collection_ids": ["coll_business_essentials", "coll_wedding_formal"],
+      "tags": ["suits", "black", "three-piece", "vest", "formal", "classic"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/suits/black-with-vest.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R", "48R"]
+        },
+        {
+          "title": "Fit",
+          "values": ["Slim", "Classic"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Black Suit with Vest 42R Slim",
+          "sku": "KCT-SUIT-BLACK-VEST-42R-SLIM",
+          "prices": [{"amount": 19999, "currency_code": "USD"}],
+          "options": [
+            {"value": "42R"},
+            {"value": "Slim"}
+          ],
+          "manage_inventory": true,
+          "inventory_quantity": 15
+        }
+      ],
+      "metadata": {
+        "seo_title": "Black Suit with Vest | Three Piece Suits | KCT Menswear",
+        "seo_description": "Classic black three-piece suit with vest. Perfect for formal events and business occasions.",
+        "material": "Premium wool",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Burnt Orange Pinstripe Three-Piece Suit",
+      "handle": "burnt-orange-pinstripe-three-piece-suit",
+      "description": "Bold burnt orange pinstripe three-piece suit that redefines classic elegance. Perfect for making a statement at formal events and special occasions.",
+      "status": "published",
+      "type": {
+        "value": "Suit"
+      },
+      "collection_ids": ["coll_wedding_formal"],
+      "tags": ["suits", "burnt-orange", "pinstripe", "three-piece", "bold", "statement"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/suits/burnt-orange-pinstripe.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Burnt Orange Pinstripe Three-Piece Suit 42R",
+          "sku": "KCT-SUIT-ORANGE-PINSTRIPE-3P-42R",
+          "prices": [{"amount": 24999, "currency_code": "USD"}],
+          "options": [
+            {"value": "42R"}
+          ],
+          "manage_inventory": true,
+          "inventory_quantity": 6
+        }
+      ],
+      "metadata": {
+        "seo_title": "Burnt Orange Pinstripe Three-Piece Suit | Statement Suits | KCT Menswear",
+        "seo_description": "Bold burnt orange pinstripe three-piece suit. Make a statement at your next formal event.",
+        "material": "Wool blend with pinstripe pattern",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Hunter Green Suit with Vest",
+      "handle": "hunter-green-suit-with-vest",
+      "description": "Sophisticated hunter green three-piece suit including jacket, pants, and vest. A refined choice for autumn weddings and formal events.",
+      "status": "published",
+      "type": {
+        "value": "Suit"
+      },
+      "collection_ids": ["coll_wedding_formal"],
+      "tags": ["suits", "hunter-green", "three-piece", "vest", "autumn", "wedding"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/suits/hunter-green-vest.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Hunter Green Suit with Vest 42R",
+          "sku": "KCT-SUIT-HUNTER-GREEN-VEST-42R",
+          "prices": [{"amount": 19999, "currency_code": "USD"}],
+          "options": [
+            {"value": "42R"}
+          ],
+          "manage_inventory": true,
+          "inventory_quantity": 8
+        }
+      ],
+      "metadata": {
+        "seo_title": "Hunter Green Suit with Vest | Wedding Suits | KCT Menswear",
+        "seo_description": "Sophisticated hunter green three-piece suit. Perfect for autumn weddings and formal events.",
+        "material": "Premium wool",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "White Wedding Suit",
+      "handle": "white-wedding-suit",
+      "description": "Perfect white wedding suit designed for grooms and formal events. Includes jacket, pants, and vest for a complete formal look.",
+      "status": "published",
+      "type": {
+        "value": "Suit"
+      },
+      "collection_ids": ["coll_wedding_formal"],
+      "tags": ["suits", "white", "wedding", "groom", "formal", "three-piece"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/suits/white-wedding.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R", "48R"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "White Wedding Suit 42R",
+          "sku": "KCT-SUIT-WHITE-WEDDING-42R",
+          "prices": [{"amount": 19999, "currency_code": "USD"}],
+          "options": [
+            {"value": "42R"}
+          ],
+          "manage_inventory": true,
+          "inventory_quantity": 10
+        }
+      ],
+      "metadata": {
+        "seo_title": "White Wedding Suit | Groom Suits | KCT Menswear",
+        "seo_description": "Perfect white wedding suit for grooms. Complete three-piece formal set for your special day.",
+        "material": "Premium white wool",
+        "care_instructions": "Dry clean only"
+      }
+    }
+  ]
+}

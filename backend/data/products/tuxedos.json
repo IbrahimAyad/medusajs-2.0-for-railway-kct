@@ -1,0 +1,223 @@
+{
+  "products": [
+    {
+      "title": "Slim Black Tuxedo",
+      "handle": "slim-black-tuxedo",
+      "description": "Classic slim-fit black tuxedo perfect for formal events, galas, and black-tie occasions. Features modern tailoring with traditional elegance.",
+      "status": "published",
+      "type": {
+        "value": "Tuxedo"
+      },
+      "collection_ids": ["coll_luxury_tuxedos", "coll_wedding_formal"],
+      "tags": ["tuxedo", "black", "slim-fit", "formal", "black-tie"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/tuxedos/slim-black-tuxedo.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R", "48R"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Slim Black Tuxedo 42R",
+          "sku": "KCT-TUX-SLIM-BLACK-42R",
+          "prices": [{"amount": 17999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 19999, "currency_code": "USD"}],
+          "options": [{"value": "42R"}],
+          "manage_inventory": true,
+          "inventory_quantity": 12
+        }
+      ],
+      "metadata": {
+        "seo_title": "Slim Black Tuxedo | Formal Tuxedos | KCT Menswear",
+        "seo_description": "Classic slim-fit black tuxedo for formal events and black-tie occasions. Modern tailoring with traditional elegance.",
+        "material": "Premium wool with satin lapels",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Slim White Tuxedo",
+      "handle": "slim-white-tuxedo",
+      "description": "Elegant slim-fit white tuxedo perfect for summer weddings, yacht parties, and sophisticated evening events.",
+      "status": "published",
+      "type": {
+        "value": "Tuxedo"
+      },
+      "collection_ids": ["coll_luxury_tuxedos", "coll_wedding_formal"],
+      "tags": ["tuxedo", "white", "slim-fit", "summer", "wedding"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/tuxedos/slim-white-tuxedo.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R", "48R"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Slim White Tuxedo 42R",
+          "sku": "KCT-TUX-SLIM-WHITE-42R",
+          "prices": [{"amount": 17999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 19999, "currency_code": "USD"}],
+          "options": [{"value": "42R"}],
+          "manage_inventory": true,
+          "inventory_quantity": 8
+        }
+      ],
+      "metadata": {
+        "seo_title": "Slim White Tuxedo | Wedding Tuxedos | KCT Menswear",
+        "seo_description": "Elegant slim-fit white tuxedo perfect for summer weddings and sophisticated events.",
+        "material": "Premium white wool with satin lapels",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Slim Royal Blue Tuxedo",
+      "handle": "slim-royal-blue-tuxedo",
+      "description": "Bold slim-fit royal blue tuxedo that makes a statement at any formal event. Perfect for prom, weddings, and special celebrations.",
+      "status": "published",
+      "type": {
+        "value": "Tuxedo"
+      },
+      "collection_ids": ["coll_luxury_tuxedos", "coll_wedding_formal"],
+      "tags": ["tuxedo", "royal-blue", "slim-fit", "bold", "prom"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/tuxedos/slim-royal-blue-tuxedo.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Slim Royal Blue Tuxedo 42R",
+          "sku": "KCT-TUX-SLIM-ROYAL-42R",
+          "prices": [{"amount": 17999, "currency_code": "USD"}],
+          "compare_at_prices": [{"amount": 19999, "currency_code": "USD"}],
+          "options": [{"value": "42R"}],
+          "manage_inventory": true,
+          "inventory_quantity": 10
+        }
+      ],
+      "metadata": {
+        "seo_title": "Slim Royal Blue Tuxedo | Colored Tuxedos | KCT Menswear",
+        "seo_description": "Bold slim-fit royal blue tuxedo perfect for prom, weddings, and special celebrations.",
+        "material": "Premium wool with satin lapels",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Burgundy Wine Three Piece Tuxedo",
+      "handle": "burgundy-wine-three-piece-tuxedo",
+      "description": "Sophisticated burgundy wine three-piece tuxedo featuring jacket, pants, and vest. Perfect for autumn weddings and elegant evening events.",
+      "status": "published",
+      "type": {
+        "value": "Tuxedo"
+      },
+      "collection_ids": ["coll_luxury_tuxedos", "coll_wedding_formal"],
+      "tags": ["tuxedo", "burgundy", "three-piece", "autumn", "sophisticated"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/tuxedos/burgundy-three-piece.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Burgundy Wine Three Piece Tuxedo 42R",
+          "sku": "KCT-TUX-BURGUNDY-3P-42R",
+          "prices": [{"amount": 22999, "currency_code": "USD"}],
+          "options": [{"value": "42R"}],
+          "manage_inventory": true,
+          "inventory_quantity": 6
+        }
+      ],
+      "metadata": {
+        "seo_title": "Burgundy Wine Three Piece Tuxedo | Luxury Tuxedos | KCT Menswear",
+        "seo_description": "Sophisticated burgundy wine three-piece tuxedo perfect for autumn weddings and elegant events.",
+        "material": "Premium burgundy wool with matching vest",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Navy Three Piece Tuxedo",
+      "handle": "navy-three-piece-tuxedo",
+      "description": "Classic navy three-piece tuxedo combining traditional elegance with modern sophistication. Features jacket, pants, and matching vest.",
+      "status": "published",
+      "type": {
+        "value": "Tuxedo"
+      },
+      "collection_ids": ["coll_luxury_tuxedos", "coll_wedding_formal"],
+      "tags": ["tuxedo", "navy", "three-piece", "classic", "sophisticated"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/tuxedos/navy-three-piece.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R", "48R"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Navy Three Piece Tuxedo 42R",
+          "sku": "KCT-TUX-NAVY-3P-42R",
+          "prices": [{"amount": 22999, "currency_code": "USD"}],
+          "options": [{"value": "42R"}],
+          "manage_inventory": true,
+          "inventory_quantity": 10
+        }
+      ],
+      "metadata": {
+        "seo_title": "Navy Three Piece Tuxedo | Classic Tuxedos | KCT Menswear",
+        "seo_description": "Classic navy three-piece tuxedo with traditional elegance and modern sophistication.",
+        "material": "Premium navy wool with matching vest",
+        "care_instructions": "Dry clean only"
+      }
+    },
+    {
+      "title": "Black Three Piece Tuxedo",
+      "handle": "black-three-piece-tuxedo",
+      "description": "The ultimate in formal elegance - classic black three-piece tuxedo with jacket, pants, and vest. Perfect for the most formal occasions.",
+      "status": "published",
+      "type": {
+        "value": "Tuxedo"
+      },
+      "collection_ids": ["coll_luxury_tuxedos", "coll_wedding_formal"],
+      "tags": ["tuxedo", "black", "three-piece", "formal", "classic"],
+      "images": [
+        {"url": "https://images.kctmenswear.com/tuxedos/black-three-piece.jpg"}
+      ],
+      "options": [
+        {
+          "title": "Size",
+          "values": ["38R", "40R", "42R", "44R", "46R", "48R"]
+        }
+      ],
+      "variants": [
+        {
+          "title": "Black Three Piece Tuxedo 42R",
+          "sku": "KCT-TUX-BLACK-3P-42R",
+          "prices": [{"amount": 22999, "currency_code": "USD"}],
+          "options": [{"value": "42R"}],
+          "manage_inventory": true,
+          "inventory_quantity": 15
+        }
+      ],
+      "metadata": {
+        "seo_title": "Black Three Piece Tuxedo | Formal Tuxedos | KCT Menswear",
+        "seo_description": "Ultimate formal elegance with our classic black three-piece tuxedo. Perfect for the most formal occasions.",
+        "material": "Premium black wool with matching vest",
+        "care_instructions": "Dry clean only"
+      }
+    }
+  ]
+}
