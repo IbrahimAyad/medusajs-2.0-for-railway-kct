@@ -1,0 +1,23 @@
+{
+  "name": "kct-medusa-v2-import",
+  "version": "1.0.0",
+  "description": "KCT Menswear product import system for Medusa v2",
+  "scripts": {
+    "seed:kct-products": "node scripts/import-all.js",
+    "seed:collections": "node scripts/import-collections.js",
+    "seed:suits": "node scripts/import-products.js --category=suits",
+    "seed:tuxedos": "node scripts/import-products.js --category=tuxedos",
+    "seed:shirts": "node scripts/import-products.js --category=shirts",
+    "seed:accessories": "node scripts/import-products.js --category=accessories",
+    "verify:products": "node scripts/verify-import.js"
+  },
+  "dependencies": {
+    "@medusajs/medusa": "^2.8.8",
+    "@medusajs/admin": "^2.8.8",
+    "dotenv": "^16.0.0",
+    "uuid": "^9.0.0"
+  },
+  "devDependencies": {
+    "@types/uuid": "^9.0.0"
+  }
+}
