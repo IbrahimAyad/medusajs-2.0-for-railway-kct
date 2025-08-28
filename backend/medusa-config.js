@@ -1,4 +1,4 @@
-import { loadEnv, Modules, defineConfig } from '@medusajs/utils';
+import { loadEnv, Modules, defineConfig } from '@medusajs/framework/utils';
 import {
   ADMIN_CORS,
   AUTH_CORS,
@@ -27,7 +27,8 @@ import {
   S3_BUCKET,
   S3_ENDPOINT,
   MEILISEARCH_HOST,
-  MEILISEARCH_ADMIN_KEY
+  MEILISEARCH_ADMIN_KEY,
+  EASYPOST_API_KEY
 } from './src/lib/constants';
 
 loadEnv(process.env.NODE_ENV, process.cwd());
