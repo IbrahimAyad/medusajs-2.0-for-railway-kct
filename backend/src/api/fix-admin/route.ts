@@ -77,21 +77,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     } catch (updateError) {
       console.error("Service update failed:", updateError);
       
-      // Try direct database update
-      const db = req.scope.resolve("__pg_connection__");
-      if (db) {
-        await db.query(
-          `UPDATE auth_identity SET app_metadata = $1 WHERE id = $2`,
-          [JSON.stringify({ user_id: user.id }), adminAuth.id]
-        );
-        
-        return res.json({ 
-          success: true, 
-          message: "Successfully updated auth via database",
-          user_id: user.id,
-          auth_id: adminAuth.id
-        });
-      }
+      // Return partial success
+      return res.json({ 
+        success: false, 
+        message: "Could not update auth identity - manual database update required",
+        user_id: user.id,
+        auth_id: adminAuth.id,
+        sql: `UPDATE auth_identity SET app_metadata = '{"user_id": "${user.id}"}' WHERE id = '${adminAuth.id}';`
+      });
     }
     
     return res.status(500).json({ 
