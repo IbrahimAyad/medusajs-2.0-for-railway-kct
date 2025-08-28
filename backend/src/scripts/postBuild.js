@@ -11,6 +11,16 @@ if (!fs.existsSync(MEDUSA_SERVER_PATH)) {
   process.exit(0);
 }
 
+// Copy medusa-config.js to .medusa/server
+const configPath = path.join(process.cwd(), 'medusa-config.js');
+if (fs.existsSync(configPath)) {
+  fs.copyFileSync(
+    configPath,
+    path.join(MEDUSA_SERVER_PATH, 'medusa-config.js')
+  );
+  console.log('Copied medusa-config.js to .medusa/server');
+}
+
 // Copy pnpm-lock.yaml
 fs.copyFileSync(
   path.join(process.cwd(), 'pnpm-lock.yaml'),
