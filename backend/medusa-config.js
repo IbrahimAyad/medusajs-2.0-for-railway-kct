@@ -33,15 +33,6 @@ import {
 
 loadEnv(process.env.NODE_ENV, process.cwd());
 
-// Debug S3 configuration
-console.log('S3 Configuration Debug:');
-console.log('S3_ACCESS_KEY_ID:', S3_ACCESS_KEY_ID ? 'Set (hidden)' : 'Not set');
-console.log('S3_SECRET_ACCESS_KEY:', S3_SECRET_ACCESS_KEY ? 'Set (hidden)' : 'Not set');
-console.log('S3_BUCKET:', S3_BUCKET || 'Not set');
-console.log('S3_ENDPOINT:', S3_ENDPOINT || 'Not set');
-console.log('S3_REGION:', S3_REGION || 'Not set');
-console.log('Will use S3 provider:', !!(S3_ACCESS_KEY_ID && S3_SECRET_ACCESS_KEY && S3_BUCKET));
-
 const medusaConfig = {
   projectConfig: {
     databaseUrl: DATABASE_URL,
@@ -191,5 +182,4 @@ const medusaConfig = {
   ]
 };
 
-console.log(JSON.stringify(medusaConfig, null, 2));
 export default defineConfig(medusaConfig);
