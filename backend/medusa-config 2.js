@@ -33,26 +33,14 @@ import {
 
 loadEnv(process.env.NODE_ENV, process.cwd());
 
-// Force re-read environment variables at runtime for Railway
-if (process.env.RAILWAY_ENVIRONMENT) {
-  // In Railway, environment variables are available at runtime
-  process.env.S3_ACCESS_KEY_ID = process.env.S3_ACCESS_KEY_ID;
-  process.env.S3_SECRET_ACCESS_KEY = process.env.S3_SECRET_ACCESS_KEY;
-  process.env.S3_BUCKET = process.env.S3_BUCKET;
-  process.env.S3_ENDPOINT = process.env.S3_ENDPOINT;
-  process.env.S3_FILE_URL = process.env.S3_FILE_URL;
-  process.env.S3_REGION = process.env.S3_REGION || 'auto';
-}
-
-// Check if S3 vars are available
-console.log('Environment Check:');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT);
-console.log('S3_ACCESS_KEY_ID available:', !!process.env.S3_ACCESS_KEY_ID);
-console.log('S3_SECRET_ACCESS_KEY available:', !!process.env.S3_SECRET_ACCESS_KEY);
-console.log('S3_BUCKET:', process.env.S3_BUCKET);
-console.log('S3_ENDPOINT:', process.env.S3_ENDPOINT);
-console.log('Will use S3:', !!(process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY && process.env.S3_BUCKET));
+// Debug S3 configuration
+console.log('S3 Configuration Debug:');
+console.log('S3_ACCESS_KEY_ID:', S3_ACCESS_KEY_ID ? 'Set (hidden)' : 'Not set');
+console.log('S3_SECRET_ACCESS_KEY:', S3_SECRET_ACCESS_KEY ? 'Set (hidden)' : 'Not set');
+console.log('S3_BUCKET:', S3_BUCKET || 'Not set');
+console.log('S3_ENDPOINT:', S3_ENDPOINT || 'Not set');
+console.log('S3_REGION:', S3_REGION || 'Not set');
+console.log('Will use S3 provider:', !!(S3_ACCESS_KEY_ID && S3_SECRET_ACCESS_KEY && S3_BUCKET));
 
 const medusaConfig = {
   projectConfig: {
@@ -203,4 +191,5 @@ const medusaConfig = {
   ]
 };
 
+console.log(JSON.stringify(medusaConfig, null, 2));
 export default defineConfig(medusaConfig);
