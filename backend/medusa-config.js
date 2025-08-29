@@ -33,6 +33,14 @@ import {
 
 loadEnv(process.env.NODE_ENV, process.cwd());
 
+// Check if S3 vars are available
+console.log('Environment Check:');
+console.log('NODE_ENV:', process.env.NODE_ENV);
+console.log('S3_ACCESS_KEY_ID available:', !!process.env.S3_ACCESS_KEY_ID);
+console.log('S3_SECRET_ACCESS_KEY available:', !!process.env.S3_SECRET_ACCESS_KEY);
+console.log('S3_BUCKET:', process.env.S3_BUCKET);
+console.log('Will use S3:', !!(process.env.S3_ACCESS_KEY_ID && process.env.S3_SECRET_ACCESS_KEY && process.env.S3_BUCKET));
+
 const medusaConfig = {
   projectConfig: {
     databaseUrl: DATABASE_URL,
