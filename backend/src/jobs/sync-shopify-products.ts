@@ -19,7 +19,7 @@ export default async function syncShopifyProducts(container: MedusaContainer) {
     // The medusa-source-shopify plugin should handle the actual sync
     // This job just ensures it runs
     
-    const eventBus = container.resolve("eventBusService")
+    const eventBus: any = container.resolve("eventBusService")
     if (eventBus) {
       await eventBus.emit("shopify.sync.start", {
         domain: SHOPIFY_DOMAIN,

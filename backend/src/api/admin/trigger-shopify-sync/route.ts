@@ -12,7 +12,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     // but we need to trigger it manually
     
     // Get the Shopify service if available
-    const shopifyService = req.scope.resolve("shopifyService") || 
+    const shopifyService: any = req.scope.resolve("shopifyService") || 
                           req.scope.resolve("shopify") ||
                           req.scope.resolve("medusa-source-shopify")
     
@@ -28,7 +28,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     }
     
     // If no direct service, try to trigger via event
-    const eventBus = req.scope.resolve("eventBusService")
+    const eventBus: any = req.scope.resolve("eventBusService")
     if (eventBus) {
       console.log("[Shopify Sync] Emitting sync event...")
       await eventBus.emit("shopify.sync", {
@@ -73,7 +73,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
  */
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
-    const productService = req.scope.resolve("productModuleService")
+    const productService: any = req.scope.resolve("productModuleService")
     
     // Count products with Shopify metadata
     let shopifyProductCount = 0
