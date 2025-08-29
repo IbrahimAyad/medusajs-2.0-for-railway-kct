@@ -81,7 +81,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   }
 }
 
-// POST /admin/vendor-curation/approve - Approve products for store
+// POST /admin/vendor-curation - Update product curation status
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
     const productService: any = req.scope.resolve("productModuleService")
