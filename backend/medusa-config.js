@@ -28,7 +28,10 @@ import {
   S3_ENDPOINT,
   MEILISEARCH_HOST,
   MEILISEARCH_ADMIN_KEY,
-  EASYPOST_API_KEY
+  EASYPOST_API_KEY,
+  SHOPIFY_DOMAIN,
+  SHOPIFY_ACCESS_TOKEN,
+  SHOPIFY_LOCATION_ID
 } from './src/lib/constants';
 
 loadEnv(process.env.NODE_ENV, process.cwd());
@@ -171,6 +174,21 @@ const medusaConfig = {
     }] : [])
   ],
   plugins: [
+    ...(SHOPIFY_DOMAIN && SHOPIFY_ACCESS_TOKEN ? [{
+      resolve: 'medusa-source-shopify',
+      options: {
+        domain: SHOPIFY_DOMAIN,
+        password: SHOPIFY_ACCESS_TOKEN,
+        location_id: SHOPIFY_LOCATION_ID,
+        // Optional: specify which data to sync
+        sync_options: {
+          products: true,
+          collections: true,
+          // Run sync every Wednesday and Saturday at 2 AM
+          schedule: '0 2 * * 3,6'
+        }
+      }
+    }] : []),
   ...(MEILISEARCH_HOST && MEILISEARCH_ADMIN_KEY ? [{
       resolve: '@rokmohar/medusa-plugin-meilisearch',
       options: {
