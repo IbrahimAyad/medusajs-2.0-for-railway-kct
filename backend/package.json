@@ -26,6 +26,7 @@
     "@medusajs/dashboard": "2.8.8",
     "@medusajs/file-s3": "^2.8.8",
     "@medusajs/framework": "2.8.8",
+    "@medusajs/icons": "^2.10.1",
     "@medusajs/medusa": "2.8.8",
     "@medusajs/notification-sendgrid": "2.8.8",
     "@medusajs/payment-stripe": "2.8.8",

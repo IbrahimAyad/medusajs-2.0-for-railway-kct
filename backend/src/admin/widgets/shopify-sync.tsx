@@ -159,7 +159,7 @@ const ShopifySyncWidget = () => {
 }
 
 export const config = {
-  zone: "product.list.before",
+  zone: ["product.list.before"],
 }
 
 export default ShopifySyncWidget

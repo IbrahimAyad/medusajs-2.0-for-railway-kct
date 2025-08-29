@@ -1,12 +1,13 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { IProductModuleService } from "@medusajs/framework/types"
 
 export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
     // Get products that came from Shopify
-    const productService = req.scope.resolve("product")
+    const productService: IProductModuleService = req.scope.resolve("productModuleService")
     
     // Query products with Shopify metadata
-    const products = await productService.list({
+    const [products] = await productService.listAndCount({
       metadata: {
         source: "shopify"
       }

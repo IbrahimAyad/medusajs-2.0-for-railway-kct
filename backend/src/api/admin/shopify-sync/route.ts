@@ -1,8 +1,12 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 
-export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+interface SyncRequestBody {
+  productIds?: string[]
+}
+
+export const POST = async (req: MedusaRequest<SyncRequestBody>, res: MedusaResponse) => {
   try {
-    const { productIds } = req.body
+    const { productIds } = req.body as SyncRequestBody
     
     // Trigger Shopify sync
     // The medusa-source-shopify plugin handles this automatically
