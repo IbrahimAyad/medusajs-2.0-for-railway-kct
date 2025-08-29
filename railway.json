@@ -13,7 +13,7 @@
       "name": "backend",
       "source": {
         "repo": "IbrahimAyad/medusajs-2.0-for-railway-kct",
-        "branch": "main"
+        "branch": "master"
       },
       "build": {
         "buildCommand": "cd backend && pnpm install && pnpm build",
@@ -35,7 +35,7 @@
       "name": "storefront",
       "source": {
         "repo": "IbrahimAyad/medusajs-2.0-for-railway-kct",
-        "branch": "main"
+        "branch": "master"
       },
       "build": {
         "buildCommand": "cd storefront && pnpm install && pnpm build",
