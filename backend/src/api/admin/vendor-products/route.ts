@@ -21,7 +21,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
 // POST endpoint to mark products for curation
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
-    const { productIds, action } = req.body
+    const { productIds, action } = req.body as any
     
     if (!productIds || !action) {
       return res.status(400).json({ 
