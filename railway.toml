@@ -1,0 +1,12 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "cd backend && pnpm install --frozen-lockfile && pnpm run build"
+
+[deploy]
+startCommand = "cd backend && pnpm run start"
+healthcheckPath = "/health"
+healthcheckTimeout = 300
+
+[[services]]
+name = "backend"
+source = "backend"
