@@ -178,7 +178,7 @@ export class CSVImportHelper {
         prices: this.parsePrices(row),
         options: variantOptions,
         inventory_quantity: this.parseInventory(row),
-        metadata: {}
+        metadata: {} as Record<string, any>
       }
       
       // Add weight if available
