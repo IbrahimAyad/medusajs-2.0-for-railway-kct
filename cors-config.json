@@ -1,0 +1,34 @@
+[
+  {
+    "AllowedOrigins": [
+      "https://super-admin-ruby.vercel.app",
+      "https://backend-ai-enhanced-kct-admin.vercel.app",
+      "https://kct-menswear-ai-enhanced.vercel.app",
+      "https://kctmenswear.com",
+      "https://www.kctmenswear.com",
+      "https://cdn.kctmenswear.com",
+      "https://super-admin-*-ibrahimayads-projects.vercel.app",
+      "https://backend-production-7441.up.railway.app",
+      "http://localhost:3000",
+      "http://localhost:3001",
+      "http://localhost:5173",
+      "http://localhost:8080"
+    ],
+    "AllowedMethods": [
+      "GET",
+      "HEAD",
+      "PUT",
+      "POST",
+      "DELETE"
+    ],
+    "AllowedHeaders": [
+      "*"
+    ],
+    "ExposeHeaders": [
+      "ETag",
+      "Content-Type",
+      "Content-Length"
+    ],
+    "MaxAgeSeconds": 3600
+  }
+]
