@@ -19,7 +19,7 @@ export default async function createAdmin({ container }: ExecArgs) {
       return;
     }
     
-    // Create admin user
+    // Create admin user without password (password is set via auth identity)
     const createdUsers = await userService.createUsers([{
       email: adminEmail,
       first_name: "Admin",
@@ -29,8 +29,8 @@ export default async function createAdmin({ container }: ExecArgs) {
     const user = createdUsers[0];
     console.log("Admin user created successfully");
     
-    // Create auth provider for the user using the correct method signature
-    const authIdentities = await authService.createAuthIdentities([{
+    // Create auth identity with password using correct structure
+    await authService.createAuthIdentities([{
       provider_identities: [{
         entity_id: user.id,
         provider: "emailpass",
