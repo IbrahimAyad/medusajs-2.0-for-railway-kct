@@ -1,0 +1,13 @@
+{
+  "name": "medusa-railway-setup",
+  "version": "1.0.0",
+  "description": "Root package for Railway deployment",
+  "scripts": {
+    "build": "cd backend && npm install && npm run build",
+    "start": "cd backend && npm run start",
+    "install": "cd backend && npm install"
+  },
+  "engines": {
+    "node": ">=20"
+  }
+}
