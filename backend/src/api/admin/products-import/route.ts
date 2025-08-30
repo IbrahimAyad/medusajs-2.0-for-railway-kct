@@ -54,9 +54,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Get sales channel (required for products)
     const salesChannelModuleService = req.scope.resolve(Modules.SALES_CHANNEL)
-    const salesChannels = await salesChannelModuleService.listSalesChannels({
-      name: "Default Sales Channel"
+    let salesChannels = await salesChannelModuleService.listSalesChannels({
+      name: "KCT Menswear"
     })
+    
+    // Fallback to any available sales channel
+    if (!salesChannels.length) {
+      salesChannels = await salesChannelModuleService.listSalesChannels()
+    }
     
     if (!salesChannels.length) {
       return res.status(400).json({
