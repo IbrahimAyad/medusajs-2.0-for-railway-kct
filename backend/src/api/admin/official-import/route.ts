@@ -10,7 +10,7 @@ import path from "path"
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
-    const { csvPath } = req.body || {}
+    const { csvPath } = (req.body as any) || {}
     
     // Default to the official template if no path provided
     const filePath = csvPath || path.join(process.cwd(), "medusa-official-template.csv")
@@ -39,7 +39,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       // Auto-confirm the import
       // Note: In production, you might want to review before confirming
       try {
-        const workflowEngine = req.scope.resolve("workflowEngine")
+        const workflowEngine = req.scope.resolve("workflowEngine") as any
         await workflowEngine.confirm(transactionId)
         
         res.json({

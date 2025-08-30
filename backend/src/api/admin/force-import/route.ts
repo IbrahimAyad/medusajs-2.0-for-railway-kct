@@ -8,7 +8,7 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
     // Get the database connection directly
-    const manager = req.scope.resolve("manager")
+    const manager = req.scope.resolve("manager") as any
     
     const products = [
       {
