@@ -1,7 +1,7 @@
 import { ExecArgs } from "@medusajs/framework/types";
 import { Modules } from "@medusajs/framework/utils";
 
-export default async function createAdmin({ container }: ExecArgs) {
+export default async function createAdminUser({ container }: ExecArgs) {
   const userService = container.resolve(Modules.USER);
   const authService = container.resolve(Modules.AUTH);
   
@@ -12,27 +12,27 @@ export default async function createAdmin({ container }: ExecArgs) {
   
   try {
     // Check if user exists
-    const existingUsers = await userService.listUsers({ email: adminEmail });
+    const existingUserList = await userService.listUsers({ email: adminEmail });
     
-    if (existingUsers?.length > 0) {
+    if (existingUserList?.length > 0) {
       console.log("Admin user already exists");
       return;
     }
     
     // Create admin user without password (password is set via auth identity)
-    const newUser = await userService.createUsers([{
+    const newUserArray = await userService.createUsers([{
       email: adminEmail,
       first_name: "Admin",
       last_name: "User"
     }]);
     
-    const createdUser = newUser[0];
+    const adminUser = newUserArray[0];
     console.log("Admin user created successfully");
     
     // Create auth identity with password using correct structure
     await authService.createAuthIdentities([{
       provider_identities: [{
-        entity_id: createdUser.id,
+        entity_id: adminUser.id,
         provider: "emailpass",
         user_metadata: {
           email: adminEmail,
@@ -46,6 +46,7 @@ export default async function createAdmin({ container }: ExecArgs) {
     
   } catch (error) {
     console.error("Error creating admin user:", error);
-    throw error;
+    // Don't throw - just log the error
+    console.log("Admin creation failed but continuing...");
   }
 }
