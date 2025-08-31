@@ -50,6 +50,14 @@ console.log('From constants - S3_ENDPOINT:', S3_ENDPOINT);
 console.log('Will use S3:', !!(S3_ACCESS_KEY_ID && S3_SECRET_ACCESS_KEY && S3_BUCKET));
 console.log('=========================');
 
+// Debug Stripe configuration
+console.log('=== Stripe Configuration ===');
+console.log('STRIPE_API_KEY exists:', !!STRIPE_API_KEY);
+console.log('STRIPE_API_KEY length:', STRIPE_API_KEY ? STRIPE_API_KEY.length : 0);
+console.log('STRIPE_API_KEY prefix:', STRIPE_API_KEY ? STRIPE_API_KEY.substring(0, 12) + '...' : 'NOT SET');
+console.log('STRIPE_WEBHOOK_SECRET exists:', !!STRIPE_WEBHOOK_SECRET);
+console.log('============================');
+
 const medusaConfig = {
   projectConfig: {
     databaseUrl: DATABASE_URL,
