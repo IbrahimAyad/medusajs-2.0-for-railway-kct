@@ -1,46 +1,32 @@
 #!/bin/bash
 
-echo "=== Deploying Medusa Backend to Railway ==="
-echo ""
+# Deploy Stripe Tax Update to Railway
+echo "========================================="
+echo "Deploying Stripe Tax Update to Railway"
+echo "========================================="
 
-# Check if we're in the right directory
-if [ ! -d "backend" ]; then
-    echo "Error: backend directory not found"
-    echo "Make sure you're in the medusa-railway-setup directory"
-    exit 1
-fi
+# Navigate to backend directory
+cd backend
 
-echo "1. Checking git status..."
-git status --short
+# Try to deploy with different service names
+echo "Attempting to deploy to Railway..."
 
-echo ""
-echo "2. Adding all changes..."
-git add -A
+# Try common service names
+for SERVICE in "backend" "medusa" "backend-production-7441" "medusa-backend" "production"; do
+    echo "Trying service: $SERVICE"
+    railway up --service "$SERVICE" 2>/dev/null && {
+        echo "✅ Successfully deployed using service: $SERVICE"
+        exit 0
+    }
+done
 
-echo ""
-echo "3. Creating commit..."
-git commit -m "Deploy Shopify sync fixes and updates" || echo "No changes to commit"
-
-echo ""
-echo "4. Deploying to Railway..."
-echo "   Note: If this fails, manually deploy from Railway dashboard"
-echo ""
-
-# Try to deploy
-railway up --detach || {
-    echo ""
-    echo "=== Manual Deployment Instructions ==="
-    echo "1. Go to https://railway.app/dashboard"
-    echo "2. Select the 'admin-kct' project"
-    echo "3. Click on the backend service"
-    echo "4. Click 'Deploy' or 'Redeploy'"
-    echo ""
-    echo "Or use GitHub:"
-    echo "1. Push to your GitHub repo"
-    echo "2. Railway will auto-deploy from GitHub"
+# If all fail, try without service flag (will prompt)
+echo "Trying without service flag (may prompt for selection)..."
+railway up && {
+    echo "✅ Successfully deployed!"
+    exit 0
 }
 
-echo ""
-echo "=== Deployment Complete ==="
-echo "Admin Panel: https://backend-production-7441.up.railway.app/app"
-echo "Vendor Sync: Available in admin sidebar"
+echo "❌ Could not deploy automatically. Please run:"
+echo "   cd backend && railway up"
+echo "   Then select your service from the list"
