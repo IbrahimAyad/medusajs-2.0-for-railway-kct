@@ -185,6 +185,23 @@ const medusaConfig = {
           },
         ],
       },
+    }] : []),
+    // Stripe Tax Provider for automated tax calculation
+    ...(STRIPE_API_KEY ? [{
+      key: Modules.TAX,
+      resolve: '@medusajs/tax',
+      options: {
+        providers: [
+          {
+            resolve: './src/modules/stripe-tax',
+            id: 'stripe-tax',
+            options: {
+              api_key: STRIPE_API_KEY,
+              automatic_tax: true,
+            },
+          },
+        ],
+      },
     }] : [])
   ],
   plugins: [
