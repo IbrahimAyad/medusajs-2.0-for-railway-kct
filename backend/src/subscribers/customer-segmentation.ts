@@ -50,7 +50,7 @@ export async function handleGuestPurchase({
         
         // Update group metadata with guest tracking
         const currentMetadata = guestGroup.metadata || {}
-        const guestTracking: any[] = currentMetadata.guest_tracking || []
+        const guestTracking: any[] = (currentMetadata.guest_tracking as any[]) || []
         guestTracking.push(guestData)
         
         await customerModuleService.updateCustomerGroups(guestGroup.id, {
@@ -110,7 +110,7 @@ export async function handleCustomerRegistration({
       
       if (guestGroups.length > 0) {
         const guestGroup = guestGroups[0]
-        const guestTracking: any[] = guestGroup.metadata?.guest_tracking || []
+        const guestTracking: any[] = (guestGroup.metadata?.guest_tracking as any[]) || []
         
         const guestRecord = guestTracking.find(g => g.email === customer.email)
         if (guestRecord) {
