@@ -55,17 +55,27 @@ export const POST = async (
 
     const customerModuleService = req.scope.resolve(Modules.CUSTOMER)
     
-    // Create address for customer
-    const address = await customerModuleService.createAddress({
-      ...(addressData as any),
-      customer_id: id
+    // In Medusa 2.10.1, we need to fetch existing addresses first
+    const customer = await customerModuleService.retrieveCustomer(id, {
+      relations: ["addresses"]
     })
+    
+    // Add the new address to existing addresses
+    const existingAddresses = customer.addresses || []
+    const updatedAddresses = [...existingAddresses, addressData]
+    
+    // Update customer with all addresses
+    const updatedCustomer = await customerModuleService.updateCustomers(
+      id,
+      { addresses: updatedAddresses } as any
+    )
 
     res.status(201).json({
-      address
+      address: addressData,
+      customer: updatedCustomer
     })
 
-  } catch (error) {
+  } catch (error: any) {
     console.error("[Customer Address Create] Error:", error)
     res.status(500).json({
       error: "Failed to create address",
