@@ -50,7 +50,7 @@ export async function handleGuestPurchase({
         
         // Update group metadata with guest tracking
         const currentMetadata = guestGroup.metadata || {}
-        const guestTracking = currentMetadata.guest_tracking || []
+        const guestTracking: any[] = currentMetadata.guest_tracking || []
         guestTracking.push(guestData)
         
         await customerModuleService.updateCustomerGroups(guestGroup.id, {
@@ -110,7 +110,7 @@ export async function handleCustomerRegistration({
       
       if (guestGroups.length > 0) {
         const guestGroup = guestGroups[0]
-        const guestTracking = guestGroup.metadata?.guest_tracking || []
+        const guestTracking: any[] = guestGroup.metadata?.guest_tracking || []
         
         const guestRecord = guestTracking.find(g => g.email === customer.email)
         if (guestRecord) {
@@ -124,7 +124,7 @@ export async function handleCustomerRegistration({
             metadata: {
               ...guestGroup.metadata,
               guest_tracking: guestTracking,
-              conversions_count: (guestGroup.metadata?.conversions_count || 0) + 1,
+              conversions_count: Number(guestGroup.metadata?.conversions_count || 0) + 1,
               conversion_rate: calculateConversionRate(guestTracking)
             }
           })
@@ -163,7 +163,7 @@ export async function handleCustomerPurchase({
       })
       
       const purchaseCount = orders.length
-      const totalSpend = orders.reduce((sum, o) => sum + (o.total || 0), 0)
+      const totalSpend = orders.reduce((sum, o) => sum + Number(o.total || 0), 0)
       
       // Determine appropriate segment
       let targetGroup = null

@@ -58,7 +58,7 @@ export const GET = async (
           customer_id: customerIds
         })
         
-        metrics.total_revenue = orders.reduce((sum, order) => sum + (order.total || 0), 0)
+        metrics.total_revenue = orders.reduce((sum, order) => sum + Number(order.total || 0), 0)
         metrics.avg_order_value = orders.length > 0 
           ? Math.round(metrics.total_revenue / orders.length) 
           : 0
@@ -81,7 +81,7 @@ export const GET = async (
     const [allCustomers, totalCustomerCount] = await customerModuleService.listAndCountCustomers({})
     const [allOrders, totalOrderCount] = await orderModuleService.listAndCountOrders({})
     
-    const totalRevenue = allOrders.reduce((sum, order) => sum + (order.total || 0), 0)
+    const totalRevenue = allOrders.reduce((sum, order) => sum + Number(order.total || 0), 0)
     const guestGroup = groupAnalytics.find(g => g.name === "Guest Purchasers")
     
     const overallMetrics = {
