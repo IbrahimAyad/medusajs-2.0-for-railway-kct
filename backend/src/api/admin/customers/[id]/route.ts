@@ -87,10 +87,10 @@ export const POST = async (
     const customerModuleService = req.scope.resolve(Modules.CUSTOMER)
     
     // Update the customer
-    const updatedCustomer = await customerModuleService.updateCustomers({
+    const updatedCustomer = await customerModuleService.updateCustomers(
       id,
-      ...updateData
-    })
+      updateData as any
+    )
 
     res.json({
       customer: updatedCustomer

@@ -73,12 +73,12 @@ export const POST = async (
   res: MedusaResponse
 ) => {
   try {
-    const customerData = req.body
+    const customerData = req.body as any
 
     console.log("[Customer Create] Creating new customer...")
 
     // Validate required fields
-    if (!customerData.email) {
+    if (!customerData?.email) {
       return res.status(400).json({
         error: "Email is required"
       })
@@ -100,11 +100,11 @@ export const POST = async (
 
     // Create the customer
     const customer = await customerModuleService.createCustomers({
-      ...customerData,
+      ...(customerData as any),
       has_account: customerData.has_account || false
     })
 
-    console.log(`[Customer Create] Created customer: ${customer.id}`)
+    console.log(`[Customer Create] Created customer: ${(customer as any).id || (customer[0] as any).id}`)
 
     res.status(201).json({
       customer

@@ -56,8 +56,8 @@ export const POST = async (
     const customerModuleService = req.scope.resolve(Modules.CUSTOMER)
     
     // Create address for customer
-    const address = await customerModuleService.createAddresses({
-      ...addressData,
+    const address = await customerModuleService.createAddress({
+      ...(addressData as any),
       customer_id: id
     })
 
