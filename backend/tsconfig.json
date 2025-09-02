@@ -34,6 +34,8 @@
     "**/__fixtures__",
     "node_modules",
     "build",
-    ".cache"
+    ".cache",
+    "src/api/_archived",
+    "**/_archived/**"
   ]
 }
