@@ -13,20 +13,20 @@ import LineItemUnitPrice from "@modules/common/components/line-item-unit-price"
 import LocalizedClientLink from "@modules/common/components/localized-client-link"
 import Spinner from "@modules/common/icons/spinner"
 import Thumbnail from "@modules/products/components/thumbnail"
-import { useState } from "react"
+import { useState, useCallback, memo } from "react"
 
 type ItemProps = {
   item: HttpTypes.StoreCartLineItem
   type?: "full" | "preview"
 }
 
-const Item = ({ item, type = "full" }: ItemProps) => {
+const Item = memo(({ item, type = "full" }: ItemProps) => {
   const [updating, setUpdating] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const { handle } = item.variant?.product ?? {}
 
-  const changeQuantity = async (quantity: number) => {
+  const changeQuantity = useCallback(async (quantity: number) => {
     setError(null)
     setUpdating(true)
 
@@ -40,11 +40,12 @@ const Item = ({ item, type = "full" }: ItemProps) => {
       .finally(() => {
         setUpdating(false)
       })
-  }
+  }, [item.id])
 
-  // TODO: Update this to grab the actual max inventory
-  const maxQtyFromInventory = 10
-  const maxQuantity = item.variant?.manage_inventory ? 10 : maxQtyFromInventory
+  // Use available quantity from variant inventory or default to 99 if not managed
+  const maxQuantity = item.variant?.manage_inventory 
+    ? (item.variant?.inventory_quantity ?? 10)
+    : 99
 
   return (
     <Table.Row className="w-full" data-testid="product-row">
@@ -84,7 +85,6 @@ const Item = ({ item, type = "full" }: ItemProps) => {
               className="w-14 h-10 p-4"
               data-testid="product-select-button"
             >
-              {/* TODO: Update this with the v2 way of managing inventory */}
               {Array.from(
                 {
                   length: Math.min(maxQuantity, 10),
@@ -95,10 +95,6 @@ const Item = ({ item, type = "full" }: ItemProps) => {
                   </option>
                 )
               )}
-
-              <option value={1} key={1}>
-                1
-              </option>
             </CartItemSelect>
             {updating && <Spinner />}
           </div>
@@ -129,6 +125,8 @@ const Item = ({ item, type = "full" }: ItemProps) => {
       </Table.Cell>
     </Table.Row>
   )
-}
+})
+
+Item.displayName = "CartItem"
 
 export default Item

@@ -1,11 +1,13 @@
 import { Heading } from "@medusajs/ui"
+import { memo } from "react"
 
 import ItemsPreviewTemplate from "@modules/cart/templates/preview"
 import DiscountCode from "@modules/checkout/components/discount-code"
 import CartTotals from "@modules/common/components/cart-totals"
 import Divider from "@modules/common/components/divider"
+import { CheckoutSummaryProps } from "@/types/checkout"
 
-const CheckoutSummary = ({ cart }: { cart: any }) => {
+const CheckoutSummary = memo(({ cart }: CheckoutSummaryProps) => {
   return (
     <div className="sticky top-0 flex flex-col-reverse small:flex-col gap-y-8 py-8 small:py-0 ">
       <div className="w-full bg-white flex flex-col">
@@ -25,6 +27,8 @@ const CheckoutSummary = ({ cart }: { cart: any }) => {
       </div>
     </div>
   )
-}
+})
+
+CheckoutSummary.displayName = "CheckoutSummary"
 
 export default CheckoutSummary

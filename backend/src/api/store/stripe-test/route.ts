@@ -23,7 +23,7 @@ export const GET = async (
     
     // Test Stripe connection
     const stripe = new Stripe(stripeKey, {
-      apiVersion: '2024-11-20.acacia'
+      apiVersion: '2025-08-27.basil' as any
     })
     
     // Try to create a test PaymentIntent

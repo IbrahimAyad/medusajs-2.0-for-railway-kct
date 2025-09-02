@@ -11,7 +11,7 @@ export const POST = async (
   res: MedusaResponse
 ) => {
   try {
-    const { cart_id } = req.body
+    const { cart_id } = req.body as { cart_id?: string }
     
     if (!cart_id) {
       return res.status(400).json({
@@ -52,7 +52,7 @@ export const POST = async (
       issues.push("Missing shipping method")
     }
     
-    if (cart.total < 50) { // Stripe minimum in cents
+    if (Number(cart.total) < 50) { // Stripe minimum in cents
       issues.push(`Total too low: ${cart.total} (minimum 50 cents)`)
     }
     
@@ -80,7 +80,6 @@ export const POST = async (
           {
             provider_id: 'pp_stripe_stripe',
             context: {
-              email: cart.email || 'test@example.com',
               billing_address: cart.billing_address || {
                 first_name: 'Test',
                 last_name: 'User',

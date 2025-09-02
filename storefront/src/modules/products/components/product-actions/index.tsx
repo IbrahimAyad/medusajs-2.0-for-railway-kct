@@ -20,8 +20,16 @@ type ProductActionsProps = {
   disabled?: boolean
 }
 
-const optionsAsKeymap = (variantOptions: any) => {
-  return variantOptions?.reduce((acc: Record<string, string | undefined>, varopt: any) => {
+interface VariantOption {
+  option?: {
+    title: string
+    id: string
+  }
+  value?: string
+}
+
+const optionsAsKeymap = (variantOptions: VariantOption[] | undefined) => {
+  return variantOptions?.reduce((acc: Record<string, string | undefined>, varopt: VariantOption) => {
     if (varopt.option && varopt.value !== null && varopt.value !== undefined) {
       acc[varopt.option.title] = varopt.value
     }

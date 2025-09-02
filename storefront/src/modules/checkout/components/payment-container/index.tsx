@@ -5,9 +5,6 @@ import React from "react"
 
 import Radio from "@modules/common/components/radio"
 
-import PaymentTest from "../payment-test"
-import { isManual } from "@lib/constants"
-
 type PaymentContainerProps = {
   paymentProviderId: string
   selectedPaymentOptionId: string | null
@@ -21,8 +18,6 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
   paymentInfoMap,
   disabled = false,
 }) => {
-  const isDevelopment = process.env.NODE_ENV === "development"
-
   return (
     <>
       <RadioGroup.Option
@@ -43,17 +38,11 @@ const PaymentContainer: React.FC<PaymentContainerProps> = ({
             <Text className="text-base-regular">
               {paymentInfoMap[paymentProviderId]?.title || paymentProviderId}
             </Text>
-            {isManual(paymentProviderId) && isDevelopment && (
-              <PaymentTest className="hidden small:block" />
-            )}
           </div>
           <span className="justify-self-end text-ui-fg-base">
             {paymentInfoMap[paymentProviderId]?.icon}
           </span>
         </div>
-        {isManual(paymentProviderId) && isDevelopment && (
-          <PaymentTest className="small:hidden text-[10px]" />
-        )}
       </RadioGroup.Option>
     </>
   )

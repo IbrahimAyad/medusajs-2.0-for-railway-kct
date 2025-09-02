@@ -7,6 +7,7 @@ import { revalidateTag } from "next/cache"
 import { redirect } from "next/navigation"
 import { cache } from "react"
 import { getAuthHeaders, removeAuthToken, setAuthToken } from "./cookies"
+import { ActionResult, CustomerFormState } from "@/types/customer"
 
 export const getCustomer = cache(async function () {
   return await sdk.store.customer
@@ -91,7 +92,7 @@ export async function signout(countryCode: string) {
 export const addCustomerAddress = async (
   _currentState: unknown,
   formData: FormData
-): Promise<any> => {
+): Promise<ActionResult> => {
   const address = {
     first_name: formData.get("first_name") as string,
     last_name: formData.get("last_name") as string,
@@ -131,9 +132,9 @@ export const deleteCustomerAddress = async (
 }
 
 export const updateCustomerAddress = async (
-  currentState: Record<string, unknown>,
+  currentState: CustomerFormState,
   formData: FormData
-): Promise<any> => {
+): Promise<ActionResult> => {
   const addressId = currentState.addressId as string
 
   const address = {

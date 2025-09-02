@@ -1,6 +1,6 @@
 "use client"
 
-import { useCallback, useContext, useEffect, useMemo, useState } from "react"
+import { useCallback, useContext, useEffect, useMemo, useState, memo } from "react"
 import { usePathname, useRouter, useSearchParams } from "next/navigation"
 import { RadioGroup } from "@headlessui/react"
 import ErrorMessage from "@modules/checkout/components/error-message"
@@ -14,16 +14,14 @@ import PaymentContainer from "@modules/checkout/components/payment-container"
 import { isStripe as isStripeFunc, paymentInfoMap } from "@lib/constants"
 import { StripeContext } from "@modules/checkout/components/payment-wrapper"
 import { initiatePaymentSession } from "@lib/data/cart"
+import { PaymentProps } from "@/types/checkout"
 
-const Payment = ({
+const Payment = memo(({
   cart,
   availablePaymentMethods,
-}: {
-  cart: any
-  availablePaymentMethods: any[]
-}) => {
+}: PaymentProps) => {
   const activeSession = cart.payment_collection?.payment_sessions?.find(
-    (paymentSession: any) => paymentSession.status === "pending"
+    (paymentSession) => paymentSession.status === "pending"
   )
 
   const [isLoading, setIsLoading] = useState(false)
@@ -276,6 +274,8 @@ const Payment = ({
       <Divider className="mt-8" />
     </div>
   )
-}
+})
+
+Payment.displayName = "Payment"
 
 export default Payment

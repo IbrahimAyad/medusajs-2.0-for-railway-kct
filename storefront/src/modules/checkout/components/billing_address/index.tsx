@@ -3,8 +3,30 @@ import Input from "@modules/common/components/input"
 import CountrySelect from "../country-select"
 import { HttpTypes } from "@medusajs/types"
 
+interface BillingAddressFormData {
+  "billing_address.first_name": string
+  "billing_address.last_name": string
+  "billing_address.address_1": string
+  "billing_address.company": string
+  "billing_address.postal_code": string
+  "billing_address.city": string
+  "billing_address.country_code": string
+  "billing_address.province": string
+  "billing_address.phone": string
+}
+
 const BillingAddress = ({ cart }: { cart: HttpTypes.StoreCart | null }) => {
-  const [formData, setFormData] = useState<any>({})
+  const [formData, setFormData] = useState<BillingAddressFormData>({
+    "billing_address.first_name": "",
+    "billing_address.last_name": "",
+    "billing_address.address_1": "",
+    "billing_address.company": "",
+    "billing_address.postal_code": "",
+    "billing_address.city": "",
+    "billing_address.country_code": "",
+    "billing_address.province": "",
+    "billing_address.phone": "",
+  })
 
   useEffect(() => {
     setFormData({
