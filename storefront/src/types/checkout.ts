@@ -17,19 +17,10 @@ export interface CartAddress {
 export interface CartLineItem extends HttpTypes.StoreCartLineItem {
   product?: HttpTypes.StoreProduct
   variant?: HttpTypes.StoreProductVariant
-  quantity: number
-  subtotal?: number
-  total?: number
-  original_total?: number
-  discount_total?: number
-  tax_total?: number
 }
 
 export interface ShippingMethod extends HttpTypes.StoreCartShippingMethod {
-  id: string
-  name: string
-  amount: number
-  is_tax_inclusive?: boolean
+  // Additional properties already included in base type
 }
 
 export interface PaymentSession {
@@ -41,28 +32,7 @@ export interface PaymentSession {
   data?: Record<string, any>
 }
 
-export interface Cart extends HttpTypes.StoreCart {
-  id: string
-  email?: string
-  currency_code: string
-  region?: HttpTypes.StoreRegion
-  items?: CartLineItem[]
-  shipping_address?: CartAddress
-  billing_address?: CartAddress
-  shipping_methods?: ShippingMethod[]
-  payment_collection?: {
-    id: string
-    amount: number
-    currency_code: string
-    payment_sessions?: PaymentSession[]
-  }
-  subtotal?: number
-  tax_total?: number
-  shipping_total?: number
-  discount_total?: number
-  gift_card_total?: number
-  total?: number
-}
+export type Cart = HttpTypes.StoreCart
 
 // Payment Types
 export interface PaymentMethod {
@@ -79,36 +49,8 @@ export interface PaymentFormData {
 }
 
 // Order Types
-export interface OrderAddress extends CartAddress {
-  id: string
-}
-
-export interface OrderLineItem extends CartLineItem {
-  id: string
-  order_id: string
-  fulfilled_quantity?: number
-  returned_quantity?: number
-}
-
-export interface Order extends HttpTypes.StoreOrder {
-  id: string
-  status: "pending" | "confirmed" | "shipped" | "delivered" | "canceled" | "refunded"
-  email: string
-  currency_code: string
-  items: OrderLineItem[]
-  shipping_address: OrderAddress
-  billing_address: OrderAddress
-  shipping_methods: ShippingMethod[]
-  payment_status: "pending" | "paid" | "refunded" | "partially_refunded"
-  fulfillment_status: "pending" | "fulfilled" | "partially_fulfilled" | "canceled"
-  total: number
-  subtotal: number
-  tax_total: number
-  shipping_total: number
-  discount_total: number
-  created_at: string
-  updated_at: string
-}
+export type Order = HttpTypes.StoreOrder
+export type OrderLineItem = HttpTypes.StoreOrderLineItem
 
 // Form Types
 export interface AddressFormData {

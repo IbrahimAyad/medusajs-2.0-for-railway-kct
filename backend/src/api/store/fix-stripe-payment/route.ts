@@ -79,6 +79,8 @@ export const POST = async (
           collection.id,
           {
             provider_id: 'pp_stripe_stripe',
+            currency_code: cart.currency_code,
+            amount: cart.total,
             context: {},
             data: {
               customer_email: cart.email || 'test@example.com'
