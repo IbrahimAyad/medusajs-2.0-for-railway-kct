@@ -14,5 +14,9 @@ export default defineMiddlewares({
       matcher: "/store/stripe-payment-fix",
       middlewares: [],
     },
+    {
+      matcher: "/store/test-tier-system",
+      middlewares: [],
+    },
   ],
 })
