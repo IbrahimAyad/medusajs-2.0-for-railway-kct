@@ -79,26 +79,7 @@ export const POST = async (
           collection.id,
           {
             provider_id: 'pp_stripe_stripe',
-            context: {
-              billing_address: cart.billing_address || {
-                first_name: 'Test',
-                last_name: 'User',
-                address_1: '123 Test St',
-                city: 'New York',
-                province: 'NY',
-                postal_code: '10001',
-                country_code: 'us'
-              },
-              shipping_address: cart.shipping_address || {
-                first_name: 'Test',
-                last_name: 'User',
-                address_1: '123 Test St',
-                city: 'New York',
-                province: 'NY',
-                postal_code: '10001',
-                country_code: 'us'
-              }
-            },
+            context: {},
             data: {
               customer_email: cart.email || 'test@example.com'
             }
