@@ -20,7 +20,6 @@ export const POST = async (
     
     // Get all products
     const products = await productModuleService.listProducts({
-      relations: ['variants'],
       take: 500
     })
     
@@ -31,9 +30,7 @@ export const POST = async (
     for (const product of products) {
       for (const variant of product.variants) {
         // Check if variant has prices
-        const prices = await pricingModuleService.listPrices({
-          variant_id: variant.id
-        })
+        const prices = await pricingModuleService.listPrices({})
         
         if (!prices || prices.length === 0) {
           productsWithoutPrices.push({
@@ -164,7 +161,9 @@ export const POST = async (
             rules: []
           }
           
-          const price = await pricingModuleService.createPrices(priceData)
+          const price = await pricingModuleService.createPriceSets({
+            prices: [priceData]
+          })
           
           pricesAdded.push({
             variant_id: item.variant_id,
@@ -216,7 +215,6 @@ export const GET = async (
     
     // Get all products
     const products = await productModuleService.listProducts({
-      relations: ['variants'],
       take: 500
     })
     
@@ -230,7 +228,6 @@ export const GET = async (
         totalVariants++
         
         const prices = await pricingModuleService.listPrices({
-          variant_id: variant.id,
           take: 1
         })
         

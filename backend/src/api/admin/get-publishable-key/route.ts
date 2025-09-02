@@ -35,7 +35,7 @@ export const GET = async (
     const newKey = await apiKeyModuleService.createApiKeys({
       title: "Store Frontend Key",
       type: "publishable",
-      created_by: req.auth?.actor_id || "system"
+      created_by: "system"
     })
     
     res.json({

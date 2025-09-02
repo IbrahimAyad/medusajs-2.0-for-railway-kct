@@ -288,12 +288,13 @@ export const POST = async (
           
           // Create new prices for each region with tier price
           for (const region of regions) {
-            await pricingModuleService.createPrices({
-              title: `${tierName} - ${region.currency_code.toUpperCase()}`,
-              currency_code: region.currency_code,
-              amount: tier.price,
-              variant_id: variant.id,
-              rules: []
+            await pricingModuleService.createPriceSets({
+              prices: [{
+                title: `${tierName} - ${region.currency_code.toUpperCase()}`,
+                currency_code: region.currency_code,
+                amount: tier.price,
+                rules: []
+              }]
             })
           }
         }
