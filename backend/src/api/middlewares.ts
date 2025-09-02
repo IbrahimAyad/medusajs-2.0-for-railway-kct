@@ -3,19 +3,15 @@ import { defineMiddlewares } from "@medusajs/medusa"
 export default defineMiddlewares({
   routes: [
     {
-      matcher: "/store/checkout-diagnostics",
+      matcher: "/store/prepare-cart",
       middlewares: [],
     },
     {
-      matcher: "/store/cart-prepare-stripe",
+      matcher: "/store/checkout-status",
       middlewares: [],
     },
     {
-      matcher: "/store/stripe-payment-fix",
-      middlewares: [],
-    },
-    {
-      matcher: "/store/test-tier-system",
+      matcher: "/admin/setup-product-pricing",
       middlewares: [],
     },
   ],
