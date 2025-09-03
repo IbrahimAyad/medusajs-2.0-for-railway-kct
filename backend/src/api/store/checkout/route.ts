@@ -80,10 +80,12 @@ export const POST = async (
         const total = subtotal + shipping
         
         // Create payment collection
-        const paymentCollection = await paymentModuleService.createPaymentCollections({
+        const paymentCollections = await paymentModuleService.createPaymentCollections({
           amount: total * 100, // Convert to cents for Stripe
           currency_code: "usd"
         } as any)
+        
+        const paymentCollection = Array.isArray(paymentCollections) ? paymentCollections[0] : paymentCollections
         
         // Initialize payment session with Stripe
         const paymentSession = await paymentModuleService.createPaymentSession(
@@ -125,7 +127,7 @@ export const POST = async (
         })
         
         // Create order
-        const order = await orderModuleService.createOrders({
+        const orders = await orderModuleService.createOrders({
           currency_code: "usd",
           email: finalCart.email,
           shipping_address: finalCart.shipping_address,
@@ -137,6 +139,8 @@ export const POST = async (
           })),
           status: "pending"
         } as any)
+        
+        const order = Array.isArray(orders) ? orders[0] : orders
         
         // Mark cart as completed
         await cartModuleService.updateCarts([{
