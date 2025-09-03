@@ -6,9 +6,21 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
 
+interface CartOperationRequest extends MedusaRequest {
+  body: {
+    action: string
+    cart_id?: string
+    variant_id?: string
+    quantity?: number
+    customer_email?: string
+    region_id?: string
+    item_id?: string
+  }
+}
+
 // Create or retrieve cart
 export const POST = async (
-  req: MedusaRequest,
+  req: CartOperationRequest,
   res: MedusaResponse
 ) => {
   try {
@@ -48,15 +60,13 @@ export const POST = async (
         const variant = variants[0]
         
         // Add item to cart
-        await cartModuleService.addLineItems({
+        await cartModuleService.addLineItems([{
           cart_id,
-          items: [{
-            variant_id,
-            quantity,
-            unit_price: variant.calculated_price?.calculated_amount || 0,
-            title: variant.title || "Product"
-          }]
-        })
+          variant_id,
+          quantity,
+          unit_price: (variant as any).calculated_price?.calculated_amount || 0,
+          title: variant.title || "Product"
+        }])
         
         // Get updated cart
         const updatedCart = await cartModuleService.retrieveCart(cart_id, {
@@ -72,7 +82,7 @@ export const POST = async (
         // Update line item quantity
         const { item_id } = req.body
         
-        await cartModuleService.updateLineItems(cart_id, [{
+        await cartModuleService.updateLineItems([{
           id: item_id,
           quantity
         }])

@@ -103,9 +103,15 @@ export const GET = async (
   }
 }
 
+interface ProductRequest extends MedusaRequest {
+  body: {
+    product_id: string
+  }
+}
+
 // Get single product by ID
 export const POST = async (
-  req: MedusaRequest,
+  req: ProductRequest,
   res: MedusaResponse
 ) => {
   try {

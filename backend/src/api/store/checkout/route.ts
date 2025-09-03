@@ -6,8 +6,16 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
 
+interface CheckoutRequest extends MedusaRequest {
+  body: {
+    action: string
+    cart_id?: string
+    [key: string]: any
+  }
+}
+
 export const POST = async (
-  req: MedusaRequest,
+  req: CheckoutRequest,
   res: MedusaResponse
 ) => {
   try {
@@ -44,13 +52,11 @@ export const POST = async (
         
       case "add_shipping_method":
         // Add shipping method (simplified for now)
-        await cartModuleService.addShippingMethods({
+        await cartModuleService.addShippingMethods([{
           cart_id,
-          methods: [{
-            name: data.shipping_method || "Standard Shipping",
-            amount: data.shipping_amount || 10
-          }]
-        })
+          name: data.shipping_method || "Standard Shipping",
+          amount: data.shipping_amount || 10
+        }])
         
         const cartWithShipping = await cartModuleService.retrieveCart(cart_id)
         
@@ -76,9 +82,8 @@ export const POST = async (
         // Create payment collection
         const paymentCollection = await paymentModuleService.createPaymentCollections({
           amount: total * 100, // Convert to cents for Stripe
-          currency_code: "usd",
-          region_id: cart.region_id || "default-region"
-        })
+          currency_code: "usd"
+        } as any)
         
         // Initialize payment session with Stripe
         const paymentSession = await paymentModuleService.createPaymentSession(
@@ -130,9 +135,8 @@ export const POST = async (
             unit_price: item.unit_price,
             title: item.title
           })),
-          payment_collection_id,
           status: "pending"
-        })
+        } as any)
         
         // Mark cart as completed
         await cartModuleService.updateCarts([{
