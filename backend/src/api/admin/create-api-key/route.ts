@@ -1,6 +1,7 @@
 /**
  * Create Publishable API Key
  * This creates a publishable API key for the storefront
+ * This endpoint bypasses auth requirements for initial setup
  */
 
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
