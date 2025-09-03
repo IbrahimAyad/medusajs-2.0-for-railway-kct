@@ -8,6 +8,27 @@ This guide provides complete implementation instructions for adding Medusa check
 - **28 Core Products**: Continue using direct Stripe checkout
 - **Dual Cart System**: Separate carts for each product type
 
+## IMPORTANT: API Key Requirement
+
+All store endpoints require a publishable API key. Get your key first:
+
+```javascript
+// Get publishable API key (run once)
+const response = await fetch('https://backend-production-7441.up.railway.app/store/create-api-key', {
+  method: 'POST'
+});
+const { api_key } = await response.json();
+// Save this key in your environment variables as NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+```
+
+Then include it in all store API requests:
+```javascript
+headers: {
+  'Content-Type': 'application/json',
+  'x-publishable-api-key': process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+}
+```
+
 ## API Endpoints
 
 ### 1. Product Fetching
@@ -135,6 +156,7 @@ const MedusaCartContext = createContext();
 export function MedusaCartProvider({ children }) {
   const [cart, setCart] = useState(null);
   const [cartId, setCartId] = useState(null);
+  const apiKey = process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY;
 
   useEffect(() => {
     // Load cart ID from localStorage
@@ -147,7 +169,10 @@ export function MedusaCartProvider({ children }) {
   const createCart = async (email) => {
     const response = await fetch('https://backend-production-7441.up.railway.app/store/cart-operations', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-publishable-api-key': apiKey
+      },
       body: JSON.stringify({ 
         action: 'create',
         customer_email: email 
@@ -169,7 +194,10 @@ export function MedusaCartProvider({ children }) {
 
     const response = await fetch('https://backend-production-7441.up.railway.app/store/cart-operations', {
       method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
+      headers: { 
+        'Content-Type': 'application/json',
+        'x-publishable-api-key': apiKey
+      },
       body: JSON.stringify({
         action: 'add_item',
         cart_id: currentCartId,
@@ -183,7 +211,11 @@ export function MedusaCartProvider({ children }) {
   };
 
   const fetchCart = async (id) => {
-    const response = await fetch(`https://backend-production-7441.up.railway.app/store/cart-operations?cart_id=${id}`);
+    const response = await fetch(`https://backend-production-7441.up.railway.app/store/cart-operations?cart_id=${id}`, {
+      headers: {
+        'x-publishable-api-key': apiKey
+      }
+    });
     const data = await response.json();
     if (data.success) {
       setCart(data.cart);
