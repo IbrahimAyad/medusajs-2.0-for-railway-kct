@@ -15,17 +15,14 @@ All store endpoints require a publishable API key. Get your key first:
 ```javascript
 // Get publishable API key (run once from admin)
 // Note: This requires admin authentication (use session cookie from browser)
-const response = await fetch('https://backend-production-7441.up.railway.app/admin/create-api-key', {
-  method: 'POST',
+const response = await fetch('https://backend-production-7441.up.railway.app/admin/get-publishable-key', {
+  method: 'GET',
   headers: {
     'Cookie': 'connect.sid=YOUR_SESSION_COOKIE' // Get from browser DevTools
   }
 });
-const { api_key } = await response.json();
+const { publishable_key } = await response.json();
 // Save this key in your environment variables as NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
-
-// Alternative: Use this pre-generated key for testing
-// NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_01JFSH5K7Y2E4H3M9XNV8ZQR6T
 ```
 
 Then include it in all store API requests:

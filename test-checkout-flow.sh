@@ -9,13 +9,12 @@ echo ""
 COOKIE="connect.sid=s%3ALyso2HtL-a4qycA62Bg_tVHblNA6Qsr9.%2FeLu5NAso4ZhLz%2FoS0juzmE7PzL0NSORpEi99JEejtw"
 BASE_URL="https://backend-production-7441.up.railway.app"
 
-echo "Step 1: Creating publishable API key..."
+echo "Step 1: Getting publishable API key..."
 echo "-----------------------------------"
-API_KEY_RESPONSE=$(curl -s -X POST $BASE_URL/admin/create-api-key \
-  -H "Cookie: $COOKIE" \
-  -H 'Content-Type: application/json')
+API_KEY_RESPONSE=$(curl -s -X GET $BASE_URL/admin/get-publishable-key \
+  -H "Cookie: $COOKIE")
 
-API_KEY=$(echo "$API_KEY_RESPONSE" | python3 -c "import sys, json; data = json.load(sys.stdin); print(data.get('api_key', ''))")
+API_KEY=$(echo "$API_KEY_RESPONSE" | python3 -c "import sys, json; data = json.load(sys.stdin); print(data.get('publishable_key', ''))")
 
 if [ -z "$API_KEY" ]; then
   echo "Failed to get API key. Response:"
