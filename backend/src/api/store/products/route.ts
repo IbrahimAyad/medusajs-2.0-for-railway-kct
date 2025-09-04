@@ -63,24 +63,43 @@ export const GET = async (
         let inventoryQuantity = 0
         
         try {
-          // Get inventory item linked to variant
-          const links = await remoteLink.list({
-            product_variant_id: v.id
-          })
-          
-          if (links.length > 0 && (links[0] as any).inventory_item_id) {
-            // Get inventory levels for this item
-            const inventoryLevels = await inventoryModuleService.listInventoryLevels({
-              inventory_item_id: (links[0] as any).inventory_item_id
+          // First try the link approach
+          try {
+            const links = await remoteLink.list({
+              product_variant_id: v.id
             })
             
-            // Sum up all location quantities (or just take first)
-            if (inventoryLevels.length > 0) {
-              inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
+            if (links.length > 0 && (links[0] as any).inventory_item_id) {
+              const inventoryLevels = await inventoryModuleService.listInventoryLevels({
+                inventory_item_id: (links[0] as any).inventory_item_id
+              })
+              
+              if (inventoryLevels.length > 0) {
+                inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
+              }
+            }
+          } catch (linkError) {
+            // Link approach failed, try by SKU
+          }
+          
+          // If no inventory from link, try finding by SKU
+          if (inventoryQuantity === 0 && v.sku) {
+            const inventoryItems = await inventoryModuleService.listInventoryItems({
+              sku: v.sku
+            })
+            
+            if (inventoryItems.length > 0) {
+              const inventoryLevels = await inventoryModuleService.listInventoryLevels({
+                inventory_item_id: inventoryItems[0].id
+              })
+              
+              if (inventoryLevels.length > 0) {
+                inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
+              }
             }
           }
         } catch (error) {
-          // If no inventory link, default to 0
+          // If no inventory, default to 0
           console.log(`No inventory for variant ${v.id}`)
         }
         
@@ -163,17 +182,39 @@ export const POST = async (
       let inventoryQuantity = 0
       
       try {
-        const links = await remoteLink.list({
-          product_variant_id: v.id
-        })
-        
-        if (links.length > 0 && (links[0] as any).inventory_item_id) {
-          const inventoryLevels = await inventoryModuleService.listInventoryLevels({
-            inventory_item_id: (links[0] as any).inventory_item_id
+        // Try link approach first
+        try {
+          const links = await remoteLink.list({
+            product_variant_id: v.id
           })
           
-          if (inventoryLevels.length > 0) {
-            inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
+          if (links.length > 0 && (links[0] as any).inventory_item_id) {
+            const inventoryLevels = await inventoryModuleService.listInventoryLevels({
+              inventory_item_id: (links[0] as any).inventory_item_id
+            })
+            
+            if (inventoryLevels.length > 0) {
+              inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
+            }
+          }
+        } catch (linkError) {
+          // Link failed, try SKU
+        }
+        
+        // Fallback to SKU-based lookup
+        if (inventoryQuantity === 0 && v.sku) {
+          const inventoryItems = await inventoryModuleService.listInventoryItems({
+            sku: v.sku
+          })
+          
+          if (inventoryItems.length > 0) {
+            const inventoryLevels = await inventoryModuleService.listInventoryLevels({
+              inventory_item_id: inventoryItems[0].id
+            })
+            
+            if (inventoryLevels.length > 0) {
+              inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
+            }
           }
         }
       } catch (error) {
