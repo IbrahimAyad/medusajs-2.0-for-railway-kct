@@ -176,6 +176,8 @@ export const POST = async (
             // Update existing level
             await inventoryModuleService.updateInventoryLevels([{
               id: existingLevels[0].id,
+              inventory_item_id: inventoryItem.id,
+              location_id: kalamazooStore.id,
               stocked_quantity: DEFAULT_QUANTITY
             }])
           } else {
