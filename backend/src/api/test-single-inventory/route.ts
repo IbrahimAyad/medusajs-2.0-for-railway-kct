@@ -61,14 +61,26 @@ export const GET = async (
       })
       result.steps.push("✓ manage_inventory enabled")
       
-      // Step 2: Create inventory item
-      result.steps.push("Creating inventory item...")
-      const inventoryItem = await inventoryModuleService.createInventoryItems({
-        sku: variant.sku || `test-${variant.id}`,
-        title: `${product.title} - ${variant.title}`,
-        requires_shipping: true
+      // Step 2: Create or find inventory item
+      result.steps.push("Finding/creating inventory item...")
+      let inventoryItem = null
+      
+      // Check if it exists
+      const existingItems = await inventoryModuleService.listInventoryItems({
+        sku: variant.sku
       })
-      result.steps.push(`✓ Inventory item created: ${inventoryItem.id}`)
+      
+      if (existingItems.length > 0) {
+        inventoryItem = existingItems[0]
+        result.steps.push(`✓ Found existing inventory item: ${inventoryItem.id}`)
+      } else {
+        inventoryItem = await inventoryModuleService.createInventoryItems({
+          sku: variant.sku || `test-${variant.id}`,
+          title: `${product.title} - ${variant.title}`,
+          requires_shipping: true
+        })
+        result.steps.push(`✓ Created inventory item: ${inventoryItem.id}`)
+      }
       
       // Step 3: Link variant to inventory
       result.steps.push("Creating link...")
@@ -82,14 +94,30 @@ export const GET = async (
         result.steps.push(`⚠️ Link error: ${e.message}`)
       }
       
-      // Step 4: Create inventory level
-      result.steps.push("Creating inventory level...")
-      await inventoryModuleService.createInventoryLevels([{
+      // Step 4: Create or update inventory level
+      result.steps.push("Setting inventory level...")
+      
+      const existingLevels = await inventoryModuleService.listInventoryLevels({
         inventory_item_id: inventoryItem.id,
-        location_id: kalamazooStore.id,
-        stocked_quantity: 10
-      }])
-      result.steps.push("✓ Inventory level created with 10 units")
+        location_id: kalamazooStore.id
+      })
+      
+      if (existingLevels.length > 0) {
+        await inventoryModuleService.updateInventoryLevels([{
+          id: existingLevels[0].id,
+          inventory_item_id: inventoryItem.id,
+          location_id: kalamazooStore.id,
+          stocked_quantity: 10
+        }])
+        result.steps.push("✓ Updated inventory level to 10 units")
+      } else {
+        await inventoryModuleService.createInventoryLevels([{
+          inventory_item_id: inventoryItem.id,
+          location_id: kalamazooStore.id,
+          stocked_quantity: 10
+        }])
+        result.steps.push("✓ Created inventory level with 10 units")
+      }
       
       // Verify
       const levels = await inventoryModuleService.listInventoryLevels({
