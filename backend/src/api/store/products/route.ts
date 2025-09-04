@@ -68,10 +68,10 @@ export const GET = async (
             product_variant_id: v.id
           })
           
-          if (links.length > 0 && links[0].inventory_item_id) {
+          if (links.length > 0 && (links[0] as any).inventory_item_id) {
             // Get inventory levels for this item
             const inventoryLevels = await inventoryModuleService.listInventoryLevels({
-              inventory_item_id: links[0].inventory_item_id
+              inventory_item_id: (links[0] as any).inventory_item_id
             })
             
             // Sum up all location quantities (or just take first)
@@ -167,9 +167,9 @@ export const POST = async (
           product_variant_id: v.id
         })
         
-        if (links.length > 0 && links[0].inventory_item_id) {
+        if (links.length > 0 && (links[0] as any).inventory_item_id) {
           const inventoryLevels = await inventoryModuleService.listInventoryLevels({
-            inventory_item_id: links[0].inventory_item_id
+            inventory_item_id: (links[0] as any).inventory_item_id
           })
           
           if (inventoryLevels.length > 0) {

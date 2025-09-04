@@ -159,9 +159,9 @@ export const POST = async (
           // Step 3: Create link between variant and inventory item
           try {
             await remoteLink.create({
-              productVariantId: variant.id,
-              inventoryItemId: inventoryItem.id
-            })
+              product_variant_id: variant.id,
+              inventory_item_id: inventoryItem.id
+            } as any)
           } catch (linkError) {
             // Link might already exist, that's OK
           }
@@ -174,17 +174,17 @@ export const POST = async (
           
           if (existingLevels.length > 0) {
             // Update existing level
-            await inventoryModuleService.updateInventoryLevels(existingLevels[0].id, {
+            await inventoryModuleService.updateInventoryLevels([{
+              id: existingLevels[0].id,
               stocked_quantity: DEFAULT_QUANTITY
-            })
+            }])
           } else {
             // Create new inventory level
-            await inventoryModuleService.createInventoryLevels({
+            await inventoryModuleService.createInventoryLevels([{
               inventory_item_id: inventoryItem.id,
               location_id: kalamazooStore.id,
-              stocked_quantity: DEFAULT_QUANTITY,
-              reserved_quantity: 0
-            })
+              stocked_quantity: DEFAULT_QUANTITY
+            }])
             results.inventory_levels_created++
           }
           

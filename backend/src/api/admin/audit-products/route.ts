@@ -94,11 +94,11 @@ export const GET = async (
           sku: v.sku,
           barcode: v.barcode,
           options: v.options,
-          inventory_quantity: v.inventory_quantity
+          inventory_quantity: (v as any).inventory_quantity || 0
         })) || [],
         
         categories: p.categories?.map(c => c.name) || [],
-        collections: p.collections?.map(c => c.title) || [],
+        collections: (p as any).collections?.map((c: any) => c.title) || [],
         tags: p.tags?.map(t => t.value) || [],
         
         options: p.options?.map(o => ({
