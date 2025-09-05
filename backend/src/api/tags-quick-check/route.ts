@@ -67,8 +67,9 @@ export const GET = async (
       if (product.metadata?.pricing_tier) {
         withPricingTier++
         productInfo.has_pricing = true
-        productInfo.pricing_tier = product.metadata.pricing_tier
-        pricingTiers.add(product.metadata.pricing_tier)
+        const tierValue = String(product.metadata.pricing_tier)
+        productInfo.pricing_tier = tierValue
+        pricingTiers.add(tierValue)
       }
       
       if (sampleData.length < 10) {

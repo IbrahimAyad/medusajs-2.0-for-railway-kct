@@ -87,7 +87,7 @@ export const POST = async (
         if (title.includes('double breasted')) tags.push('double-breasted')
         
         // Price tags
-        const price = product.metadata?.tier_price || 0
+        const price = parseFloat(String(product.metadata?.tier_price || 0))
         if (price < 100) tags.push('under-100')
         else if (price < 200) tags.push('100-200')
         else if (price < 300) tags.push('200-300')
@@ -101,9 +101,10 @@ export const POST = async (
         
         // Default collection if none
         if (collections.length === 0) {
-          if (product.metadata?.pricing_tier?.includes('SUIT')) {
+          const pricingTier = String(product.metadata?.pricing_tier || '')
+          if (pricingTier.includes('SUIT')) {
             collections.push('suits-tuxedos')
-          } else if (product.metadata?.pricing_tier?.includes('ACCESSORY')) {
+          } else if (pricingTier.includes('ACCESSORY')) {
             collections.push('accessories')
           } else {
             collections.push('all-products')

@@ -68,16 +68,14 @@ export const GET = async (
         }
       }
       
-      // Check collections
-      if (product.collections && product.collections.length > 0) {
+      // Check collection (singular in Medusa v2)
+      if (product.collection) {
         analysis.products_with_collections++
         hasOrganization = true
         
-        product.collections.forEach((collection: any) => {
-          const collName = collection.title || collection.name || collection.handle
-          analysis.all_collections.add(collName)
-          analysis.products_by_collection[collName] = (analysis.products_by_collection[collName] || 0) + 1
-        })
+        const collName = product.collection.title || product.collection.handle
+        analysis.all_collections.add(collName)
+        analysis.products_by_collection[collName] = (analysis.products_by_collection[collName] || 0) + 1
       }
       
       // Check categories  
@@ -96,7 +94,8 @@ export const GET = async (
       if (product.type) {
         analysis.products_with_type++
         hasOrganization = true
-        analysis.all_types.add(product.type.value || product.type)
+        const typeValue = typeof product.type === 'string' ? product.type : product.type.value
+        analysis.all_types.add(typeValue)
       }
       
       // Check metadata
