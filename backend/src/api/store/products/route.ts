@@ -15,6 +15,7 @@ export const GET = async (
     const pricingModuleService = req.scope.resolve(Modules.PRICING)
     const inventoryModuleService = req.scope.resolve(Modules.INVENTORY)
     const remoteLink = req.scope.resolve("remoteLink")
+    const cacheService = req.scope.resolve(Modules.CACHE)
     
     // Parse query parameters
     const {
@@ -26,6 +27,18 @@ export const GET = async (
       max_price,
       sort = "created_at"
     } = req.query as Record<string, string>
+    
+    // Create cache key from query parameters
+    const cacheKey = `products:${limit}:${offset}:${category || ''}:${search || ''}:${min_price || ''}:${max_price || ''}:${sort}`
+    
+    // Try to get from cache first
+    const cached = await cacheService.get(cacheKey)
+    if (cached) {
+      // Set cache headers for CDN
+      res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+      res.set('X-Cache', 'HIT')
+      return res.json(cached)
+    }
     
     // Build filters
     const filters: any = {}
@@ -138,13 +151,22 @@ export const GET = async (
       filteredProducts = filteredProducts.filter(p => p.price <= parseFloat(max_price))
     }
     
-    res.json({
+    const response = {
       products: filteredProducts,
       count: filteredProducts.length,
       total: count.length,
       limit: parseInt(limit),
       offset: parseInt(offset)
-    })
+    }
+    
+    // Cache the response for 60 seconds
+    await cacheService.set(cacheKey, response, 60)
+    
+    // Set cache headers for CDN
+    res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
+    res.set('X-Cache', 'MISS')
+    
+    res.json(response)
     
   } catch (error: any) {
     console.error("Products fetch error:", error)

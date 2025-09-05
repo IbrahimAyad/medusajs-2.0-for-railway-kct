@@ -18,7 +18,11 @@ export const POST = async (
       timestamp: new Date().toISOString(),
       headers_received: {
         has_publishable_key: !!req.headers['x-publishable-api-key'],
-        key_prefix: req.headers['x-publishable-api-key']?.substring(0, 10) + '...'
+        key_prefix: req.headers['x-publishable-api-key'] 
+          ? (Array.isArray(req.headers['x-publishable-api-key']) 
+            ? req.headers['x-publishable-api-key'][0].substring(0, 10) 
+            : req.headers['x-publishable-api-key'].substring(0, 10)) + '...'
+          : 'NOT PROVIDED'
       }
     })
   } catch (error: any) {
