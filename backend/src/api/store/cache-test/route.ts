@@ -1,6 +1,6 @@
 /**
  * Cache Test Endpoint
- * Tests Redis cache implementation for performance
+ * Verifies Redis cache is working
  */
 
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
@@ -12,52 +12,40 @@ export const GET = async (
 ) => {
   try {
     const cacheService = req.scope.resolve(Modules.CACHE)
-    const productModuleService = req.scope.resolve(Modules.PRODUCT)
-    
-    const cacheKey = "test-products-cache"
+    const cacheKey = "test-cache-key"
     const startTime = Date.now()
     
-    // Try to get from cache first
+    // Try to get from cache
     const cached = await cacheService.get(cacheKey)
     
     if (cached) {
-      const cacheTime = Date.now() - startTime
       return res.json({
-        source: "cache",
-        cache_time_ms: cacheTime,
-        products_count: cached.length,
-        message: "Data served from Redis cache",
+        source: "CACHE HIT",
+        time_ms: Date.now() - startTime,
+        message: "Redis cache is working! Data served from cache.",
         data: cached
       })
     }
     
-    // If not in cache, fetch from database
-    const dbStartTime = Date.now()
-    const products = await productModuleService.listProducts(
-      { limit: 10 },
-      { 
-        relations: ["variants", "images", "options"],
-        take: 10
-      }
-    )
-    const dbTime = Date.now() - dbStartTime
+    // Store test data in cache
+    const testData = {
+      timestamp: new Date().toISOString(),
+      message: "This data is cached for 60 seconds"
+    }
     
-    // Store in cache for next request
-    await cacheService.set(cacheKey, products, 60) // 60 second TTL
+    await cacheService.set(cacheKey, testData, 60)
     
     return res.json({
-      source: "database",
-      database_time_ms: dbTime,
-      products_count: products.length,
-      message: "Data fetched from database and cached for 60 seconds",
-      data: products
+      source: "CACHE MISS",
+      time_ms: Date.now() - startTime,
+      message: "Data stored in cache. Next request will be served from cache.",
+      data: testData
     })
     
   } catch (error: any) {
-    console.error("Cache test error:", error)
-    res.status(500).json({
+    return res.status(500).json({
       error: error.message,
-      message: "Cache test failed - Redis might not be configured"
+      message: "Cache not configured. Redis might not be connected."
     })
   }
 }

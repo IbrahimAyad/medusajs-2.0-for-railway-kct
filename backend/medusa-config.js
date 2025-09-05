@@ -149,7 +149,7 @@ const medusaConfig = {
       resolve: '@medusajs/cache-redis',
       options: {
         redisUrl: REDIS_URL,
-        ttl: 60, // 60 seconds TTL for cached data
+        ttl: 60, // 60 seconds TTL
       }
     }] : []),
     ...(SENDGRID_API_KEY && SENDGRID_FROM_EMAIL || RESEND_API_KEY && RESEND_FROM_EMAIL ? [{
