@@ -1,20 +1,21 @@
 /**
- * Store Products API
- * Public endpoint for fetching products with pricing
+ * Store Products API - Fixed Version with Proper Pricing
+ * Uses Medusa 2.0 Query API with calculated prices
  */
 
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { Modules } from "@medusajs/framework/utils"
+import { 
+  Modules, 
+  ContainerRegistrationKeys,
+  remoteQueryObjectFromString
+} from "@medusajs/framework/utils"
 
 export const GET = async (
   req: MedusaRequest,
   res: MedusaResponse
 ) => {
   try {
-    const productModuleService = req.scope.resolve(Modules.PRODUCT)
-    const pricingModuleService = req.scope.resolve(Modules.PRICING)
-    const inventoryModuleService = req.scope.resolve(Modules.INVENTORY)
-    const remoteLink = req.scope.resolve("remoteLink")
+    const remoteQuery = req.scope.resolve(ContainerRegistrationKeys.REMOTE_QUERY)
     const cacheService = req.scope.resolve(Modules.CACHE)
     
     // Parse query parameters
@@ -25,23 +26,23 @@ export const GET = async (
       search,
       min_price,
       max_price,
-      sort = "created_at"
+      sort = "created_at",
+      region_id = "reg_01K3S6NDGAC1DSWH9MCZCWBWWD" // Default to US region
     } = req.query as Record<string, string>
     
-    // Create cache key from query parameters
-    const cacheKey = `products:${limit}:${offset}:${category || ''}:${search || ''}:${min_price || ''}:${max_price || ''}:${sort}`
+    // Create cache key
+    const cacheKey = `products:${limit}:${offset}:${category || ''}:${search || ''}:${min_price || ''}:${max_price || ''}:${sort}:${region_id}`
     
-    // Try to get from cache first
+    // Try cache first
     const cached = await cacheService.get(cacheKey)
     if (cached) {
-      // Set cache headers for CDN
       res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
       res.set('X-Cache', 'HIT')
       return res.json(cached)
     }
     
     // Build filters
-    const filters: any = {}
+    const filters: any = { status: "published" }
     if (category) {
       filters.categories = { handle: category }
     }
@@ -52,80 +53,75 @@ export const GET = async (
       ]
     }
     
-    // Get products
-    const products = await productModuleService.listProducts(
-      filters,
-      {
-        take: parseInt(limit),
-        skip: parseInt(offset),
+    // Build query with calculated prices
+    const queryObject = remoteQueryObjectFromString({
+      entryPoint: "product",
+      variables: {
+        filters,
         order: { [sort]: "DESC" },
-        relations: ["variants", "images", "categories"]
+        take: parseInt(limit),
+        skip: parseInt(offset)
+      },
+      fields: [
+        "id",
+        "title",
+        "subtitle", 
+        "description",
+        "handle",
+        "thumbnail",
+        "status",
+        "metadata",
+        "images.*",
+        "categories.*",
+        "variants.id",
+        "variants.title",
+        "variants.sku",
+        "variants.barcode",
+        "variants.manage_inventory",
+        "variants.options.*",
+        "variants.calculated_price.*"
+      ]
+    })
+    
+    // Add pricing context for region
+    if (region_id) {
+      (queryObject as any).variables = {
+        ...(queryObject as any).variables,
+        context: {
+          "variants.calculated_price": {
+            context: {
+              region_id,
+              currency_code: "usd"
+            }
+          }
+        }
       }
-    )
+    }
     
-    // Get total count for pagination
-    const count = await productModuleService.listProducts(
-      filters,
-      { take: null }
-    )
+    // Execute query
+    const { rows: products } = await remoteQuery(queryObject)
     
-    // Format products with pricing from metadata and proper inventory
-    const formattedProducts = await Promise.all(products.map(async (product: any) => {
-      // Get inventory for each variant
-      const variantsWithInventory = await Promise.all((product.variants || []).map(async (v: any) => {
-        let inventoryQuantity = 0
+    // Get total count
+    const countQuery = remoteQueryObjectFromString({
+      entryPoint: "product",
+      variables: { filters },
+      fields: ["id"]
+    })
+    const { rows: allProducts } = await remoteQuery(countQuery)
+    
+    // Format products with proper pricing
+    const formattedProducts = products.map((product: any) => {
+      // Get the lowest variant price as the product price
+      let productPrice = 0
+      if (product.variants && product.variants.length > 0) {
+        const prices = product.variants
+          .map((v: any) => v.calculated_price?.calculated_amount)
+          .filter((p: any) => p && p > 0)
         
-        try {
-          // First try the link approach
-          try {
-            const links = await remoteLink.list({
-              product_variant_id: v.id
-            })
-            
-            if (links.length > 0 && (links[0] as any).inventory_item_id) {
-              const inventoryLevels = await inventoryModuleService.listInventoryLevels({
-                inventory_item_id: (links[0] as any).inventory_item_id
-              })
-              
-              if (inventoryLevels.length > 0) {
-                inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
-              }
-            }
-          } catch (linkError) {
-            // Link approach failed, try by SKU
-          }
-          
-          // If no inventory from link, try finding by SKU
-          if (inventoryQuantity === 0 && v.sku) {
-            const inventoryItems = await inventoryModuleService.listInventoryItems({
-              sku: v.sku
-            })
-            
-            if (inventoryItems.length > 0) {
-              const inventoryLevels = await inventoryModuleService.listInventoryLevels({
-                inventory_item_id: inventoryItems[0].id
-              })
-              
-              if (inventoryLevels.length > 0) {
-                inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
-              }
-            }
-          }
-        } catch (error) {
-          // If no inventory, default to 0
-          console.log(`No inventory for variant ${v.id}`)
+        if (prices.length > 0) {
+          productPrice = Math.min(...prices)
         }
-        
-        return {
-          id: v.id,
-          title: v.title,
-          sku: v.sku,
-          barcode: v.barcode,
-          inventory_quantity: inventoryQuantity,
-          options: v.options,
-          manage_inventory: v.manage_inventory || false
-        }
-      }))
+      }
       
       return {
         id: product.id,
@@ -134,35 +130,48 @@ export const GET = async (
         description: product.description,
         handle: product.handle,
         thumbnail: product.thumbnail,
-        images: product.images,
-        categories: product.categories,
-        pricing_tier: product.metadata?.pricing_tier,
-        price: product.metadata?.tier_price || 0,
-        variants: variantsWithInventory
+        images: product.images || [],
+        categories: product.categories || [],
+        price: productPrice, // Price in cents from calculated_price
+        currency_code: "usd",
+        variants: (product.variants || []).map((v: any) => ({
+          id: v.id,
+          title: v.title,
+          sku: v.sku,
+          barcode: v.barcode,
+          manage_inventory: v.manage_inventory || false,
+          options: v.options || [],
+          calculated_price: v.calculated_price, // Include full price object
+          price: v.calculated_price?.calculated_amount || 0 // Convenience field
+        }))
       }
-    }))
+    })
     
-    // Apply price filters if provided
+    // Apply price filters
     let filteredProducts = formattedProducts
     if (min_price) {
-      filteredProducts = filteredProducts.filter(p => p.price >= parseFloat(min_price))
+      const minCents = parseFloat(min_price) * 100
+      filteredProducts = filteredProducts.filter(p => p.price >= minCents)
     }
     if (max_price) {
-      filteredProducts = filteredProducts.filter(p => p.price <= parseFloat(max_price))
+      const maxCents = parseFloat(max_price) * 100
+      filteredProducts = filteredProducts.filter(p => p.price <= maxCents)
     }
     
     const response = {
       products: filteredProducts,
       count: filteredProducts.length,
-      total: count.length,
+      total: allProducts.length,
       limit: parseInt(limit),
-      offset: parseInt(offset)
+      offset: parseInt(offset),
+      region_id,
+      currency_code: "usd"
     }
     
-    // Cache the response for 60 seconds
+    // Cache for 60 seconds
     await cacheService.set(cacheKey, response, 60)
     
-    // Set cache headers for CDN
+    // Set cache headers
     res.set('Cache-Control', 'public, s-maxage=60, stale-while-revalidate=300')
     res.set('X-Cache', 'MISS')
     
@@ -173,87 +182,86 @@ export const GET = async (
     res.status(500).json({
       error: error.message,
       products: [],
-      count: 0
+      count: 0,
+      total: 0
     })
   }
 }
 
-interface ProductRequest extends MedusaRequest {
-  body: {
-    product_id: string
-  }
-}
-
-// Get single product by ID
+// Get single product by handle or ID
 export const POST = async (
-  req: ProductRequest,
+  req: MedusaRequest,
   res: MedusaResponse
 ) => {
   try {
-    const { product_id } = req.body
-    const productModuleService = req.scope.resolve(Modules.PRODUCT)
-    const inventoryModuleService = req.scope.resolve(Modules.INVENTORY)
-    const remoteLink = req.scope.resolve("remoteLink")
+    const { product_id, handle, region_id = "reg_01K3S6NDGAC1DSWH9MCZCWBWWD" } = req.body as any
+    const remoteQuery = req.scope.resolve(ContainerRegistrationKeys.REMOTE_QUERY)
     
-    const product = await productModuleService.retrieveProduct(product_id, {
-      relations: ["variants", "images", "categories"]
+    // Build filter
+    const filters: any = {}
+    if (product_id) {
+      filters.id = product_id
+    } else if (handle) {
+      filters.handle = handle
+    } else {
+      return res.status(400).json({ error: "product_id or handle required" })
+    }
+    
+    // Query with calculated prices
+    const queryObject = remoteQueryObjectFromString({
+      entryPoint: "product",
+      variables: {
+        filters,
+        context: {
+          "variants.calculated_price": {
+            context: {
+              region_id,
+              currency_code: "usd"
+            }
+          }
+        }
+      },
+      fields: [
+        "id",
+        "title",
+        "subtitle",
+        "description", 
+        "handle",
+        "thumbnail",
+        "status",
+        "metadata",
+        "images.*",
+        "categories.*",
+        "tags.*",
+        "variants.id",
+        "variants.title",
+        "variants.sku",
+        "variants.barcode",
+        "variants.manage_inventory",
+        "variants.options.*",
+        "variants.calculated_price.*"
+      ]
     })
     
-    // Get inventory for variants
-    const variantsWithInventory = await Promise.all((product.variants || []).map(async (v: any) => {
-      let inventoryQuantity = 0
+    const { rows: products } = await remoteQuery(queryObject)
+    
+    if (!products || products.length === 0) {
+      return res.status(404).json({ error: "Product not found" })
+    }
+    
+    const product = products[0]
+    
+    // Get product price from variants
+    let productPrice = 0
+    if (product.variants && product.variants.length > 0) {
+      const prices = product.variants
+        .map((v: any) => v.calculated_price?.calculated_amount)
+        .filter((p: any) => p && p > 0)
       
-      try {
-        // Try link approach first
-        try {
-          const links = await remoteLink.list({
-            product_variant_id: v.id
-          })
-          
-          if (links.length > 0 && (links[0] as any).inventory_item_id) {
-            const inventoryLevels = await inventoryModuleService.listInventoryLevels({
-              inventory_item_id: (links[0] as any).inventory_item_id
-            })
-            
-            if (inventoryLevels.length > 0) {
-              inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
-            }
-          }
-        } catch (linkError) {
-          // Link failed, try SKU
-        }
-        
-        // Fallback to SKU-based lookup
-        if (inventoryQuantity === 0 && v.sku) {
-          const inventoryItems = await inventoryModuleService.listInventoryItems({
-            sku: v.sku
-          })
-          
-          if (inventoryItems.length > 0) {
-            const inventoryLevels = await inventoryModuleService.listInventoryLevels({
-              inventory_item_id: inventoryItems[0].id
-            })
-            
-            if (inventoryLevels.length > 0) {
-              inventoryQuantity = inventoryLevels[0].stocked_quantity - inventoryLevels[0].reserved_quantity
-            }
-          }
-        }
-      } catch (error) {
-        console.log(`No inventory for variant ${v.id}`)
+      if (prices.length > 0) {
+        productPrice = Math.min(...prices)
       }
-      
-      return {
-        id: v.id,
-        title: v.title,
-        sku: v.sku,
-        barcode: v.barcode,
-        inventory_quantity: inventoryQuantity,
-        options: v.options,
-        price: product.metadata?.tier_price || 0,
-        manage_inventory: v.manage_inventory || false
-      }
-    }))
+    }
     
     const formattedProduct = {
       id: product.id,
@@ -262,15 +270,27 @@ export const POST = async (
       description: product.description,
       handle: product.handle,
       thumbnail: product.thumbnail,
-      images: product.images,
-      categories: product.categories,
-      pricing_tier: product.metadata?.pricing_tier,
-      price: product.metadata?.tier_price || 0,
-      variants: variantsWithInventory
+      images: product.images || [],
+      categories: product.categories || [],
+      tags: product.tags || [],
+      price: productPrice,
+      currency_code: "usd",
+      variants: (product.variants || []).map((v: any) => ({
+        id: v.id,
+        title: v.title,
+        sku: v.sku,
+        barcode: v.barcode,
+        manage_inventory: v.manage_inventory || false,
+        options: v.options || [],
+        calculated_price: v.calculated_price,
+        price: v.calculated_price?.calculated_amount || 0
+      }))
     }
     
     res.json({
-      product: formattedProduct
+      product: formattedProduct,
+      region_id,
+      currency_code: "usd"
     })
     
   } catch (error: any) {

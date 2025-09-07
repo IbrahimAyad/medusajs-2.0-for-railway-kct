@@ -36,27 +36,6 @@ import {
 
 loadEnv(process.env.NODE_ENV, process.cwd());
 
-// Check if S3 vars are available from constants
-console.log('=== Environment Check ===');
-console.log('NODE_ENV:', process.env.NODE_ENV);
-console.log('RAILWAY_ENVIRONMENT:', process.env.RAILWAY_ENVIRONMENT);
-console.log('From ENV - S3_ACCESS_KEY_ID:', !!process.env.S3_ACCESS_KEY_ID);
-console.log('From ENV - S3_SECRET_ACCESS_KEY:', !!process.env.S3_SECRET_ACCESS_KEY);
-console.log('From ENV - S3_BUCKET:', process.env.S3_BUCKET);
-console.log('From constants - S3_ACCESS_KEY_ID:', !!S3_ACCESS_KEY_ID);
-console.log('From constants - S3_SECRET_ACCESS_KEY:', !!S3_SECRET_ACCESS_KEY);
-console.log('From constants - S3_BUCKET:', S3_BUCKET);
-console.log('From constants - S3_ENDPOINT:', S3_ENDPOINT);
-console.log('Will use S3:', !!(S3_ACCESS_KEY_ID && S3_SECRET_ACCESS_KEY && S3_BUCKET));
-console.log('=========================');
-
-// Debug Stripe configuration
-console.log('=== Stripe Configuration ===');
-console.log('STRIPE_API_KEY exists:', !!STRIPE_API_KEY);
-console.log('STRIPE_API_KEY length:', STRIPE_API_KEY ? STRIPE_API_KEY.length : 0);
-console.log('STRIPE_API_KEY prefix:', STRIPE_API_KEY ? STRIPE_API_KEY.substring(0, 12) + '...' : 'NOT SET');
-console.log('STRIPE_WEBHOOK_SECRET exists:', !!STRIPE_WEBHOOK_SECRET);
-console.log('============================');
 
 const medusaConfig = {
   projectConfig: {
