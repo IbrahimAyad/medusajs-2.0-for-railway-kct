@@ -143,15 +143,22 @@ const medusaConfig = {
           url: REDIS_URL,
         }
       }
-    },
-    {
+    }] : []),
+    // Add cache module - use Redis if available, otherwise in-memory
+    ...(REDIS_URL && REDIS_URL !== 'redis://' && REDIS_URL.includes('://') && REDIS_URL.length > 10 ? [{
       key: Modules.CACHE,
       resolve: '@medusajs/cache-redis',
       options: {
         redisUrl: REDIS_URL,
-        ttl: 60, // 60 seconds TTL
+        ttl: 60, // 60 seconds TTL for cached data
       }
-    }] : []),
+    }] : [{
+      key: Modules.CACHE,
+      resolve: '@medusajs/cache-inmemory',
+      options: {
+        ttl: 60 // 60 seconds TTL for in-memory cache
+      }
+    }]),
     ...(SENDGRID_API_KEY && SENDGRID_FROM_EMAIL || RESEND_API_KEY && RESEND_FROM_EMAIL ? [{
       key: Modules.NOTIFICATION,
       resolve: '@medusajs/notification',
