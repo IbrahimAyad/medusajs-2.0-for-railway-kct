@@ -44,7 +44,7 @@ export class StripeTaxService implements ITaxProvider {
   ) {
     this.logger_ = logger
     this.stripe = new Stripe(options.api_key, {
-      apiVersion: '2024-11-20.acacia'
+      apiVersion: '2025-08-27.basil'
     })
     this.automaticTax = options.automatic_tax ?? true
   }

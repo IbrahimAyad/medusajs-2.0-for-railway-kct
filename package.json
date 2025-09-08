@@ -9,5 +9,9 @@
   },
   "engines": {
     "node": ">=20"
+  },
+  "dependencies": {
+    "@medusajs/payment-stripe": "^2.10.1",
+    "stripe": "^18.5.0"
   }
 }
