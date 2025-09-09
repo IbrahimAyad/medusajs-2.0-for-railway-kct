@@ -1,0 +1,2 @@
+# Trigger redeploy with fixed Stripe key
+# Reverting to correct Stripe key ending in glir
