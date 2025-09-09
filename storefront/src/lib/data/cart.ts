@@ -218,13 +218,55 @@ export async function initiatePaymentSession(
     context?: Record<string, unknown>
   }
 ) {
-  return sdk.store.payment
-    .initiatePaymentSession(cart, data, {}, getAuthHeaders())
-    .then((resp) => {
-      revalidateTag("cart")
-      return resp
+  // CRITICAL FIX: Use custom endpoint to avoid Stripe 100x bug
+  // DO NOT use sdk.store.payment.initiatePaymentSession - it has a bug that multiplies amounts by 100
+  
+  const baseUrl = process.env.NEXT_PUBLIC_MEDUSA_BACKEND_URL || "http://localhost:9000"
+  
+  try {
+    const response = await fetch(`${baseUrl}/store/carts/${cart.id}/payment-session`, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...getAuthHeaders(),
+      },
+      body: JSON.stringify({
+        provider_id: data.provider_id,
+        context: data.context,
+      }),
     })
-    .catch(medusaError)
+    
+    if (!response.ok) {
+      const error = await response.json()
+      throw new Error(error.message || "Failed to create payment session")
+    }
+    
+    const result = await response.json()
+    
+    // Log for debugging
+    console.log("[STRIPE FIX] Payment session created:", {
+      cart_id: cart.id,
+      provider_id: data.provider_id,
+      stripe_amount: result.stripe_amount,
+      stripe_amount_usd: result.stripe_amount_usd,
+    })
+    
+    revalidateTag("cart")
+    
+    // Return in format expected by frontend
+    return {
+      cart: {
+        ...cart,
+        payment_collection: {
+          ...cart.payment_collection,
+          payment_sessions: [result.payment_session]
+        }
+      }
+    }
+  } catch (error) {
+    console.error("[STRIPE FIX] Error creating payment session:", error)
+    throw medusaError(error)
+  }
 }
 
 export async function applyPromotions(codes: string[]) {
