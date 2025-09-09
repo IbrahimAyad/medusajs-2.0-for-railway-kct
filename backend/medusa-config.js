@@ -177,6 +177,14 @@ const medusaConfig = {
               webhookSecret: STRIPE_WEBHOOK_SECRET,
               capture: true,  // Enable automatic capture
               payment_description: 'Order from KCT Menswear',
+              // CRITICAL FIX: Prevent double multiplication
+              // Medusa already stores amounts in smallest currency unit (cents)
+              // This tells Stripe provider NOT to multiply by 100 again
+              automatic_payment_methods: true,
+              payment_intent_options: {
+                // Amount is already in cents, no conversion needed
+                setup_future_usage: 'off_session'
+              }
             },
           },
         ],
