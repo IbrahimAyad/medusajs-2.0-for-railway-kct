@@ -80,8 +80,9 @@ export const POST = async (
         const total = subtotal + shipping
         
         // Create payment collection
+        // IMPORTANT: total is already in cents from Medusa cart
         const paymentCollections = await paymentModuleService.createPaymentCollections({
-          amount: total * 100, // Convert to cents for Stripe
+          amount: total, // Already in cents, DO NOT multiply by 100
           currency_code: "usd"
         } as any)
         
@@ -93,7 +94,7 @@ export const POST = async (
           {
             provider_id: "pp_stripe_stripe",
             currency_code: "usd",
-            amount: total * 100,
+            amount: total, // Already in cents, DO NOT multiply by 100
             data: {
               customer: {
                 email: cart.email
