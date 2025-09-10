@@ -54,18 +54,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       console.log(`[STRIPE FIX] Created payment collection ${paymentCollectionId}`)
     }
     
-    // Check if session already exists
-    const existingSession = cart.payment_collection?.payment_sessions?.find(
-      (s: any) => s.provider_id === provider_id
-    )
-    
-    if (existingSession) {
-      console.log(`[STRIPE FIX] Session already exists: ${existingSession.id}`)
-      return res.json({
-        payment_session: existingSession,
-        payment_collection_id: paymentCollectionId
-      })
-    }
+    // For fresh checkout experience, always create new payment intent
+    // Skip checking for existing sessions to avoid stale payment data
+    console.log(`[STRIPE FIX] Creating fresh payment session`)
     
     // For Stripe, create the payment intent directly with correct amount
     if (provider_id === "stripe") {
