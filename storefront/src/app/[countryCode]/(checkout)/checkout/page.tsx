@@ -7,7 +7,7 @@ import CheckoutSummary from "@modules/checkout/templates/checkout-summary"
 import { enrichLineItems, retrieveCart } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import { getCustomer } from "@lib/data/customer"
-import CheckoutErrorBoundary from "@/components/error-boundary/checkout-error-boundary"
+import CheckoutErrorBoundary from "../../../../components/error-boundary/checkout-error-boundary"
 
 export const metadata: Metadata = {
   title: "Checkout",

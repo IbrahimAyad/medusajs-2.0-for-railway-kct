@@ -1,0 +1,486 @@
+{
+  "metadata": {
+    "siteName": "KCT Menswear",
+    "baseUrl": "https://kctmenswear.com",
+    "scrapedDate": "2025-01-11",
+    "totalProductsScraped": 75,
+    "categoriesScraped": 10,
+    "priceRange": {
+      "min": 24.99,
+      "max": 329.99
+    },
+    "sizeRanges": {
+      "clothing": ["34S", "34R", "34L", "36S", "36R", "36L", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44S", "44R", "44L", "46S", "46R", "46L", "48S", "48R", "48L", "50S", "50R", "50L", "52S", "52R", "52L", "54S", "54R", "54L"],
+      "shoes": ["8", "9", "10", "11", "12", "13"],
+      "fits": ["Short", "Regular", "Long"],
+      "vest_sizes": ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL", "XXXXXL", "XXXXXXL"]
+    },
+    "colorOptions": {
+      "ties": ["Dark Silver", "Charcoal", "Taupe", "Champagne", "Ivory", "Chocolate Brown", "Dark Grey", "Silver", "White", "Apple Red", "Navy", "Royal Blue", "Burgundy", "Forest Green", "Purple", "Pink", "Orange", "Yellow", "Turquoise", "Lilac"],
+      "bowties": ["Black", "Red", "Royal Blue", "Yellow", "White", "Grey", "Navy", "Pink", "Rose Pink", "Peach", "Gold", "Purple", "Green", "Burgundy"],
+      "suspenders": ["Black", "White", "Navy", "Royal Blue", "Rose", "Gold", "Dark Red", "Pink", "Red", "Bright Pink", "Turquoise", "Lilac", "Off-White", "Green", "Mint"],
+      "shoes": ["Black", "Gold", "Silver", "Royal Blue", "Red", "White", "Navy", "Brown", "Burgundy"],
+      "suits": ["Black", "Navy", "Charcoal", "Grey", "Hunter Green", "Burgundy", "Brick-Rust", "Light Brown", "Mauve", "Blush Pink", "Cerulean Blue", "Sunshine Yellow", "Electric Pink", "Burnt Orange"]
+    }
+  },
+  "categories": {
+    "prom": {
+      "tuxedos": [
+        "sophisticated-black-paisley-tuxedo",
+        "luxurious-ivory-paisley-tuxedo",
+        "elegant-blush-pink-paisley-tuxedo",
+        "burgundy-european-prom-tuxedo",
+        "green-european-prom-tuxedo",
+        "black-european-prom-tuxedo"
+      ],
+      "blazers": [
+        "glitter-black-prom-blazer",
+        "green-velvet-silver-floral-prom-blazer",
+        "red-diamond-jacket",
+        "glitter-green-prom-blazer",
+        "glitter-red-velvet-sparkling-blazer",
+        "red-velvet-paisley-engraved-prom-blazer",
+        "glitter-burgundy-velvet-prom-blazer"
+      ],
+      "shoes": [
+        "gold-prom-loafers",
+        "silver-prom-loafers",
+        "black-gold-rhinestone-prom-loafers",
+        "white-gold-rhinestone-prom-loafers",
+        "royal-blue-velvet-rhinestone-prom-loafers",
+        "red-velvet-rhinestone-prom-loafers",
+        "royal-blue-studded-prom-loafers",
+        "red-velvet-studded-prom-loafers"
+      ]
+    },
+    "wedding": {
+      "tuxedos": [
+        "sly-blue-tuxedo-with-matching-bowtie",
+        "light-gold-tuxedo-with-matching-bowtie",
+        "light-orange-tuxedo-with-matching-bowtie",
+        "light-blush-tuxedo-with-matching-bowtie"
+      ],
+      "suits": [
+        "hunter-green-suit-with-vest",
+        "light-brown-suit-with-vest",
+        "burgundy-suit-with-vest",
+        "brick-rust-suit-with-vest"
+      ]
+    },
+    "accessories": {
+      "ties": [
+        "dark-silver-solo-ties",
+        "charcoal-solo-ties",
+        "taupe-solo-ties",
+        "champagne-solo-ties",
+        "ivory-solo-ties",
+        "chocolate-brown-solo-ties",
+        "dark-grey-solo-ties",
+        "silver-solo-ties",
+        "white-solo-ties",
+        "apple-red-solo-ties"
+      ],
+      "bowties": [
+        "kct-classic-black-bowtie",
+        "red-bowtie",
+        "royal-blue-bowtie",
+        "yellow-bowtie",
+        "navy-bowtie",
+        "grey-bowtie",
+        "pink-bowtie",
+        "rose-pink-bowtie",
+        "peach-bow-tie",
+        "vis-vis-bow-tie"
+      ]
+    }
+  },
+  "products": [
+    {
+      "id": "sophisticated-black-paisley-tuxedo",
+      "name": "Sophisticated Black Paisley Tuxedo with Satin Accents - Ideal for Prom & Wedding Elegance",
+      "category": "Prom",
+      "subcategory": "Tuxedos",
+      "price": 249.99,
+      "comparePrice": 199.99,
+      "description": "Distinguished Black Paisley Tuxedo: A Symbol of Timeless Elegance for Prom and Wedding Seasons. Discover the pinnacle of style with our Black Paisley Tuxedo. Slim-fit tuxedo with black paisley design, satin black pants, black satin shawl lapels, includes matching black paisley bowtie.",
+      "colors": ["Black"],
+      "sizes": ["34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54"],
+      "fits": ["Regular", "Long"],
+      "variants": 22,
+      "materials": "Not specified",
+      "features": ["Slim Fit", "Satin Accents", "Matching Bowtie Included", "Black Buttons", "Paisley Pattern"],
+      "whatsIncluded": ["Tuxedo Jacket", "Satin Pants", "Matching Bowtie"],
+      "images": {
+        "main": "https://kctmenswear.com/cdn/shop/files/4_686aca0a-7773-4d53-bd3a-86da2789c509.jpg",
+        "secondary": "https://kctmenswear.com/cdn/shop/files/3_3e115060-3376-4a64-9499-254ef999ed5d.jpg"
+      },
+      "url": "https://kctmenswear.com/products/sophisticated-black-paisley-tuxedo-with-satin-accents-ideal-for-prom-wedding-elegance",
+      "sku": "Not available",
+      "inStock": true,
+      "careInstructions": "Not specified",
+      "relatedProducts": []
+    },
+    {
+      "id": "luxurious-ivory-paisley-tuxedo",
+      "name": "Luxurious Ivory Paisley Tuxedo with Satin Highlights - Perfect for Prom & Wedding Seasons",
+      "category": "Prom",
+      "subcategory": "Tuxedos",
+      "price": 249.99,
+      "description": "Slim-fit tuxedo with ivory paisley pattern, satin ivory pants and shawl lapels, matching ivory paisley bowtie included. Designed for prom and wedding events in 2024.",
+      "colors": ["Ivory"],
+      "sizes": ["34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54"],
+      "fits": ["Regular", "Long"],
+      "variants": 22,
+      "materials": "Not specified",
+      "features": ["Slim Fit", "Ivory Satin Accents", "Matching Bowtie", "Ivory Buttons", "Paisley Pattern"],
+      "whatsIncluded": ["Tuxedo Jacket", "Satin Pants", "Matching Bowtie"],
+      "images": {
+        "main": "Not extracted"
+      },
+      "url": "https://kctmenswear.com/products/luxurious-ivory-paisley-tuxedo-with-satin-highlights-perfect-for-prom-wedding-seasons",
+      "sku": "Not available",
+      "inStock": true,
+      "careInstructions": "Not specified",
+      "relatedProducts": []
+    },
+    {
+      "id": "elegant-blush-pink-paisley-tuxedo",
+      "name": "Elegant Blush Pink Paisley Tuxedo Suit",
+      "category": "Prom",
+      "subcategory": "Tuxedos",
+      "price": 229.99,
+      "description": "Blush pink paisley tuxedo with satin accents",
+      "colors": ["Blush Pink"],
+      "sizes": ["34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54"],
+      "fits": ["Regular", "Long"],
+      "materials": "Not specified",
+      "features": ["Paisley Pattern", "Satin Accents"],
+      "url": "https://kctmenswear.com/products/elegant-blush-pink-paisley-tuxedo-suit-with-satin-accents-perfect-for-prom-wedding-seasons",
+      "inStock": true
+    },
+    {
+      "id": "burgundy-european-prom-tuxedo",
+      "name": "Burgundy European Prom Tuxedo with Black Velvet Lapel",
+      "category": "Prom",
+      "subcategory": "Tuxedos",
+      "price": 329.99,
+      "description": "Burgundy European style tuxedo with black velvet lapel",
+      "colors": ["Burgundy"],
+      "sizes": ["34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54"],
+      "fits": ["Regular", "Long"],
+      "features": ["European Style", "Black Velvet Lapel"],
+      "url": "https://kctmenswear.com/products/burgundy-european-prom-tuxedo-2025-velvet-lapel",
+      "inStock": true
+    },
+    {
+      "id": "green-european-prom-tuxedo",
+      "name": "Green European Prom Tuxedo with Black Velvet Lapel",
+      "category": "Prom",
+      "subcategory": "Tuxedos",
+      "price": 329.99,
+      "description": "Green European style tuxedo with black velvet lapel",
+      "colors": ["Green"],
+      "sizes": ["34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54"],
+      "fits": ["Regular", "Long"],
+      "features": ["European Style", "Black Velvet Lapel"],
+      "url": "https://kctmenswear.com/products/green-european-prom-tuxedo-2025-velvet-lapel",
+      "inStock": true
+    },
+    {
+      "id": "black-european-prom-tuxedo",
+      "name": "Black European Prom Tuxedo with Black Velvet Lapel",
+      "category": "Prom",
+      "subcategory": "Tuxedos",
+      "price": 329.99,
+      "description": "Black European style tuxedo with black velvet lapel",
+      "colors": ["Black"],
+      "sizes": ["34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54"],
+      "fits": ["Regular", "Long"],
+      "features": ["European Style", "Black Velvet Lapel"],
+      "url": "https://kctmenswear.com/products/black-european-prom-tuxedo-2025-velvet-lapel",
+      "inStock": true
+    },
+    {
+      "id": "glitter-black-prom-blazer",
+      "name": "Glitter Black Velvet Prom Blazer with Black Satin Lapel",
+      "category": "Prom",
+      "subcategory": "Blazers",
+      "price": 249.99,
+      "description": "Glitter black velvet blazer with black satin lapel",
+      "colors": ["Black"],
+      "sizes": ["36", "38", "40", "42", "44", "46", "48", "50", "52"],
+      "fits": ["Regular"],
+      "materials": "Velvet",
+      "features": ["Glitter Details", "Satin Lapel", "Velvet"],
+      "url": "https://kctmenswear.com/products/glitter-black-prom-blazer",
+      "inStock": true
+    },
+    {
+      "id": "green-velvet-silver-floral-prom-blazer",
+      "name": "Green Velvet Silver Floral Prom Blazer",
+      "category": "Prom",
+      "subcategory": "Blazers",
+      "price": 249.99,
+      "description": "Green velvet blazer with silver floral pattern",
+      "colors": ["Green"],
+      "sizes": ["36", "38", "40", "42", "44", "46", "48", "50", "52"],
+      "fits": ["Regular"],
+      "materials": "Velvet",
+      "features": ["Velvet", "Silver Floral Pattern"],
+      "url": "https://kctmenswear.com/products/green-velvet-silver-floral-prom-blazer",
+      "inStock": true
+    },
+    {
+      "id": "red-diamond-jacket",
+      "name": "Red Diamond Jacket",
+      "category": "Prom",
+      "subcategory": "Blazers",
+      "price": 299.99,
+      "description": "Red diamond pattern jacket",
+      "colors": ["Red"],
+      "sizes": ["36", "38", "40", "42", "44", "46", "48", "50", "52"],
+      "fits": ["Regular"],
+      "features": ["Diamond Pattern"],
+      "url": "https://kctmenswear.com/products/red-diamond-jacket",
+      "inStock": true
+    },
+    {
+      "id": "gold-prom-loafers",
+      "name": "Gold Prom Loafers",
+      "category": "Prom",
+      "subcategory": "Shoes",
+      "price": 79.99,
+      "description": "Gold sparkle prom loafers",
+      "colors": ["Gold"],
+      "sizes": ["8", "9", "10", "11", "12", "13"],
+      "features": ["Sparkle Design"],
+      "url": "https://kctmenswear.com/products/gold-prom-loafers-mens-sparkle-dress-shoes",
+      "inStock": true
+    },
+    {
+      "id": "silver-prom-loafers",
+      "name": "Silver Prom Loafers",
+      "category": "Prom",
+      "subcategory": "Shoes",
+      "price": 79.99,
+      "description": "Black and silver sparkle dress loafers",
+      "colors": ["Silver", "Black"],
+      "sizes": ["8", "9", "10", "11", "12", "13"],
+      "features": ["Sparkle Design", "Black and Silver"],
+      "url": "https://kctmenswear.com/products/silver-prom-loafers-mens-black-silver-sparkle-dress",
+      "inStock": true
+    },
+    {
+      "id": "black-gold-rhinestone-prom-loafers",
+      "name": "Black & Gold Rhinestone Prom Loafers",
+      "category": "Prom",
+      "subcategory": "Shoes",
+      "price": 89.99,
+      "description": "Black and gold prom loafers with rhinestone details",
+      "colors": ["Black", "Gold"],
+      "sizes": ["8", "9", "10", "11", "12", "13"],
+      "features": ["Rhinestone Details"],
+      "url": "https://kctmenswear.com/products/black-gold-rhinestone-prom-loafers",
+      "inStock": true
+    },
+    {
+      "id": "royal-blue-velvet-rhinestone-prom-loafers",
+      "name": "Royal Blue Velvet Rhinestone Prom Loafers",
+      "category": "Prom",
+      "subcategory": "Shoes",
+      "price": 99.99,
+      "description": "Royal blue velvet loafers with rhinestone details",
+      "colors": ["Royal Blue"],
+      "sizes": ["8", "9", "10", "11", "12", "13"],
+      "materials": "Velvet",
+      "features": ["Velvet", "Rhinestone Details"],
+      "url": "https://kctmenswear.com/products/royal-blue-velvet-rhinestone-prom-loafers",
+      "inStock": true
+    },
+    {
+      "id": "royal-blue-studded-prom-loafers",
+      "name": "Royal Blue Studded Prom Loafers",
+      "category": "Prom",
+      "subcategory": "Shoes",
+      "price": 99.99,
+      "description": "Royal blue velvet loafers with spike details",
+      "colors": ["Royal Blue"],
+      "sizes": ["8", "9", "10", "11", "12", "13"],
+      "materials": "Velvet",
+      "features": ["Velvet", "Spike Details", "Studded"],
+      "url": "https://kctmenswear.com/products/royal-blue-studded-prom-loafers",
+      "inStock": true
+    },
+    {
+      "id": "sly-blue-tuxedo-with-matching-bowtie",
+      "name": "Sly Blue Tuxedo with Matching Bowtie",
+      "category": "Wedding",
+      "subcategory": "Tuxedos",
+      "price": 229.99,
+      "description": "Sky blue tuxedo with matching bowtie",
+      "colors": ["Sky Blue"],
+      "sizes": ["34", "36", "38", "40", "42", "44", "46", "48", "50", "52", "54"],
+      "fits": ["Regular", "Long"],
+      "whatsIncluded": ["Tuxedo", "Matching Bowtie"],
+      "url": "https://kctmenswear.com/products/sly-blue-tuxedo-with-matching-bowtie",
+      "inStock": true
+    },
+    {
+      "id": "hunter-green-suit-with-vest",
+      "name": "Hunter Green Suit with Vest",
+      "category": "Wedding",
+      "subcategory": "Suits",
+      "price": 199.99,
+      "description": "Hunter green suit with matching vest",
+      "colors": ["Hunter Green"],
+      "sizes": ["36", "38", "40", "42", "44", "46", "48", "50", "52", "54"],
+      "fits": ["Regular", "Long"],
+      "whatsIncluded": ["Suit Jacket", "Pants", "Vest"],
+      "url": "https://kctmenswear.com/products/hunter-green-suit-with-vest",
+      "inStock": true
+    },
+    {
+      "id": "dark-silver-solo-ties",
+      "name": "Dark Silver Solo Ties",
+      "category": "Accessories",
+      "subcategory": "Ties",
+      "price": 24.99,
+      "description": "Dark silver ties with matching pocket square",
+      "colors": ["Dark Silver"],
+      "width": "3.5 inches",
+      "features": ["Regular Width", "Matching Pocket Square"],
+      "url": "https://kctmenswear.com/products/dark-silver-solo-ties",
+      "inStock": true
+    },
+    {
+      "id": "kct-classic-black-bowtie",
+      "name": "Black Bowtie",
+      "category": "Accessories",
+      "subcategory": "Bowties",
+      "price": 24.99,
+      "description": "Classic black bowtie",
+      "colors": ["Black"],
+      "url": "https://kctmenswear.com/products/kct-classic-black-bowtie",
+      "inStock": true
+    },
+    {
+      "id": "glitter-black-velvet-prom-blazer-detailed",
+      "name": "Glitter Black Velvet Prom Blazer with Black Satin Lapel",
+      "category": "Prom",
+      "subcategory": "Blazers",
+      "price": 249.99,
+      "comparePrice": 289.99,
+      "description": "Crafted in Turkey with slim-fit tailoring. Black velvet with glitter finish, black satin lapel, one-button front closure, side vents, functional front and chest pockets, three interior pockets, fully lined interior, French facing.",
+      "colors": ["Black"],
+      "sizes": ["36R", "38R", "40R", "42R", "44R", "46R", "48R", "50R", "52R"],
+      "materials": "Velvet with Glitter Finish",
+      "features": ["Slim Fit", "One-Button Closure", "Side Vents", "Functional Pockets", "Three Interior Pockets", "Fully Lined", "French Facing", "Satin Lapel", "Made in Turkey"],
+      "images": {
+        "main": "https://kctmenswear.com/cdn/shop/products/velvetspark_jpg.webp?v=1681419684",
+        "alternates": [
+          "https://kctmenswear.com/cdn/shop/products/black-plain-shiny-slim-fit-prom-blazer-prom-blazer-wessi-207916-51-B_jpg.webp?v=1681419830",
+          "https://kctmenswear.com/cdn/shop/products/black-plain-shiny-slim-fit-prom-blazer-prom-blazer-wessi-207914-51-B_jpg.webp?v=1681419831",
+          "https://kctmenswear.com/cdn/shop/products/black-plain-shiny-slim-fit-prom-blazer-prom-blazer-wessi-207911-51-B_jpg.webp?v=1681419830"
+        ]
+      },
+      "url": "https://kctmenswear.com/products/glitter-black-prom-blazer",
+      "inStock": true,
+      "stockStatus": {
+        "36R": false,
+        "38R": false,
+        "40R": false,
+        "42R": false,
+        "44R": true,
+        "46R": true,
+        "48R": true,
+        "50R": true,
+        "52R": false
+      },
+      "occasions": ["Prom", "Formal Events"]
+    },
+    {
+      "id": "royal-blue-velvet-rhinestone-prom-loafers-detailed",
+      "name": "Royal Blue Velvet Rhinestone Prom Loafers",
+      "category": "Prom",
+      "subcategory": "Shoes",
+      "price": 99.99,
+      "description": "Deep royal blue velvet with tonal rhinestone detailing. Soft velvet finish, lined for comfort. Slip-on silhouette. True to size, men's sizes 8-13 (no half sizes). Perfect for prom, weddings, red carpet events.",
+      "colors": ["Royal Blue"],
+      "sizes": ["8", "9", "10", "11", "12", "13"],
+      "materials": "Velvet with Rhinestone Details",
+      "features": ["Slip-on Style", "Tonal Rhinestones", "Comfort Lined", "True to Size"],
+      "images": {
+        "main": "https://kctmenswear.com/cdn/shop/files/61.jpg?v=1744294999"
+      },
+      "url": "https://kctmenswear.com/products/royal-blue-velvet-rhinestone-prom-loafers",
+      "inStock": true,
+      "occasions": ["Prom", "Weddings", "Red Carpet Events"],
+      "recommendedPairings": ["Royal Blue Bowtie", "Royal Blue Tuxedo"]
+    },
+    {
+      "id": "red-velvet-jacket-bowtie",
+      "name": "Red Velvet Jacket + Bowtie",
+      "category": "Blazers",
+      "subcategory": "Velvet Blazers",
+      "price": 229.99,
+      "description": "Red velvet blazer with matching bowtie",
+      "colors": ["Red"],
+      "sizes": ["34S", "36R", "36S", "38R", "38L", "40R", "40L", "42R", "42L", "44R", "44L", "46R", "46L", "48R", "48L", "50R", "50L", "52R", "52L", "54R", "54L"],
+      "materials": "Velvet",
+      "whatsIncluded": ["Velvet Blazer", "Matching Bowtie"],
+      "url": "https://kctmenswear.com/products/red-velvet-jacket-bowtie",
+      "inStock": true
+    },
+    {
+      "id": "charcoal-grey-three-piece-suit",
+      "name": "Charcoal Grey Suit - Three Piece",
+      "category": "Suits",
+      "subcategory": "Three Piece Suits",
+      "price": 159.99,
+      "description": "Classic charcoal grey three-piece suit",
+      "colors": ["Charcoal Grey"],
+      "sizes": ["34S", "36R", "36S", "38R", "38L", "40R", "40L", "42R", "42L", "44R", "44L", "46R", "46L", "48R", "48L", "50R", "50L", "52R", "52L", "54R", "54L"],
+      "features": ["Three Piece", "Classic Fit"],
+      "whatsIncluded": ["Suit Jacket", "Pants", "Vest"],
+      "url": "https://kctmenswear.com/products/charcoal-grey-suit-three-piece",
+      "inStock": true
+    },
+    {
+      "id": "black-suspenders",
+      "name": "Black Suspenders",
+      "category": "Accessories",
+      "subcategory": "Suspenders",
+      "price": 29.99,
+      "description": "Classic black suspenders for formal wear",
+      "colors": ["Black"],
+      "url": "https://kctmenswear.com/products/black-suspenders",
+      "inStock": true
+    },
+    {
+      "id": "black-vest-and-tie-set",
+      "name": "Black Vest and Tie Set",
+      "category": "Accessories",
+      "subcategory": "Vest and Tie Sets",
+      "price": 49.99,
+      "description": "Black vest and matching tie set for formal occasions",
+      "colors": ["Black"],
+      "sizes": ["XS", "S", "M", "L", "XL", "XXL", "XXXL", "XXXXL", "XXXXXL", "XXXXXXL"],
+      "whatsIncluded": ["Vest", "Matching Tie"],
+      "url": "https://kctmenswear.com/products/black-vest-and-tie-set",
+      "occasions": ["Weddings", "Proms", "Special Events"],
+      "inStock": true
+    },
+    {
+      "id": "white-cummerbund-set",
+      "name": "White Cummerbund Set",
+      "category": "Accessories",
+      "subcategory": "Cummerbund Sets",
+      "price": 49.99,
+      "description": "White cummerbund and bow tie set",
+      "colors": ["White"],
+      "whatsIncluded": ["Cummerbund", "Bow Tie"],
+      "url": "https://kctmenswear.com/products/white-cummerbund-set",
+      "inStock": true
+    }
+  ]
+}

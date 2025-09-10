@@ -1,0 +1,440 @@
+{
+  "$schema": "http://json-schema.org/draft-07/schema#",
+  "title": "KCT Menswear Product Data Schema",
+  "description": "Comprehensive schema for KCT Menswear product data extraction and storage",
+  "type": "object",
+  "properties": {
+    "metadata": {
+      "type": "object",
+      "properties": {
+        "siteName": { "type": "string", "default": "KCT Menswear" },
+        "baseUrl": { "type": "string", "default": "https://kctmenswear.com" },
+        "scrapedDate": { "type": "string", "format": "date" },
+        "totalProductsScraped": { "type": "integer" },
+        "categoriesScraped": { "type": "integer" },
+        "priceRange": {
+          "type": "object",
+          "properties": {
+            "min": { "type": "number" },
+            "max": { "type": "number" }
+          }
+        }
+      },
+      "required": ["siteName", "baseUrl", "scrapedDate", "totalProductsScraped"]
+    },
+    "collections": {
+      "type": "object",
+      "properties": {
+        "prom": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/prom" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "suits": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/suits" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "ties": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/ties" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "bowties": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/bowties" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "shoes": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/shoes" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "dress_shirts": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/dress-shirts" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "prom_blazers": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/prom-blazers" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "vest_tie_sets": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/vest-tie-sets" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "suspenders": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/suspenders" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "cummerbund_sets": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/cummerbund-set" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "wedding": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/wedding" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        },
+        "tuxedos": {
+          "type": "object",
+          "properties": {
+            "total_count": { "type": "integer" },
+            "url": { "type": "string", "default": "https://kctmenswear.com/collections/tuxedos" },
+            "products": { "$ref": "#/definitions/productArray" }
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "productArray": {
+      "type": "array",
+      "items": { "$ref": "#/definitions/product" }
+    },
+    "product": {
+      "type": "object",
+      "properties": {
+        "product_id": {
+          "type": "string",
+          "description": "Unique Shopify product identifier"
+        },
+        "sku": {
+          "type": "string",
+          "description": "Stock Keeping Unit identifier"
+        },
+        "name": {
+          "type": "string",
+          "description": "Product name/title"
+        },
+        "seo_title": {
+          "type": "string",
+          "description": "SEO optimized title"
+        },
+        "meta_description": {
+          "type": "string",
+          "description": "SEO meta description"
+        },
+        "category": {
+          "type": "string",
+          "description": "Primary product category",
+          "enum": ["Suits", "Formal Wear", "Accessories", "Shoes", "Shirts"]
+        },
+        "subcategory": {
+          "type": "string",
+          "description": "Product subcategory"
+        },
+        "collection": {
+          "type": "string",
+          "description": "Collection assignment",
+          "enum": ["Prom", "Wedding", "Formal", "Casual"]
+        },
+        "url": {
+          "type": "string",
+          "description": "Relative product URL path"
+        },
+        "pricing": {
+          "type": "object",
+          "properties": {
+            "regular_price": {
+              "type": "number",
+              "description": "Regular selling price"
+            },
+            "sale_price": {
+              "type": ["number", "null"],
+              "description": "Sale price if on sale"
+            },
+            "discount_percentage": {
+              "type": ["number", "null"],
+              "description": "Calculated discount percentage"
+            }
+          },
+          "required": ["regular_price"]
+        },
+        "availability": {
+          "type": "object",
+          "properties": {
+            "in_stock": {
+              "type": "boolean",
+              "description": "Whether product is currently in stock"
+            },
+            "inventory_count": {
+              "type": ["integer", "null"],
+              "description": "Available inventory count if known"
+            }
+          },
+          "required": ["in_stock"]
+        },
+        "variations": {
+          "type": "object",
+          "properties": {
+            "sizes": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Available sizes (e.g., 36R, 38L, S, M, L)"
+            },
+            "colors": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Available colors"
+            },
+            "fits": {
+              "type": "array",
+              "items": { 
+                "type": "string",
+                "enum": ["Slim", "Regular", "Classic", "Modern"]
+              },
+              "description": "Available fit types"
+            },
+            "widths": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Width options for ties (3.5in, 2.75in, 2.25in)"
+            }
+          }
+        },
+        "description": {
+          "type": "object",
+          "properties": {
+            "short": {
+              "type": "string",
+              "description": "Brief product description"
+            },
+            "long": {
+              "type": "string",
+              "description": "Detailed product description"
+            },
+            "features": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Key product features"
+            },
+            "materials": {
+              "type": "string",
+              "description": "Material composition"
+            },
+            "care_instructions": {
+              "type": "string",
+              "description": "Care and maintenance instructions"
+            }
+          }
+        },
+        "images": {
+          "type": "object",
+          "properties": {
+            "primary": {
+              "type": "string",
+              "description": "Primary product image URL"
+            },
+            "gallery": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Additional product image URLs"
+            },
+            "alt_text": {
+              "type": "array",
+              "items": { "type": "string" },
+              "description": "Alt text descriptions for images"
+            }
+          },
+          "required": ["primary"]
+        },
+        "specifications": {
+          "type": "object",
+          "properties": {
+            "material": { "type": "string" },
+            "fit": { "type": "string" },
+            "closure_type": { "type": "string" },
+            "lapel_style": { "type": "string" },
+            "width": { "type": "string" },
+            "heel_height": { "type": "string" }
+          }
+        },
+        "seo_data": {
+          "type": "object",
+          "properties": {
+            "title_tag": { "type": "string" },
+            "meta_description": { "type": "string" },
+            "keywords": {
+              "type": "array",
+              "items": { "type": "string" }
+            },
+            "structured_data": { "type": "object" }
+          }
+        },
+        "related_products": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Array of related product IDs"
+        },
+        "bundle_compatible": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "Compatible bundle categories"
+        },
+        "scrape_date": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this product data was scraped"
+        },
+        "last_updated": {
+          "type": "string",
+          "format": "date-time",
+          "description": "When this product was last updated on the source site"
+        }
+      },
+      "required": ["product_id", "name", "category", "url", "pricing", "images"]
+    }
+  },
+  "sample_data": {
+    "prom_product_example": {
+      "product_id": "1677916504116",
+      "sku": "BURGUNDY-PROM-TUX-BL",
+      "name": "Burgundy Prom Tuxedo Jacket - Shiny Slim With Black Lapel",
+      "seo_title": "Burgundy Prom Tuxedo Jacket - Shiny Slim With Black Lapel",
+      "meta_description": "Elevate your prom look with the exclusive Men's Burgundy Prom Tuxedo Jacket with Shiny finish and black lapel from KCT Menswear.",
+      "category": "Formal Wear",
+      "subcategory": "Tuxedo Jackets",
+      "collection": "Prom",
+      "url": "/products/burgundy-prom-tuxedo-jacket-shiny-slim-with-black-lapel",
+      "pricing": {
+        "regular_price": 289.99,
+        "sale_price": 199.99,
+        "discount_percentage": 31
+      },
+      "availability": {
+        "in_stock": true
+      },
+      "variations": {
+        "sizes": ["36R", "38R", "40R", "42R", "44R", "46R", "48R", "50R", "52R", "54R"],
+        "colors": ["Burgundy"],
+        "fits": ["Slim"]
+      },
+      "description": {
+        "features": [
+          "Shiny finish",
+          "Peak lapel",
+          "Slim fit",
+          "2 button closure",
+          "Side vents",
+          "Two front pockets",
+          "One chest pocket",
+          "Three interior pockets",
+          "Interior Pic-Stitching",
+          "Interior French Facing"
+        ]
+      },
+      "images": {
+        "primary": "//kctmenswear.com/cdn/shop/products/newburgendyprom.jpg",
+        "gallery": [
+          "//kctmenswear.com/cdn/shop/products/mj286s-1-main-2-1024x1024.jpg",
+          "//kctmenswear.com/cdn/shop/products/mj286s-1-main-3-1024x1024.jpg"
+        ]
+      },
+      "specifications": {
+        "fit": "Slim",
+        "lapel_style": "Peak lapel",
+        "closure_type": "2 button"
+      }
+    },
+    "suits_product_example": {
+      "product_id": "1547920965684",
+      "name": "Charcoal Grey Suit - Three Piece",
+      "category": "Suits",
+      "subcategory": "Three Piece Suits",
+      "collection": "Formal",
+      "url": "/products/charcoal-grey-suit-three-piece",
+      "pricing": {
+        "regular_price": 289.99,
+        "sale_price": 159.99,
+        "discount_percentage": 45
+      },
+      "availability": {
+        "in_stock": true
+      },
+      "variations": {
+        "sizes": ["34S", "36R", "36S", "38R", "38L", "40R", "40L", "42R", "42L", "44R", "44L", "46R", "46L", "48R", "48L", "50R", "50L", "52R", "52L", "54R", "54L"],
+        "colors": ["Charcoal Grey"],
+        "fits": ["Slim"]
+      },
+      "description": {
+        "short": "Slim fitting three-piece suit",
+        "long": "Slim fitting three-piece suit. Slim jacket with notch lapels comes paired with charcoal grey pants made to tailer. Slim charcoal grey vest"
+      },
+      "images": {
+        "primary": "//kctmenswear.com/cdn/shop/products/c1400x840q751.jpg",
+        "gallery": ["//kctmenswear.com/cdn/shop/products/c700x4205-compressor.jpg"]
+      },
+      "specifications": {
+        "material": "Viscose Blend",
+        "fit": "Slim",
+        "lapel_style": "Notch lapels",
+        "closure_type": "2 buttons"
+      }
+    },
+    "ties_product_example": {
+      "name": "Dark Silver Solo Ties",
+      "category": "Accessories",
+      "subcategory": "Ties",
+      "collection": "Formal",
+      "url": "/products/dark-silver-solo-ties",
+      "pricing": {
+        "regular_price": 24.99
+      },
+      "availability": {
+        "in_stock": true
+      },
+      "variations": {
+        "widths": ["3.5 inches (Regular)", "2.75 inches (Skinny)", "2.25 inches (Ultra Skinny)"],
+        "colors": ["Dark Silver"]
+      },
+      "description": {
+        "features": [
+          "Matching pocket square included",
+          "High-quality materials",
+          "Suitable for formal occasions"
+        ]
+      },
+      "images": {
+        "primary": "//kctmenswear.com/cdn/shop/products/100-35in-ties-hankies_18a3dfba-332e-491e-bc96-06c9ce0eebd4_533x.jpg"
+      }
+    }
+  }
+}

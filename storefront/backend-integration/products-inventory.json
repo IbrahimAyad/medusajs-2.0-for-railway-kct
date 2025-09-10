@@ -1,0 +1,183 @@
+{
+  "products": {
+    "suits": {
+      "total_count": 14,
+      "variants_per_product": 58,
+      "colors": ["Black", "Navy", "Charcoal Grey", "Light Grey", "Tan", "Brown", "Dark Brown", "Burgundy", "Sand", "Emerald", "Midnight Blue", "Hunter Green", "Indigo", "Beige"],
+      "types": ["2-piece", "3-piece"],
+      "sizes": ["34S", "34R", "36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44S", "44R", "44L", "46S", "46R", "46L", "48S", "48R", "48L", "50S", "50R", "50L", "52R", "52L", "54R", "54L"],
+      "price_ranges": {
+        "2-piece": 179.99,
+        "3-piece": 199.99
+      },
+      "stripe_integration": true,
+      "image_base_url": "https://pub-46371bda6faf4910b74631159fc2dfd4.r2.dev/kct-prodcuts/suits/"
+    },
+    "dress_shirts": {
+      "total_count": 17,
+      "variants_per_product": 17,
+      "colors": ["Black", "Brown", "Grey", "Hot Pink", "Lavender", "Light Blue", "Light Pink", "Mint", "Navy", "Orange Coral", "Peach", "Purple", "Red", "White", "Yellow"],
+      "fits": ["slim", "classic"],
+      "sizes": {
+        "slim": ["S", "M", "L", "XL", "XXL"],
+        "classic": ["15\"", "15.5\"", "16\"", "16.5\"", "17\"", "17.5\"", "18\"", "18.5\"", "19\"", "19.5\"", "20\"", "22\""]
+      },
+      "price": 39.99,
+      "stripe_integration": true,
+      "image_base_url": "https://pub-46371bda6faf4910b74631159fc2dfd4.r2.dev/kct-prodcuts/Dress%20Shirts/"
+    },
+    "ties": {
+      "total_count": 80,
+      "variants_per_product": 4,
+      "colors": [
+        "White", "Light Grey", "Silver", "Grey", "Charcoal", "Black",
+        "Light Yellow", "Yellow", "Gold", "Champagne", "Beige", "Tan", "Khaki", "Taupe",
+        "Pink", "Blush Pink", "Dusty Rose", "Hot Pink", "Magenta", "Fuchsia",
+        "Light Blue", "Baby Blue", "Sky Blue", "Powder Blue", "Steel Blue", "Royal Blue", "Navy", "Midnight Blue",
+        "Teal", "Turquoise", "Aqua", "Mint", "Sage Green", "Olive Green", "Forest Green", "Emerald Green",
+        "Coral", "Peach", "Orange", "Burnt Orange", "Rust",
+        "Red", "Crimson", "Burgundy", "Wine", "Maroon",
+        "Lavender", "Lilac", "Purple", "Plum", "Eggplant",
+        "Brown", "Chocolate", "Espresso", "Cognac", "Copper"
+      ],
+      "styles": ["classic", "skinny", "slim", "bowtie"],
+      "price_ranges": {
+        "classic": 24.99,
+        "skinny": 19.99,
+        "slim": 19.99,
+        "bowtie": 24.99
+      },
+      "stripe_integration": true,
+      "image_base_url": "https://pub-46371bda6faf4910b74631159fc2dfd4.r2.dev/kct-prodcuts/Bow%3ATie/"
+    },
+    "tuxedos": {
+      "total_count": 5,
+      "variants_per_product": 29,
+      "styles": ["Classic Black", "Burgundy Velvet", "Emerald Velvet", "Navy Velvet", "Royal Blue Velvet"],
+      "sizes": ["34S", "34R", "36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44S", "44R", "44L", "46S", "46R", "46L", "48S", "48R", "48L", "50S", "50R", "50L", "52R", "52L", "54R", "54L"],
+      "price_ranges": {
+        "classic": 299.99,
+        "velvet": 399.99
+      },
+      "stripe_integration": true,
+      "image_base_url": "https://pub-46371bda6faf4910b74631159fc2dfd4.r2.dev/kct-prodcuts/Tuxedo/"
+    }
+  },
+  "bundles": {
+    "tie_bundles": {
+      "types": [
+        {
+          "id": "5-tie",
+          "name": "5-Tie Bundle",
+          "quantity": 5,
+          "price": 99.95,
+          "savings": 25.00,
+          "stripe_product_id": "prod_SlSJJXCklqQLJh",
+          "stripe_price_id": "price_1RpvLrCHc12x7sCzMiPu7crt"
+        },
+        {
+          "id": "8-tie",
+          "name": "8-Tie Bundle",
+          "quantity": 8,
+          "price": 149.95,
+          "savings": 50.00,
+          "stripe_product_id": "prod_SlSJVpvJgGyQEg",
+          "stripe_price_id": "price_1RpvM9CHc12x7sCzqkW3QKUV"
+        },
+        {
+          "id": "11-tie",
+          "name": "11-Tie Bundle",
+          "quantity": 11,
+          "price": 199.95,
+          "savings": 75.00,
+          "stripe_product_id": "prod_SlSJgL1j8P2pQr",
+          "stripe_price_id": "price_1RpvMNCHc12x7sCziN5XLR9K"
+        }
+      ]
+    },
+    "suit_bundles": {
+      "types": [
+        {
+          "id": "essential",
+          "name": "Essential Bundle",
+          "price": 199.99,
+          "includes": ["2-piece suit", "dress shirt", "tie"],
+          "savings": 35.00,
+          "description": "Perfect for first-time buyers",
+          "sizes": ["34S", "34R", "36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44S", "44R", "44L", "46S", "46R", "46L", "48S", "48R", "48L", "50S", "50R", "50L", "52R", "52L", "54R", "54L"]
+        },
+        {
+          "id": "professional",
+          "name": "Professional Bundle",
+          "price": 229.99,
+          "includes": ["3-piece suit", "dress shirt", "tie"],
+          "savings": 45.00,
+          "description": "Ideal for business professionals",
+          "sizes": ["34S", "34R", "36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44S", "44R", "44L", "46S", "46R", "46L", "48S", "48R", "48L", "50S", "50R", "50L", "52R", "52L", "54R", "54L"]
+        },
+        {
+          "id": "executive",
+          "name": "Executive Bundle",
+          "price": 249.99,
+          "includes": ["3-piece suit", "2 dress shirts", "2 ties"],
+          "savings": 65.00,
+          "description": "Complete wardrobe solution",
+          "sizes": ["34S", "34R", "36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44S", "44R", "44L", "46S", "46R", "46L", "48S", "48R", "48L", "50S", "50R", "50L", "52R", "52L", "54R", "54L"]
+        }
+      ]
+    },
+    "wedding_bundles": {
+      "seasonal_collections": ["Summer", "Fall", "Modern", "Rustic"],
+      "price_range": "199.99 - 249.99",
+      "total_bundles": 16,
+      "sizes": ["34S", "34R", "36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44S", "44R", "44L", "46S", "46R", "46L", "48S", "48R", "48L", "50S", "50R", "50L", "52R", "52L", "54R", "54L"]
+    },
+    "prom_bundles": {
+      "styles": ["Classic Tuxedo", "Velvet Collection"],
+      "price": 249.99,
+      "total_bundles": 5,
+      "sizes": ["34S", "34R", "36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44S", "44R", "44L", "46S", "46R", "46L", "48S", "48R", "48L", "50S", "50R", "50L", "52R", "52L", "54R", "54L"]
+    }
+  },
+  "inventory_management": {
+    "tracking_method": "by_size_and_color",
+    "sync_with_stripe": true,
+    "low_stock_threshold": 5,
+    "reorder_point": 10
+  },
+  "customization_options": {
+    "alterations": {
+      "available": true,
+      "price": "Free",
+      "turnaround": "3-5 business days"
+    },
+    "monogramming": {
+      "available": false,
+      "future_implementation": true
+    }
+  },
+  "pricing_strategy": {
+    "bundle_discount": "15%",
+    "volume_discounts": {
+      "5+_items": "10%",
+      "10+_items": "15%",
+      "20+_items": "20%"
+    },
+    "free_shipping_threshold": 75.00
+  },
+  "image_management": {
+    "storage": "Cloudflare R2",
+    "cdn_enabled": true,
+    "image_formats": ["jpg", "webp", "png"],
+    "multiple_views": true,
+    "gallery_images": "3-8 per product"
+  },
+  "sku_format": {
+    "pattern": "KCT-[CATEGORY]-[COLOR]-[TYPE]-[SIZE]",
+    "examples": [
+      "KCT-SUIT-NAVY-2P-40R",
+      "KCT-SHIRT-WHITE-SLIM-M",
+      "KCT-TIE-BURGUNDY-CLASSIC"
+    ]
+  }
+}

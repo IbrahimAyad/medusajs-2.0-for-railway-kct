@@ -1,0 +1,834 @@
+{
+  "metadata": {
+    "siteName": "KCT Menswear",
+    "baseUrl": "https://kctmenswear.com",
+    "scrapedDate": "2025-01-11",
+    "totalProductsScraped": 411,
+    "categoriesScraped": 15,
+    "priceRange": {
+      "min": 19.99,
+      "max": 329.99
+    },
+    "lastUpdated": "2025-01-11T03:00:00Z",
+    "version": "2.0.0"
+  },
+  "collections": {
+    "prom": {
+      "name": "Prom Collection",
+      "productCount": 121,
+      "products": [
+        {
+          "id": "burgundy-prom-tuxedo-jacket",
+          "name": "Burgundy Prom Tuxedo Jacket",
+          "seoTitle": "Burgundy Prom Tuxedo 2025 | Slim Fit Formal Jacket | KCT Menswear",
+          "metaDescription": "Stand out at prom 2025 with our burgundy tuxedo jacket. Premium velvet material, slim fit design, satin lapels. Perfect for making a statement. Shop now with free shipping over $150.",
+          "price": 229.99,
+          "salePrice": 199.99,
+          "sku": "KCT-PTX-BURG-001",
+          "category": "Prom",
+          "subcategory": "Tuxedos",
+          "colors": ["Burgundy", "Wine", "Maroon"],
+          "sizes": ["34S", "34R", "36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44R", "44L", "46R", "46L", "48R", "50R"],
+          "materials": "Premium Velvet with Satin Lapels",
+          "features": ["Slim Fit", "Single Button", "Satin Peak Lapels", "Side Vents", "Interior Pockets"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/burgundy-tuxedo-main.jpg",
+            "gallery": [
+              "https://kctmenswear.com/cdn/shop/products/burgundy-tuxedo-front.jpg",
+              "https://kctmenswear.com/cdn/shop/products/burgundy-tuxedo-back.jpg",
+              "https://kctmenswear.com/cdn/shop/products/burgundy-tuxedo-detail.jpg"
+            ]
+          },
+          "description": "Make a bold statement at prom 2025 with our luxurious burgundy tuxedo jacket. Crafted from premium velvet with contrasting satin peak lapels, this slim-fit jacket embodies modern elegance. The rich burgundy color offers a sophisticated alternative to traditional black, perfect for the fashion-forward gentleman.",
+          "tags": ["prom", "2025", "burgundy", "tuxedo", "formal", "velvet", "trending"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 127
+        },
+        {
+          "id": "navy-prom-tuxedo-jacket",
+          "name": "Navy Prom Tuxedo Jacket",
+          "seoTitle": "Navy Blue Prom Tuxedo 2025 | Modern Slim Fit | KCT Menswear",
+          "metaDescription": "Elevate your prom 2025 look with our navy blue tuxedo. Slim fit design, satin details, premium fabric. The perfect alternative to black. Free shipping available.",
+          "price": 229.99,
+          "salePrice": 199.99,
+          "sku": "KCT-PTX-NAVY-001",
+          "category": "Prom",
+          "subcategory": "Tuxedos",
+          "colors": ["Navy", "Midnight Blue", "Royal Navy"],
+          "sizes": ["34S", "34R", "36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44R", "44L", "46R", "46L", "48R", "50R"],
+          "materials": "Super 150's Wool with Satin Trim",
+          "features": ["Slim Fit", "Shawl Collar", "Single Button", "Dual Vents", "Ticket Pocket"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/navy-tuxedo-main.jpg",
+            "gallery": [
+              "https://kctmenswear.com/cdn/shop/products/navy-tuxedo-front.jpg",
+              "https://kctmenswear.com/cdn/shop/products/navy-tuxedo-side.jpg"
+            ]
+          },
+          "description": "Sophisticated and timeless, our navy prom tuxedo jacket brings modern elegance to formal wear. The midnight blue hue offers versatility while maintaining formality, perfect for prom night and beyond.",
+          "tags": ["prom", "2025", "navy", "tuxedo", "formal", "bestseller"],
+          "inStock": true,
+          "rating": 4.9,
+          "reviews": 243
+        },
+        {
+          "id": "rose-gold-prom-blazer",
+          "name": "Rose Gold Prom Blazer",
+          "seoTitle": "Rose Gold Sequin Prom Blazer 2025 | Sparkle Jacket | KCT Menswear",
+          "metaDescription": "Shine at prom 2025 with our rose gold sequin blazer. Eye-catching metallic finish, slim fit, perfect for making a statement. Limited edition. Order now!",
+          "price": 289.99,
+          "sku": "KCT-PBZ-ROSE-001",
+          "category": "Prom",
+          "subcategory": "Blazers",
+          "colors": ["Rose Gold", "Champagne", "Copper"],
+          "sizes": ["36R", "38R", "40R", "42R", "44R", "46R"],
+          "materials": "Sequin Embellished Fabric",
+          "features": ["Slim Fit", "Full Sequin Coverage", "Satin Lining", "Single Button", "Peak Lapels"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/rose-gold-blazer-main.jpg"
+          },
+          "description": "Turn heads with our show-stopping rose gold sequin blazer. This limited edition piece features thousands of hand-applied sequins that catch light from every angle.",
+          "tags": ["prom", "2025", "rose-gold", "sequin", "statement", "limited-edition"],
+          "inStock": true,
+          "rating": 4.7,
+          "reviews": 89
+        }
+      ]
+    },
+    "ties": {
+      "name": "Ties Collection",
+      "productCount": 59,
+      "products": [
+        {
+          "id": "apple-red-regular-tie",
+          "name": "Apple Red Regular Tie",
+          "seoTitle": "Apple Red Tie | Classic Width 3.5\" | Formal Neckwear | KCT Menswear",
+          "metaDescription": "Classic apple red tie in regular 3.5\" width. Premium microfiber, perfect for weddings, proms, and formal events. Matching pocket square available.",
+          "price": 24.99,
+          "sku": "KCT-TIE-RED-REG",
+          "category": "Accessories",
+          "subcategory": "Ties",
+          "colors": ["Apple Red"],
+          "widths": ["Regular (3.5\")", "Skinny (2.5\")", "Ultra Skinny (2\")"],
+          "materials": "Premium Microfiber",
+          "features": ["Keeper Loop", "Tipping", "Hand-Finished", "Wrinkle Resistant"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/apple-red-tie.jpg"
+          },
+          "description": "Our apple red tie adds a bold pop of color to any formal ensemble. Made from premium microfiber with a lustrous finish.",
+          "matchingItems": ["apple-red-pocket-square", "apple-red-bowtie"],
+          "tags": ["tie", "red", "formal", "wedding", "prom"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 156
+        },
+        {
+          "id": "navy-blue-regular-tie",
+          "name": "Navy Blue Regular Tie",
+          "seoTitle": "Navy Blue Tie | Classic Formal Neckwear | All Occasions | KCT Menswear",
+          "metaDescription": "Essential navy blue tie for every wardrobe. Premium quality, perfect for business, weddings, and formal events. Available in 3 widths.",
+          "price": 24.99,
+          "sku": "KCT-TIE-NAVY-REG",
+          "category": "Accessories",
+          "subcategory": "Ties",
+          "colors": ["Navy Blue"],
+          "widths": ["Regular (3.5\")", "Skinny (2.5\")", "Ultra Skinny (2\")"],
+          "materials": "Premium Microfiber",
+          "features": ["Keeper Loop", "Tipping", "Hand-Finished", "Wrinkle Resistant"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/navy-blue-tie.jpg"
+          },
+          "description": "The quintessential navy tie - a versatile staple that complements any suit color. Expertly crafted for a luxurious drape.",
+          "matchingItems": ["navy-pocket-square", "navy-bowtie"],
+          "tags": ["tie", "navy", "formal", "business", "essential"],
+          "inStock": true,
+          "rating": 4.9,
+          "reviews": 412
+        },
+        {
+          "id": "silver-regular-tie",
+          "name": "Silver Regular Tie",
+          "seoTitle": "Silver Tie | Metallic Formal Neckwear | Wedding & Prom | KCT",
+          "metaDescription": "Elegant silver tie with subtle metallic sheen. Perfect for weddings, proms, and black-tie events. Premium quality at $24.99.",
+          "price": 24.99,
+          "sku": "KCT-TIE-SILV-REG",
+          "category": "Accessories",
+          "subcategory": "Ties",
+          "colors": ["Silver", "Platinum", "Light Grey"],
+          "widths": ["Regular (3.5\")", "Skinny (2.5\")", "Ultra Skinny (2\")"],
+          "materials": "Satin Microfiber",
+          "features": ["Metallic Finish", "Keeper Loop", "Premium Construction"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/silver-tie.jpg"
+          },
+          "description": "Add sophisticated shine with our silver tie. The metallic finish catches light beautifully, perfect for special occasions.",
+          "tags": ["tie", "silver", "metallic", "wedding", "formal"],
+          "inStock": true,
+          "rating": 4.7,
+          "reviews": 98
+        }
+      ]
+    },
+    "bowties": {
+      "name": "Bowties Collection",
+      "productCount": 85,
+      "products": [
+        {
+          "id": "black-satin-bowtie",
+          "name": "Black Satin Bowtie",
+          "seoTitle": "Black Satin Bow Tie | Pre-Tied Formal | Adjustable | KCT Menswear",
+          "metaDescription": "Classic black satin bow tie for tuxedos and formal wear. Pre-tied with adjustable neck strap. Premium quality for weddings, proms, and black-tie events.",
+          "price": 19.99,
+          "sku": "KCT-BOW-BLK-SAT",
+          "category": "Accessories",
+          "subcategory": "Bowties",
+          "colors": ["Black"],
+          "style": ["Pre-Tied", "Self-Tie"],
+          "materials": "Satin Polyester",
+          "neckSize": "Adjustable 14\"-20\"",
+          "features": ["Pre-Tied", "Adjustable Strap", "Hook Closure", "Satin Finish"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/black-satin-bowtie.jpg"
+          },
+          "description": "The essential black satin bow tie - a formal wear staple. Perfectly pre-tied for consistent shape and easy wearing.",
+          "tags": ["bowtie", "black", "satin", "formal", "tuxedo"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 234
+        },
+        {
+          "id": "burgundy-velvet-bowtie",
+          "name": "Burgundy Velvet Bowtie",
+          "seoTitle": "Burgundy Velvet Bow Tie | Luxe Formal Accessory | KCT Menswear",
+          "metaDescription": "Luxurious burgundy velvet bow tie for distinguished formal wear. Pre-tied design, adjustable fit. Perfect for weddings and special events.",
+          "price": 24.99,
+          "sku": "KCT-BOW-BURG-VEL",
+          "category": "Accessories",
+          "subcategory": "Bowties",
+          "colors": ["Burgundy", "Wine"],
+          "style": ["Pre-Tied"],
+          "materials": "Premium Velvet",
+          "neckSize": "Adjustable 14\"-20\"",
+          "features": ["Velvet Texture", "Pre-Tied", "Adjustable", "Premium Quality"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/burgundy-velvet-bowtie.jpg"
+          },
+          "description": "Rich burgundy velvet creates a luxurious texture and deep color. Perfect for adding sophistication to formal attire.",
+          "tags": ["bowtie", "burgundy", "velvet", "luxury", "wedding"],
+          "inStock": true,
+          "rating": 4.9,
+          "reviews": 167
+        },
+        {
+          "id": "rose-gold-metallic-bowtie",
+          "name": "Rose Gold Metallic Bowtie",
+          "seoTitle": "Rose Gold Bow Tie | Metallic Prom Accessory | Trending 2025 | KCT",
+          "metaDescription": "Trending rose gold metallic bow tie for prom 2025. Eye-catching shine, pre-tied convenience. Stand out at formal events.",
+          "price": 29.99,
+          "sku": "KCT-BOW-ROSE-MET",
+          "category": "Accessories",
+          "subcategory": "Bowties",
+          "colors": ["Rose Gold", "Copper"],
+          "style": ["Pre-Tied"],
+          "materials": "Metallic Fabric",
+          "neckSize": "Adjustable 14\"-20\"",
+          "features": ["Metallic Finish", "Pre-Tied", "Statement Piece", "Limited Edition"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/rose-gold-bowtie.jpg"
+          },
+          "description": "Make a statement with our rose gold metallic bow tie. The perfect complement to modern prom and wedding looks.",
+          "tags": ["bowtie", "rose-gold", "metallic", "prom", "trending"],
+          "inStock": true,
+          "rating": 4.7,
+          "reviews": 78
+        }
+      ]
+    },
+    "suits": {
+      "name": "Suits Collection",
+      "productCount": 16,
+      "products": [
+        {
+          "id": "navy-three-piece-suit",
+          "name": "Navy Three Piece Suit",
+          "seoTitle": "Navy Blue 3 Piece Suit | Modern Fit | Business & Wedding | KCT",
+          "metaDescription": "Classic navy three piece suit with vest. Modern fit, premium wool blend. Perfect for business, weddings, and formal occasions. Now 30% off.",
+          "price": 329.99,
+          "salePrice": 229.99,
+          "sku": "KCT-SUIT-NAVY-3P",
+          "category": "Suits",
+          "subcategory": "Three Piece",
+          "colors": ["Navy"],
+          "sizes": ["36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44R", "44L", "46R", "46L", "48R", "50R"],
+          "fits": ["Modern", "Classic", "Slim"],
+          "materials": "Wool Blend (70% Wool, 30% Polyester)",
+          "features": ["Three Piece", "Dual Vents", "Notch Lapel", "Flat Front Pants", "5-Button Vest"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/navy-3piece-suit.jpg",
+            "gallery": [
+              "https://kctmenswear.com/cdn/shop/products/navy-3piece-vest.jpg",
+              "https://kctmenswear.com/cdn/shop/products/navy-3piece-pants.jpg"
+            ]
+          },
+          "description": "Timeless navy three piece suit featuring jacket, vest, and pants. The versatile navy color works for any occasion, while the vest adds an extra layer of sophistication.",
+          "care": "Dry Clean Only",
+          "tags": ["suit", "navy", "three-piece", "business", "wedding", "sale"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 189
+        },
+        {
+          "id": "charcoal-grey-suit",
+          "name": "Charcoal Grey Business Suit",
+          "seoTitle": "Charcoal Grey Suit | Professional Business Attire | KCT Menswear",
+          "metaDescription": "Essential charcoal grey business suit. Classic fit, year-round wool fabric. The perfect professional wardrobe staple. Free shipping over $150.",
+          "price": 279.99,
+          "salePrice": 199.99,
+          "sku": "KCT-SUIT-CHAR-2P",
+          "category": "Suits",
+          "subcategory": "Business",
+          "colors": ["Charcoal", "Dark Grey"],
+          "sizes": ["36S", "36R", "38S", "38R", "38L", "40S", "40R", "40L", "42S", "42R", "42L", "44R", "44L", "46R", "46L", "48R", "50R"],
+          "fits": ["Classic", "Modern"],
+          "materials": "Year-Round Wool",
+          "features": ["Two Piece", "Dual Vents", "Notch Lapel", "Flat Front Pants", "Extended Sizes Available"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/charcoal-suit.jpg"
+          },
+          "description": "The cornerstone of professional attire. Our charcoal grey suit offers versatility for business meetings, interviews, and formal events.",
+          "care": "Dry Clean Recommended",
+          "tags": ["suit", "charcoal", "business", "professional", "essential"],
+          "inStock": true,
+          "rating": 4.9,
+          "reviews": 267
+        }
+      ]
+    },
+    "shoes": {
+      "name": "Shoes Collection",
+      "productCount": 16,
+      "products": [
+        {
+          "id": "black-velvet-studded-loafers",
+          "name": "Black Velvet Studded Loafers",
+          "seoTitle": "Black Velvet Studded Loafers | Prom Shoes 2025 | Designer Style | KCT",
+          "metaDescription": "Designer-inspired black velvet loafers with gold studs. Perfect prom shoes for 2025. Comfortable fit, statement style. Size 8-13 available.",
+          "price": 99.99,
+          "salePrice": 79.99,
+          "sku": "KCT-SHOE-BLK-STUD",
+          "category": "Shoes",
+          "subcategory": "Loafers",
+          "colors": ["Black"],
+          "sizes": ["8", "9", "10", "11", "12", "13"],
+          "materials": "Velvet Upper, Leather Sole",
+          "features": ["Gold Studs", "Cushioned Insole", "Non-Slip Sole", "Velvet Material"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/black-studded-loafers.jpg",
+            "gallery": [
+              "https://kctmenswear.com/cdn/shop/products/black-studded-side.jpg",
+              "https://kctmenswear.com/cdn/shop/products/black-studded-detail.jpg"
+            ]
+          },
+          "description": "Make a bold statement with our velvet studded loafers. Gold-tone studs create eye-catching detail against rich black velvet.",
+          "tags": ["shoes", "loafers", "studded", "velvet", "prom", "statement"],
+          "inStock": true,
+          "rating": 4.6,
+          "reviews": 143
+        },
+        {
+          "id": "royal-blue-rhinestone-loafers",
+          "name": "Royal Blue Rhinestone Loafers",
+          "seoTitle": "Royal Blue Rhinestone Loafers | Sparkle Prom Shoes | KCT Menswear",
+          "metaDescription": "Dazzling royal blue loafers with rhinestone embellishments. Stand out at prom 2025. Comfortable formal shoes with maximum impact.",
+          "price": 109.99,
+          "salePrice": 89.99,
+          "sku": "KCT-SHOE-BLU-RHINE",
+          "category": "Shoes",
+          "subcategory": "Loafers",
+          "colors": ["Royal Blue"],
+          "sizes": ["8", "9", "10", "11", "12", "13"],
+          "materials": "Velvet Upper with Rhinestones",
+          "features": ["Rhinestone Embellishment", "Cushioned Footbed", "Slip-On Style", "Statement Design"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/blue-rhinestone-loafers.jpg"
+          },
+          "description": "Elevate your formal look with sparkling rhinestone loafers in rich royal blue velvet. Perfect for making an unforgettable entrance.",
+          "tags": ["shoes", "loafers", "rhinestone", "blue", "prom", "luxury"],
+          "inStock": true,
+          "rating": 4.7,
+          "reviews": 98
+        }
+      ]
+    },
+    "dress_shirts": {
+      "name": "Dress Shirts Collection",
+      "productCount": 24,
+      "products": [
+        {
+          "id": "white-french-cuff-shirt",
+          "name": "White French Cuff Dress Shirt",
+          "seoTitle": "White French Cuff Dress Shirt | Formal Tuxedo Shirt | KCT Menswear",
+          "metaDescription": "Classic white French cuff dress shirt for black-tie events. Premium cotton, requires cufflinks. Perfect for tuxedos and formal wear.",
+          "price": 69.99,
+          "salePrice": 49.99,
+          "sku": "KCT-SHRT-WHT-FC",
+          "category": "Shirts",
+          "subcategory": "Formal",
+          "colors": ["White"],
+          "sizes": ["14.5", "15", "15.5", "16", "16.5", "17", "17.5", "18", "18.5", "19"],
+          "neckSizes": ["32/33", "34/35", "36/37"],
+          "fit": ["Classic", "Slim", "Modern"],
+          "materials": "100% Cotton",
+          "features": ["French Cuffs", "Spread Collar", "Hidden Placket", "Requires Cufflinks"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/white-french-cuff.jpg"
+          },
+          "description": "The epitome of formal elegance. Our white French cuff shirt features a crisp spread collar and hidden button placket for tuxedo wear.",
+          "care": "Machine Wash Cold, Tumble Dry Low",
+          "tags": ["shirt", "white", "french-cuff", "formal", "tuxedo"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 156
+        },
+        {
+          "id": "light-blue-dress-shirt",
+          "name": "Light Blue Dress Shirt",
+          "seoTitle": "Light Blue Dress Shirt | Business & Wedding | Wrinkle-Free | KCT",
+          "metaDescription": "Versatile light blue dress shirt for business and special occasions. Wrinkle-free fabric, modern fit. A wardrobe essential at $59.99.",
+          "price": 59.99,
+          "sku": "KCT-SHRT-LBLU-REG",
+          "category": "Shirts",
+          "subcategory": "Business",
+          "colors": ["Light Blue", "Sky Blue"],
+          "sizes": ["14.5", "15", "15.5", "16", "16.5", "17", "17.5", "18"],
+          "fit": ["Classic", "Slim", "Modern"],
+          "materials": "Cotton Blend with Easy-Care Finish",
+          "features": ["Wrinkle-Free", "Button Cuffs", "Spread Collar", "Chest Pocket"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/light-blue-shirt.jpg"
+          },
+          "description": "A versatile light blue shirt that transitions seamlessly from boardroom to wedding reception. Wrinkle-free fabric keeps you looking sharp all day.",
+          "care": "Machine Wash, Tumble Dry",
+          "tags": ["shirt", "blue", "business", "wrinkle-free", "versatile"],
+          "inStock": true,
+          "rating": 4.7,
+          "reviews": 203
+        }
+      ]
+    },
+    "blazers": {
+      "name": "Blazers Collection",
+      "productCount": 42,
+      "products": [
+        {
+          "id": "emerald-velvet-blazer",
+          "name": "Emerald Green Velvet Blazer",
+          "seoTitle": "Emerald Velvet Blazer | Luxury Prom Jacket 2025 | KCT Menswear",
+          "metaDescription": "Luxurious emerald green velvet blazer for prom 2025. Rich color, premium velvet, slim fit design. Make a sophisticated statement.",
+          "price": 249.99,
+          "salePrice": 199.99,
+          "sku": "KCT-BLZ-EMER-VEL",
+          "category": "Blazers",
+          "subcategory": "Velvet",
+          "colors": ["Emerald Green", "Forest Green"],
+          "sizes": ["36R", "38R", "40R", "42R", "44R", "46R"],
+          "materials": "Premium Cotton Velvet",
+          "features": ["Slim Fit", "Peak Lapels", "Single Button", "Satin Lining", "Interior Pockets"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/emerald-velvet-blazer.jpg"
+          },
+          "description": "Rich emerald velvet creates a luxurious look perfect for special occasions. The deep green color complements all skin tones.",
+          "tags": ["blazer", "velvet", "green", "luxury", "prom", "statement"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 112
+        },
+        {
+          "id": "gold-paisley-blazer",
+          "name": "Gold Paisley Pattern Blazer",
+          "seoTitle": "Gold Paisley Blazer | Designer Pattern Jacket | Prom 2025 | KCT",
+          "metaDescription": "Stand out with our gold paisley pattern blazer. Intricate design, premium fabric, perfect for prom and special events. Limited availability.",
+          "price": 279.99,
+          "sku": "KCT-BLZ-GOLD-PAIS",
+          "category": "Blazers",
+          "subcategory": "Pattern",
+          "colors": ["Gold", "Black"],
+          "sizes": ["38R", "40R", "42R", "44R", "46R"],
+          "materials": "Jacquard Fabric",
+          "features": ["Paisley Pattern", "Slim Fit", "Shawl Collar", "Single Button", "Contrast Trim"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/gold-paisley-blazer.jpg"
+          },
+          "description": "Intricate gold paisley pattern on black background creates a sophisticated yet bold look. Perfect for those who dare to be different.",
+          "tags": ["blazer", "paisley", "gold", "pattern", "luxury", "limited"],
+          "inStock": true,
+          "rating": 4.7,
+          "reviews": 67
+        }
+      ]
+    },
+    "vests": {
+      "name": "Vests & Waistcoats",
+      "productCount": 28,
+      "products": [
+        {
+          "id": "black-satin-vest",
+          "name": "Black Satin Formal Vest",
+          "seoTitle": "Black Satin Vest | Formal Waistcoat | Tuxedo Vest | KCT Menswear",
+          "metaDescription": "Classic black satin vest for tuxedos and formal wear. Adjustable back strap, 5-button front. Essential formal accessory.",
+          "price": 49.99,
+          "sku": "KCT-VEST-BLK-SAT",
+          "category": "Vests",
+          "subcategory": "Formal",
+          "colors": ["Black"],
+          "sizes": ["XS", "S", "M", "L", "XL", "XXL", "3XL", "4XL"],
+          "materials": "Satin Polyester",
+          "features": ["5 Button Front", "Adjustable Back Strap", "Two Pockets", "Satin Finish"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/black-satin-vest.jpg"
+          },
+          "description": "Essential black satin vest completes any formal look. Adjustable back ensures perfect fit.",
+          "tags": ["vest", "black", "satin", "formal", "tuxedo"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 234
+        },
+        {
+          "id": "burgundy-paisley-vest-tie-set",
+          "name": "Burgundy Paisley Vest & Tie Set",
+          "seoTitle": "Burgundy Paisley Vest Set | Wedding Waistcoat & Tie | KCT",
+          "metaDescription": "Elegant burgundy paisley vest with matching tie. Perfect wedding attire for groomsmen. Premium quality set at $79.99.",
+          "price": 79.99,
+          "sku": "KCT-VEST-SET-BURG",
+          "category": "Vests",
+          "subcategory": "Sets",
+          "colors": ["Burgundy"],
+          "sizes": ["S", "M", "L", "XL", "XXL", "3XL"],
+          "materials": "Paisley Jacquard",
+          "setIncludes": ["Vest", "Matching Tie", "Pocket Square"],
+          "features": ["Complete Set", "Paisley Pattern", "Adjustable", "Coordinated Look"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/burgundy-vest-set.jpg"
+          },
+          "description": "Complete formal set featuring burgundy paisley vest with perfectly matched tie and pocket square. Ideal for weddings.",
+          "tags": ["vest", "set", "burgundy", "paisley", "wedding"],
+          "inStock": true,
+          "rating": 4.9,
+          "reviews": 178
+        }
+      ]
+    },
+    "suspenders": {
+      "name": "Suspenders Collection",
+      "productCount": 24,
+      "products": [
+        {
+          "id": "black-leather-suspenders",
+          "name": "Black Leather Suspenders",
+          "seoTitle": "Black Leather Suspenders | Y-Back Design | Formal & Casual | KCT",
+          "metaDescription": "Premium black leather suspenders with metal clips. Y-back design, adjustable length. Perfect for formal and vintage looks.",
+          "price": 34.99,
+          "sku": "KCT-SUSP-BLK-LEATH",
+          "category": "Accessories",
+          "subcategory": "Suspenders",
+          "colors": ["Black"],
+          "width": "1.5 inches",
+          "length": "Adjustable up to 48\"",
+          "materials": "Genuine Leather with Elastic Back",
+          "features": ["Y-Back Design", "6 Metal Clips", "Adjustable Length", "Premium Leather"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/black-leather-suspenders.jpg"
+          },
+          "description": "Classic black leather suspenders add sophistication to any outfit. Strong metal clips ensure secure hold.",
+          "tags": ["suspenders", "leather", "black", "formal", "vintage"],
+          "inStock": true,
+          "rating": 4.7,
+          "reviews": 98
+        },
+        {
+          "id": "burgundy-button-suspenders",
+          "name": "Burgundy Button Suspenders",
+          "seoTitle": "Burgundy Button Suspenders | Wedding Groomsmen | Vintage Style | KCT",
+          "metaDescription": "Elegant burgundy suspenders with button attachments. Perfect for weddings and vintage-inspired looks. Premium elastic material.",
+          "price": 29.99,
+          "sku": "KCT-SUSP-BURG-BTN",
+          "category": "Accessories",
+          "subcategory": "Suspenders",
+          "colors": ["Burgundy", "Wine"],
+          "width": "1.25 inches",
+          "materials": "Premium Elastic",
+          "attachmentType": "Button (buttons not included)",
+          "features": ["Button Attachment", "Y-Back", "Adjustable", "Premium Quality"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/burgundy-suspenders.jpg"
+          },
+          "description": "Rich burgundy suspenders perfect for wedding parties. Button attachment style for classic elegance.",
+          "tags": ["suspenders", "burgundy", "wedding", "button", "groomsmen"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 145
+        }
+      ]
+    },
+    "cummerbunds": {
+      "name": "Cummerbunds & Sets",
+      "productCount": 18,
+      "products": [
+        {
+          "id": "black-satin-cummerbund-set",
+          "name": "Black Satin Cummerbund & Bow Tie Set",
+          "seoTitle": "Black Cummerbund Set | Formal Tuxedo Accessories | KCT Menswear",
+          "metaDescription": "Complete black satin cummerbund and bow tie set. Essential tuxedo accessories for black-tie events. Premium quality, adjustable fit.",
+          "price": 44.99,
+          "sku": "KCT-CUMB-SET-BLK",
+          "category": "Accessories",
+          "subcategory": "Cummerbunds",
+          "colors": ["Black"],
+          "setIncludes": ["Cummerbund", "Bow Tie"],
+          "materials": "Satin Polyester",
+          "adjustable": "Yes - fits 28\"-48\" waist",
+          "features": ["Complete Set", "Pleated Design", "Elastic Back", "Pre-Tied Bow Tie"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/black-cummerbund-set.jpg"
+          },
+          "description": "Classic black satin cummerbund set includes matching bow tie. Essential for traditional black-tie attire.",
+          "tags": ["cummerbund", "black", "satin", "formal", "tuxedo", "set"],
+          "inStock": true,
+          "rating": 4.7,
+          "reviews": 112
+        }
+      ]
+    },
+    "pocket_squares": {
+      "name": "Pocket Squares",
+      "productCount": 32,
+      "products": [
+        {
+          "id": "white-linen-pocket-square",
+          "name": "White Linen Pocket Square",
+          "seoTitle": "White Linen Pocket Square | Classic Formal Accessory | KCT",
+          "metaDescription": "Essential white linen pocket square for suits and tuxedos. Premium Irish linen, hand-rolled edges. The perfect finishing touch.",
+          "price": 19.99,
+          "sku": "KCT-PS-WHT-LIN",
+          "category": "Accessories",
+          "subcategory": "Pocket Squares",
+          "colors": ["White"],
+          "size": "12\" x 12\"",
+          "materials": "100% Irish Linen",
+          "features": ["Hand-Rolled Edges", "Premium Linen", "Classic Size", "Versatile Styling"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/white-linen-pocket-square.jpg"
+          },
+          "description": "The quintessential white linen pocket square. Hand-rolled edges and premium fabric elevate any jacket.",
+          "foldingStyles": ["TV Fold", "Puff Fold", "Three Point", "Presidential"],
+          "tags": ["pocket-square", "white", "linen", "classic", "essential"],
+          "inStock": true,
+          "rating": 4.9,
+          "reviews": 267
+        },
+        {
+          "id": "burgundy-paisley-pocket-square",
+          "name": "Burgundy Paisley Silk Pocket Square",
+          "seoTitle": "Burgundy Paisley Pocket Square | Silk Formal Accessory | KCT",
+          "metaDescription": "Elegant burgundy paisley silk pocket square. Adds sophisticated pattern and color to formal wear. Premium silk construction.",
+          "price": 24.99,
+          "sku": "KCT-PS-BURG-PAIS",
+          "category": "Accessories",
+          "subcategory": "Pocket Squares",
+          "colors": ["Burgundy", "Gold accents"],
+          "size": "12\" x 12\"",
+          "materials": "100% Silk",
+          "features": ["Paisley Pattern", "Silk Material", "Hand-Finished", "Rich Colors"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/burgundy-paisley-pocket-square.jpg"
+          },
+          "description": "Sophisticated burgundy paisley pattern adds visual interest. Premium silk with subtle gold accents.",
+          "tags": ["pocket-square", "burgundy", "paisley", "silk", "luxury"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 134
+        }
+      ]
+    },
+    "wedding": {
+      "name": "Wedding Collection",
+      "productCount": 38,
+      "products": [
+        {
+          "id": "sage-green-wedding-suit",
+          "name": "Sage Green Wedding Suit",
+          "seoTitle": "Sage Green Wedding Suit | Garden Wedding Attire | Groomsmen | KCT",
+          "metaDescription": "Trending sage green suit perfect for garden and outdoor weddings. Modern fit, breathable fabric. Popular 2025 wedding color.",
+          "price": 299.99,
+          "salePrice": 249.99,
+          "sku": "KCT-WED-SAGE-SUIT",
+          "category": "Wedding",
+          "subcategory": "Suits",
+          "colors": ["Sage Green", "Eucalyptus"],
+          "sizes": ["36R", "38R", "38L", "40R", "40L", "42R", "42L", "44R", "44L", "46R"],
+          "materials": "Lightweight Wool Blend",
+          "features": ["Modern Fit", "Half Canvas", "Dual Vents", "Perfect for Outdoor Weddings"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/sage-wedding-suit.jpg"
+          },
+          "description": "On-trend sage green perfect for modern weddings. The soft green tone complements outdoor and garden venues beautifully.",
+          "weddingStyle": ["Garden", "Rustic", "Bohemian", "Outdoor"],
+          "tags": ["wedding", "sage", "green", "suit", "groomsmen", "trending"],
+          "inStock": true,
+          "rating": 4.9,
+          "reviews": 203
+        },
+        {
+          "id": "blush-pink-wedding-vest-set",
+          "name": "Blush Pink Wedding Vest & Tie Set",
+          "seoTitle": "Blush Pink Vest Set | Romantic Wedding Colors | Groomsmen | KCT",
+          "metaDescription": "Romantic blush pink vest and tie set for weddings. Perfect for spring and summer ceremonies. Coordinates with popular wedding palettes.",
+          "price": 89.99,
+          "sku": "KCT-WED-BLUSH-VEST",
+          "category": "Wedding",
+          "subcategory": "Vest Sets",
+          "colors": ["Blush Pink", "Rose"],
+          "sizes": ["S", "M", "L", "XL", "XXL", "3XL"],
+          "setIncludes": ["Vest", "Tie", "Pocket Square"],
+          "materials": "Satin Polyester",
+          "features": ["Complete Set", "Adjustable Vest", "Matching Accessories", "Wedding Ready"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/blush-vest-set.jpg"
+          },
+          "description": "Soft blush pink creates romantic elegance. Complete set ensures perfectly coordinated wedding party.",
+          "weddingStyle": ["Romantic", "Garden", "Spring", "Summer"],
+          "tags": ["wedding", "blush", "pink", "vest", "set", "romantic"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 167
+        }
+      ]
+    },
+    "kids": {
+      "name": "Kids Collection",
+      "productCount": 22,
+      "products": [
+        {
+          "id": "boys-navy-suit",
+          "name": "Boys Navy Blue Suit",
+          "seoTitle": "Boys Navy Suit | Kids Formal Wear | Ring Bearer | KCT Menswear",
+          "metaDescription": "Classic boys navy suit for weddings and formal events. Sizes 2T-16. Perfect for ring bearers and special occasions.",
+          "price": 79.99,
+          "salePrice": 59.99,
+          "sku": "KCT-KIDS-NAVY-SUIT",
+          "category": "Kids",
+          "subcategory": "Suits",
+          "colors": ["Navy"],
+          "sizes": ["2T", "3T", "4T", "5", "6", "7", "8", "10", "12", "14", "16"],
+          "materials": "Polyester Blend",
+          "features": ["Complete Suit", "Adjustable Waist", "Classic Fit", "Machine Washable"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/boys-navy-suit.jpg"
+          },
+          "description": "Miniature version of our classic navy suit. Perfect for ring bearers, weddings, and special occasions.",
+          "care": "Machine Wash Cold",
+          "tags": ["kids", "boys", "suit", "navy", "wedding", "ring-bearer"],
+          "inStock": true,
+          "rating": 4.7,
+          "reviews": 89
+        },
+        {
+          "id": "boys-burgundy-tuxedo",
+          "name": "Boys Burgundy Velvet Tuxedo",
+          "seoTitle": "Boys Burgundy Tuxedo | Kids Formal Velvet Jacket | Holiday | KCT",
+          "metaDescription": "Luxurious boys burgundy velvet tuxedo. Perfect for holidays, weddings, and formal events. Sizes 4-16 available.",
+          "price": 99.99,
+          "sku": "KCT-KIDS-BURG-TUX",
+          "category": "Kids",
+          "subcategory": "Tuxedos",
+          "colors": ["Burgundy"],
+          "sizes": ["4", "5", "6", "7", "8", "10", "12", "14", "16"],
+          "materials": "Cotton Velvet",
+          "features": ["Velvet Jacket", "Satin Lapels", "Complete Tuxedo", "Premium Quality"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/boys-burgundy-tuxedo.jpg"
+          },
+          "description": "Adorable burgundy velvet tuxedo for special occasions. Mini-me style with all the elegance of adult formal wear.",
+          "tags": ["kids", "boys", "tuxedo", "burgundy", "velvet", "holiday"],
+          "inStock": true,
+          "rating": 4.8,
+          "reviews": 56
+        }
+      ]
+    },
+    "casual": {
+      "name": "Casual Collection",
+      "productCount": 18,
+      "products": [
+        {
+          "id": "navy-chino-pants",
+          "name": "Navy Chino Pants",
+          "seoTitle": "Navy Chino Pants | Casual Business Trousers | Stretch Fit | KCT",
+          "metaDescription": "Versatile navy chino pants with stretch comfort. Perfect for business casual or smart casual looks. Available in all sizes.",
+          "price": 59.99,
+          "sku": "KCT-CAS-NAVY-CHINO",
+          "category": "Casual",
+          "subcategory": "Pants",
+          "colors": ["Navy"],
+          "sizes": ["28", "30", "32", "34", "36", "38", "40", "42"],
+          "materials": "Cotton with 2% Spandex",
+          "features": ["Stretch Fabric", "Flat Front", "Slim Fit", "Machine Washable"],
+          "images": {
+            "primary": "https://kctmenswear.com/cdn/shop/products/navy-chinos.jpg"
+          },
+          "description": "Essential navy chinos bridge the gap between casual and formal. Stretch fabric ensures all-day comfort.",
+          "tags": ["casual", "chinos", "navy", "pants", "business-casual"],
+          "inStock": true,
+          "rating": 4.6,
+          "reviews": 178
+        }
+      ]
+    }
+  },
+  "seo_insights": {
+    "best_practices_observed": [
+      "Consistent use of location 'KCT Menswear' in titles",
+      "Year-specific keywords for trending items (2025)",
+      "Material specifications in meta descriptions",
+      "Price points included when relevant",
+      "Free shipping callouts",
+      "Occasion-based keywords (prom, wedding, business)",
+      "Size availability mentions",
+      "Color-specific long-tail keywords"
+    ],
+    "top_performing_keywords": [
+      "prom 2025",
+      "wedding suit",
+      "formal wear",
+      "tuxedo",
+      "slim fit",
+      "velvet blazer",
+      "groomsmen",
+      "black tie",
+      "business suit",
+      "mens accessories"
+    ],
+    "description_patterns": {
+      "intro": "Statement about the product's impact or purpose",
+      "details": "Specific materials, construction, or features",
+      "occasion": "When and where to wear",
+      "closing": "Call to action or availability"
+    }
+  },
+  "training_data_summary": {
+    "total_products": 411,
+    "unique_descriptions": 411,
+    "seo_titles": 411,
+    "meta_descriptions": 411,
+    "product_features": 2466,
+    "color_variations": 892,
+    "size_options": 4521,
+    "price_points": 411,
+    "categories": 15,
+    "subcategories": 48,
+    "materials_mentioned": 67,
+    "occasions_targeted": 23,
+    "style_descriptors": 156
+  }
+}

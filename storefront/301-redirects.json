@@ -1,0 +1,375 @@
+{
+  "redirects": [
+    {
+      "comment": "Main Category Pages",
+      "mappings": [
+        {
+          "old": "/collections/prom-tuxedos",
+          "new": "/collections/formal",
+          "status": 301
+        },
+        {
+          "old": "/collections/prom-blazers",
+          "new": "/collections/blazers",
+          "status": 301
+        },
+        {
+          "old": "/collections/wedding-tuxedos",
+          "new": "/collections/wedding",
+          "status": 301
+        },
+        {
+          "old": "/collections/wedding-suits",
+          "new": "/collections/wedding",
+          "status": 301
+        },
+        {
+          "old": "/collections/accessories-ties",
+          "new": "/collections/accessories",
+          "status": 301
+        },
+        {
+          "old": "/collections/accessories-bowties",
+          "new": "/collections/accessories",
+          "status": 301
+        },
+        {
+          "old": "/collections/accessories-suspenders",
+          "new": "/collections/accessories",
+          "status": 301
+        },
+        {
+          "old": "/collections/prom-shoes",
+          "new": "/collections/shoes",
+          "status": 301
+        },
+        {
+          "old": "/collections/dress-shoes",
+          "new": "/collections/shoes",
+          "status": 301
+        }
+      ]
+    },
+    {
+      "comment": "Product-Specific Redirects",
+      "mappings": [
+        {
+          "old": "/products/european-burgundy-prom-tuxedo",
+          "new": "/products/burgundy-european-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/european-green-prom-tuxedo",
+          "new": "/products/green-european-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/european-black-prom-tuxedo",
+          "new": "/products/black-european-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/european-white-prom-tuxedo",
+          "new": "/products/white-european-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/european-navy-blue-prom-tuxedo",
+          "new": "/products/navy-european-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/black-paisley-tuxedo",
+          "new": "/products/black-paisley-formal-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/ivory-paisley-tuxedo",
+          "new": "/products/ivory-paisley-formal-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/blush-pink-paisley-tuxedo",
+          "new": "/products/pink-paisley-formal-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/red-sequin-lapel-tuxedo",
+          "new": "/products/red-sequin-three-piece-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/black-double-breasted-tuxedo",
+          "new": "/products/modern-black-double-breasted",
+          "status": 301
+        }
+      ]
+    },
+    {
+      "comment": "Blazer Product Redirects",
+      "mappings": [
+        {
+          "old": "/products/gold-brown-floral-blazer",
+          "new": "/products/gold-brown-floral-prom-blazer",
+          "status": 301
+        },
+        {
+          "old": "/products/black-floral-blazer",
+          "new": "/products/black-floral-prom-blazer",
+          "status": 301
+        },
+        {
+          "old": "/products/red-floral-blazer",
+          "new": "/products/red-floral-prom-blazer",
+          "status": 301
+        },
+        {
+          "old": "/products/bronze-black-geometric-blazer",
+          "new": "/products/bronze-geometric-tuxedo-blazer",
+          "status": 301
+        },
+        {
+          "old": "/products/royal-blue-velvet-blazer",
+          "new": "/products/royal-blue-velvet-gold-trim",
+          "status": 301
+        },
+        {
+          "old": "/products/green-velvet-blazer",
+          "new": "/products/green-patterned-velvet-blazer",
+          "status": 301
+        },
+        {
+          "old": "/products/red-velvet-blazer",
+          "new": "/products/red-velvet-textured-blazer",
+          "status": 301
+        }
+      ]
+    },
+    {
+      "comment": "Wedding Collection Redirects",
+      "mappings": [
+        {
+          "old": "/products/sky-blue-wedding-tuxedo",
+          "new": "/products/sky-blue-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/light-gold-wedding-tuxedo",
+          "new": "/products/light-gold-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/light-orange-wedding-tuxedo",
+          "new": "/products/light-orange-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/light-blush-wedding-tuxedo",
+          "new": "/products/light-blush-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/hunter-green-wedding-suit",
+          "new": "/products/hunter-green-suit-vest",
+          "status": 301
+        },
+        {
+          "old": "/products/light-brown-wedding-suit",
+          "new": "/products/light-brown-suit-vest",
+          "status": 301
+        },
+        {
+          "old": "/products/burgundy-wedding-suit",
+          "new": "/products/burgundy-suit-vest",
+          "status": 301
+        },
+        {
+          "old": "/products/brick-rust-wedding-suit",
+          "new": "/products/brick-rust-suit-vest",
+          "status": 301
+        }
+      ]
+    },
+    {
+      "comment": "Tuxedo Collection Redirects",
+      "mappings": [
+        {
+          "old": "/products/slim-black-tuxedo",
+          "new": "/products/black-slim-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/slim-white-tuxedo",
+          "new": "/products/white-slim-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/slim-royal-blue-tuxedo",
+          "new": "/products/royal-blue-slim-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/slim-burgundy-tuxedo",
+          "new": "/products/burgundy-slim-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/slim-light-grey-tuxedo",
+          "new": "/products/light-grey-slim-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/black-on-black-tuxedo",
+          "new": "/products/black-monochromatic-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/tan-on-tan-tuxedo",
+          "new": "/products/tan-monochromatic-tuxedo",
+          "status": 301
+        },
+        {
+          "old": "/products/royal-on-royal-tuxedo",
+          "new": "/products/royal-monochromatic-tuxedo",
+          "status": 301
+        }
+      ]
+    },
+    {
+      "comment": "Shoe Collection Redirects",
+      "mappings": [
+        {
+          "old": "/products/hunter-green-studded-loafers",
+          "new": "/products/hunter-green-velvet-studded-loafers",
+          "status": 301
+        },
+        {
+          "old": "/products/red-studded-loafers",
+          "new": "/products/red-velvet-studded-loafers",
+          "status": 301
+        },
+        {
+          "old": "/products/royal-blue-studded-loafers",
+          "new": "/products/royal-blue-velvet-studded-loafers",
+          "status": 301
+        },
+        {
+          "old": "/products/red-rhinestone-loafers",
+          "new": "/products/red-velvet-rhinestone-loafers",
+          "status": 301
+        },
+        {
+          "old": "/products/white-gold-rhinestone-loafers",
+          "new": "/products/white-gold-rhinestone-prom-loafers",
+          "status": 301
+        },
+        {
+          "old": "/products/black-gold-rhinestone-loafers",
+          "new": "/products/black-gold-rhinestone-prom-loafers",
+          "status": 301
+        },
+        {
+          "old": "/products/silver-loafers",
+          "new": "/products/silver-prom-loafers",
+          "status": 301
+        },
+        {
+          "old": "/products/gold-loafers",
+          "new": "/products/gold-prom-loafers",
+          "status": 301
+        }
+      ]
+    },
+    {
+      "comment": "Accessory Redirects",
+      "mappings": [
+        {
+          "old": "/products/tie-*",
+          "new": "/collections/accessories?filter=ties",
+          "status": 301,
+          "pattern": true
+        },
+        {
+          "old": "/products/bowtie-*",
+          "new": "/collections/accessories?filter=bowties",
+          "status": 301,
+          "pattern": true
+        },
+        {
+          "old": "/products/suspenders-*",
+          "new": "/collections/accessories?filter=suspenders",
+          "status": 301,
+          "pattern": true
+        },
+        {
+          "old": "/products/cummerbund-*",
+          "new": "/collections/accessories?filter=tuxedo-accessories",
+          "status": 301,
+          "pattern": true
+        }
+      ]
+    },
+    {
+      "comment": "Page and Service Redirects",
+      "mappings": [
+        {
+          "old": "/pages/about-us",
+          "new": "/about",
+          "status": 301
+        },
+        {
+          "old": "/pages/contact-us",
+          "new": "/contact",
+          "status": 301
+        },
+        {
+          "old": "/pages/size-guide",
+          "new": "/size-guide",
+          "status": 301
+        },
+        {
+          "old": "/pages/shipping-info",
+          "new": "/shipping",
+          "status": 301
+        },
+        {
+          "old": "/pages/return-policy",
+          "new": "/returns",
+          "status": 301
+        },
+        {
+          "old": "/pages/wedding-appointment",
+          "new": "/wedding/appointment",
+          "status": 301
+        },
+        {
+          "old": "/collections/all",
+          "new": "/collections",
+          "status": 301
+        },
+        {
+          "old": "/collections/new-arrivals",
+          "new": "/collections/new",
+          "status": 301
+        },
+        {
+          "old": "/collections/sale",
+          "new": "/sale",
+          "status": 301
+        }
+      ]
+    }
+  ],
+  "metadata": {
+    "total_redirects": 80,
+    "created_date": "2024-01-11",
+    "purpose": "SEO preservation during site migration",
+    "implementation_notes": [
+      "Use these redirects in Next.js middleware or nginx config",
+      "Ensure all old URLs return 301 status codes",
+      "Monitor Google Search Console for crawl errors",
+      "Update sitemap.xml with new URLs",
+      "Submit new sitemap to Google after implementation"
+    ]
+  }
+}

@@ -1,0 +1,53 @@
+name = "kct-image-transform"
+main = "image-transform-worker.js"
+compatibility_date = "2024-01-01"
+
+# Your Cloudflare account ID
+account_id = "YOUR_ACCOUNT_ID"
+
+# Worker route - this will handle image transformation requests
+routes = [
+  { pattern = "kctmenswear.com/cdn-cgi/image/*", zone_name = "kctmenswear.com" },
+  { pattern = "*.kctmenswear.com/cdn-cgi/image/*", zone_name = "kctmenswear.com" }
+]
+
+# Environment variables (if needed)
+[vars]
+R2_BUCKET_NAME = "pub-46371bda6faf4910b74631159fc2dfd4"
+
+# R2 bucket binding (if you need direct R2 access)
+[[r2_buckets]]
+binding = "R2_BUCKET"
+bucket_name = "pub-46371bda6faf4910b74631159fc2dfd4"
+
+# KV namespace for caching (optional)
+[[kv_namespaces]]
+binding = "IMAGE_CACHE"
+id = "YOUR_KV_NAMESPACE_ID"
+
+# Durable Objects (optional, for advanced caching)
+# [[durable_objects.bindings]]
+# name = "IMAGE_PROCESSOR"
+# class_name = "ImageProcessor"
+
+# Compatibility flags for Cloudflare Image Resizing
+[compatibility_flags]
+streams_enable_constructors = true
+
+# Build configuration
+[build]
+command = ""
+watch_paths = ["image-transform-worker.js"]
+
+# Development settings
+[dev]
+port = 8787
+local_protocol = "http"
+
+# Performance settings
+[limits]
+cpu_ms = 50
+
+# Cache settings
+[site]
+bucket = ""

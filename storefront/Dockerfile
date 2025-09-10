@@ -14,7 +14,13 @@ RUN npm ci
 FROM base AS builder
 WORKDIR /app
 COPY --from=deps /app/node_modules ./node_modules
-COPY storefront/ .
+# Copy all storefront files including src directory
+COPY storefront/ ./
+
+# Debug: List the error-boundary directory to ensure files are copied
+RUN ls -la src/components/ || echo "No components directory"
+RUN ls -la src/components/error-boundary/ || echo "Error: error-boundary directory not found"
+RUN find . -name "checkout-error-boundary.tsx" || echo "checkout-error-boundary.tsx not found anywhere"
 
 # Set environment variables for build
 ENV NEXT_TELEMETRY_DISABLED 1

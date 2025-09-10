@@ -4,7 +4,7 @@ import CartTemplate from "@modules/cart/templates"
 import { enrichLineItems, retrieveCart } from "@lib/data/cart"
 import { HttpTypes } from "@medusajs/types"
 import { getCustomer } from "@lib/data/customer"
-import ErrorBoundary from "@/components/error-boundary"
+import ErrorBoundary from "../../../../components/error-boundary"
 
 export const metadata: Metadata = {
   title: "Cart",
