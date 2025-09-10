@@ -61,16 +61,22 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     // For Stripe, create the payment intent directly with correct amount
     if (provider_id === "stripe") {
       const stripeKey = process.env.STRIPE_API_KEY || process.env.STRIPE_SECRET_KEY
+      console.log(`[STRIPE FIX] Stripe key exists: ${!!stripeKey}`)
+      
       if (!stripeKey) {
+        console.error(`[STRIPE FIX] ERROR: Stripe API key not configured`)
         throw new Error("Stripe API key not configured")
       }
       
-      const stripe = new Stripe(stripeKey, {
-        apiVersion: '2025-08-27.basil'
-      })
-      
-      // Create payment intent with CORRECT amount (no multiplication!)
-      const paymentIntent = await stripe.paymentIntents.create({
+      try {
+        const stripe = new Stripe(stripeKey, {
+          apiVersion: '2025-08-27.basil'
+        })
+        
+        console.log(`[STRIPE FIX] Creating PaymentIntent with amount: ${amountInCents}`)
+        
+        // Create payment intent with CORRECT amount (no multiplication!)
+        const paymentIntent = await stripe.paymentIntents.create({
         amount: amountInCents, // Already in cents, NO MULTIPLICATION!
         currency: cart.currency_code,
         capture_method: 'manual', // CRITICAL: Use manual capture so backend can control it
@@ -84,10 +90,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         description: 'Order from KCT Menswear'
       })
       
-      console.log(`[STRIPE FIX] Created Stripe PaymentIntent ${paymentIntent.id} for ${amountInCents} cents`)
-      
-      // Create payment session in Medusa
-      const session = await paymentService.createPaymentSession(
+        console.log(`[STRIPE FIX] Created Stripe PaymentIntent ${paymentIntent.id} for ${amountInCents} cents`)
+        
+        // Create payment session in Medusa
+        const session = await paymentService.createPaymentSession(
         paymentCollectionId,
         {
           provider_id: provider_id,
@@ -106,18 +112,23 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       
       console.log(`[STRIPE FIX] Created payment session ${session.id}`)
       
-      return res.json({
-        payment_session: {
-          ...session,
-          data: {
-            id: paymentIntent.id,
-            client_secret: paymentIntent.client_secret
-          }
-        },
-        payment_collection_id: paymentCollectionId,
-        stripe_amount: amountInCents,
-        stripe_amount_usd: amountInCents / 100
-      })
+        return res.json({
+          payment_session: {
+            ...session,
+            data: {
+              id: paymentIntent.id,
+              client_secret: paymentIntent.client_secret
+            }
+          },
+          payment_collection_id: paymentCollectionId,
+          stripe_amount: amountInCents,
+          stripe_amount_usd: amountInCents / 100
+        })
+      } catch (stripeError: any) {
+        console.error(`[STRIPE FIX] Failed to create PaymentIntent:`, stripeError.message)
+        console.error(`[STRIPE FIX] Error details:`, stripeError)
+        throw stripeError
+      }
     }
     
     // For other providers, use default flow
