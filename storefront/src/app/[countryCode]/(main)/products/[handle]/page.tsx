@@ -9,38 +9,43 @@ type Props = {
   params: { countryCode: string; handle: string }
 }
 
-export async function generateStaticParams() {
-  const countryCodes = await listRegions().then(
-    (regions) =>
-      regions
-        ?.map((r) => r.countries?.map((c) => c.iso_2))
-        .flat()
-        .filter(Boolean) as string[]
-  )
+// Disable static generation to prevent build timeouts
+// Products will be rendered on-demand instead
+export const dynamic = 'force-dynamic'
 
-  if (!countryCodes) {
-    return null
-  }
+// Comment out static params generation to prevent timeout
+// export async function generateStaticParams() {
+//   const countryCodes = await listRegions().then(
+//     (regions) =>
+//       regions
+//         ?.map((r) => r.countries?.map((c) => c.iso_2))
+//         .flat()
+//         .filter(Boolean) as string[]
+//   )
 
-  const products = await Promise.all(
-    countryCodes.map((countryCode) => {
-      return getProductsList({ countryCode })
-    })
-  ).then((responses) =>
-    responses.map(({ response }) => response.products).flat()
-  )
+//   if (!countryCodes) {
+//     return null
+//   }
 
-  const staticParams = countryCodes
-    ?.map((countryCode) =>
-      products.map((product) => ({
-        countryCode,
-        handle: product.handle,
-      }))
-    )
-    .flat()
+//   const products = await Promise.all(
+//     countryCodes.map((countryCode) => {
+//       return getProductsList({ countryCode })
+//     })
+//   ).then((responses) =>
+//     responses.map(({ response }) => response.products).flat()
+//   )
 
-  return staticParams
-}
+//   const staticParams = countryCodes
+//     ?.map((countryCode) =>
+//       products.map((product) => ({
+//         countryCode,
+//         handle: product.handle,
+//       }))
+//     )
+//     .flat()
+
+//   return staticParams
+// }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { handle } = params

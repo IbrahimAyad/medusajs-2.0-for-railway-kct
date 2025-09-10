@@ -28,6 +28,7 @@
     "@medusajs/types": "preview",
     "@medusajs/ui": "preview",
     "@meilisearch/instant-meilisearch": "^0.7.1",
+    "@next/swc-darwin-arm64": "^15.5.0",
     "@paypal/paypal-js": "^5.0.6",
     "@paypal/react-paypal-js": "^7.8.1",
     "@stripe/react-stripe-js": "^1.7.2",
