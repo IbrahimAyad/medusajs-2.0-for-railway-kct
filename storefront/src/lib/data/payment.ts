@@ -9,8 +9,8 @@ export const listCartPaymentMethods = cache(async function (regionId: string) {
     
     const response = await sdk.store.payment
       .listPaymentProviders(
-        { region_id: regionId },
-        { next: { tags: ["payment_providers"] } }
+        { region_id: regionId }
+        // Remove the tags parameter as it's not recognized by the backend
       )
     
     console.log("Payment providers response:", response)
