@@ -1,15 +1,24 @@
 import { sdk } from "@lib/config"
 import { cache } from "react"
 
-// Shipping actions
+// Payment actions
 export const listCartPaymentMethods = cache(async function (regionId: string) {
-  return sdk.store.payment
-    .listPaymentProviders(
-      { region_id: regionId },
-      { next: { tags: ["payment_providers"] } }
-    )
-    .then(({ payment_providers }) => payment_providers)
-    .catch(() => {
-      return null
-    })
+  try {
+    // Add debug logging
+    console.log("Fetching payment providers for region:", regionId)
+    
+    const response = await sdk.store.payment
+      .listPaymentProviders(
+        { region_id: regionId },
+        { next: { tags: ["payment_providers"] } }
+      )
+    
+    console.log("Payment providers response:", response)
+    
+    // Ensure we always return an array
+    return response?.payment_providers || []
+  } catch (error) {
+    console.error("Error fetching payment providers:", error)
+    return []
+  }
 })

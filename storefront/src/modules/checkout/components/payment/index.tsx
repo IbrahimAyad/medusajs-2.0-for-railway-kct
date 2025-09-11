@@ -141,15 +141,19 @@ const Payment = memo(({
       </div>
       <div>
         <div className={isOpen ? "block" : "hidden"}>
-          {!paidByGiftcard && availablePaymentMethods?.length && (
+          {!paidByGiftcard && availablePaymentMethods && availablePaymentMethods.length > 0 ? (
             <>
               <RadioGroup
                 value={selectedPaymentMethod}
                 onChange={(value: string) => setSelectedPaymentMethod(value)}
               >
                 {availablePaymentMethods
+                  .filter((method) => method && method.id) // Filter out any invalid methods
                   .sort((a, b) => {
-                    return a.id > b.id ? 1 : -1
+                    // Safe comparison with fallback
+                    const aId = a?.id || ""
+                    const bId = b?.id || ""
+                    return aId > bId ? 1 : -1
                   })
                   .map((paymentMethod) => {
                     return (
@@ -182,7 +186,16 @@ const Payment = memo(({
                 </div>
               )}
             </>
-          )}
+          ) : !paidByGiftcard ? (
+            <div className="flex flex-col w-full">
+              <Text className="txt-medium-plus text-ui-fg-base mb-1">
+                Payment methods
+              </Text>
+              <Text className="txt-medium text-ui-fg-subtle">
+                No payment methods available. Please contact support.
+              </Text>
+            </div>
+          ) : null}
 
           {paidByGiftcard && (
             <div className="flex flex-col w-1/3">
