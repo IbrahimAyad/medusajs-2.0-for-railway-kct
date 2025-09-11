@@ -26,12 +26,16 @@ RUN find . -name "checkout-error-boundary.tsx" || echo "checkout-error-boundary.
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Build arguments for required environment variables
-ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL
-ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+ARG NEXT_PUBLIC_MEDUSA_BACKEND_URL=https://backend-production-7441.up.railway.app
+ARG NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_58348c0c95bd27ad28bce27481ac65396899a29c70b3b86bc129318bdef8ce14
+ARG NEXT_PUBLIC_BASE_URL=https://storefront-production-c1c6.up.railway.app
+ARG NEXT_PUBLIC_DEFAULT_REGION=us
 
 # Set them as environment variables for the build
 ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=$NEXT_PUBLIC_MEDUSA_BACKEND_URL
 ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=$NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY
+ENV NEXT_PUBLIC_BASE_URL=$NEXT_PUBLIC_BASE_URL
+ENV NEXT_PUBLIC_DEFAULT_REGION=$NEXT_PUBLIC_DEFAULT_REGION
 
 # Build the application
 RUN npm run build:next
@@ -42,6 +46,12 @@ WORKDIR /app
 
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
+
+# Set runtime environment variables
+ENV NEXT_PUBLIC_MEDUSA_BACKEND_URL=https://backend-production-7441.up.railway.app
+ENV NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY=pk_58348c0c95bd27ad28bce27481ac65396899a29c70b3b86bc129318bdef8ce14
+ENV NEXT_PUBLIC_BASE_URL=https://storefront-production-c1c6.up.railway.app
+ENV NEXT_PUBLIC_DEFAULT_REGION=us
 
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
