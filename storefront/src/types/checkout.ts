@@ -36,11 +36,10 @@ export type Cart = HttpTypes.StoreCart
 
 // Payment Types
 export interface PaymentMethod {
-  id: string
-  provider_id: string
-  name: string
-  description?: string
+  id: string           // This is the provider ID from API (e.g., pp_stripe_stripe)
   is_enabled: boolean
+  name?: string        // Optional as API doesn't return it
+  description?: string // Optional as API doesn't return it
 }
 
 export interface PaymentFormData {

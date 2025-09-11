@@ -149,7 +149,7 @@ const Payment = memo(({
               >
                 {availablePaymentMethods
                   .sort((a, b) => {
-                    return a.provider_id > b.provider_id ? 1 : -1
+                    return a.id > b.id ? 1 : -1
                   })
                   .map((paymentMethod) => {
                     return (
