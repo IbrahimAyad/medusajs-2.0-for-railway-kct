@@ -1,13 +1,11 @@
-# Fixed Node.js version - DO NOT use nodejs-22_x
 [phases.setup]
-nixPkgs = ["nodejs_20"]
+nixPkgs = ["nodejs_20", "npm-9_x"]
 
 [phases.install]
-cmds = ["npm install"]
+cmds = ["npm install --production=false"]
 
 [phases.build]
-# Skip the wait step during build, just build Next.js directly
-cmds = ["npm run build:next"]
+cmds = ["npm install && npm run build"]
 
 [start]
 cmd = "npm start"

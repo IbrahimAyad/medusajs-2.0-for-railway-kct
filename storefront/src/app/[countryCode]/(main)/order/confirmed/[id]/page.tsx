@@ -32,6 +32,27 @@ export const metadata: Metadata = {
 }
 
 export default async function OrderConfirmedPage({ params, searchParams }: Props) {
+  // Check if this is a pending order (webhook processing)
+  const isPending = params.id.startsWith('pending_') || searchParams.pending === 'true'
+  
+  if (isPending && searchParams.cart_id) {
+    console.log("[Order Page] Pending order, will poll for completion. Cart ID:", searchParams.cart_id)
+    // For pending orders, create a temporary order object
+    const tempOrder = {
+      id: params.id,
+      display_id: params.id,
+      email: "Processing...",
+      created_at: new Date().toISOString(),
+      items: [],
+      total: 0,
+      currency_code: "usd",
+      shipping_address: null,
+      billing_address: null,
+    } as unknown as HttpTypes.StoreOrder
+    
+    return <OrderCompletedTemplate order={tempOrder} cartId={searchParams.cart_id} isPending={true} />
+  }
+  
   const order = await getOrder(params.id)
   if (!order) {
     return notFound()

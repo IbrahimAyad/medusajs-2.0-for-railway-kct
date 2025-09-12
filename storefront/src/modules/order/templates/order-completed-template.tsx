@@ -14,17 +14,19 @@ import { HttpTypes } from "@medusajs/types"
 type OrderCompletedTemplateProps = {
   order: HttpTypes.StoreOrder
   cartId?: string
+  isPending?: boolean
 }
 
 export default function OrderCompletedTemplate({
   order,
   cartId,
+  isPending = false,
 }: OrderCompletedTemplateProps) {
   const isOnboarding = cookies().get("_medusa_onboarding")?.value === "true"
   
   // Cart ID is now available for potential order verification/polling
-  // TODO: Implement polling logic when backend endpoint is ready
   console.log("[Order Confirmation] Cart ID received:", cartId)
+  console.log("[Order Confirmation] Is pending:", isPending)
 
   return (
     <div className="py-6 min-h-[calc(100vh-64px)]">
