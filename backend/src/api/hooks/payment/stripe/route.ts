@@ -20,7 +20,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   }
 
   const stripe = new Stripe(stripeKey, {
-    apiVersion: '2024-04-10',
+    apiVersion: '2025-08-27.basil',
   })
 
   // Get the signature from headers
@@ -123,12 +123,12 @@ async function handlePaymentIntentSucceeded(
         container: req.scope,
       })
 
-      if (result?.order) {
-        console.log(`[Stripe Webhook] ✅ Order created successfully: ${result.order.id}`)
+      if (result?.orderId) {
+        console.log(`[Stripe Webhook] ✅ Order created successfully: ${result.orderId}`)
         return res.json({ 
           received: true, 
           success: true, 
-          order_id: result.order.id 
+          order_id: result.orderId 
         })
       } else {
         console.warn("[Stripe Webhook] Cart completion didn't create order")
@@ -158,6 +158,8 @@ async function handlePaymentIntentSucceeded(
             // Mark as authorized
             await paymentService.updatePaymentSession({
               id: stripeSession.id,
+              currency_code: 'usd',
+              amount: paymentIntent.amount,
               data: {
                 ...stripeSession.data,
                 status: 'authorized',
