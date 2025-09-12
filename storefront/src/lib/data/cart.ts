@@ -367,8 +367,10 @@ export async function placeOrder() {
   if (cartRes?.type === "order") {
     const countryCode =
       cartRes.order.shipping_address?.country_code?.toLowerCase()
-    removeCartId()
-    redirect(`/${countryCode}/order/confirmed/${cartRes?.order.id}`)
+    // IMPORTANT: Do NOT remove cart ID here - keep it for order verification
+    // removeCartId() // Commented out to keep cart alive for webhook processing
+    const cartId = getCartId() // Get cart ID to pass to success page
+    redirect(`/${countryCode}/order/confirmed/${cartRes?.order.id}?cart_id=${cartId}`)
   }
 
   return cartRes.cart

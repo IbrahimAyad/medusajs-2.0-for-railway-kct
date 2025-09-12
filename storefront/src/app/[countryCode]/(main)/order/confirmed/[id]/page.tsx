@@ -8,6 +8,7 @@ import { HttpTypes } from "@medusajs/types"
 
 type Props = {
   params: { id: string }
+  searchParams: { cart_id?: string }
 }
 
 async function getOrder(id: string) {
@@ -30,11 +31,12 @@ export const metadata: Metadata = {
   description: "You purchase was successful",
 }
 
-export default async function OrderConfirmedPage({ params }: Props) {
+export default async function OrderConfirmedPage({ params, searchParams }: Props) {
   const order = await getOrder(params.id)
   if (!order) {
     return notFound()
   }
 
-  return <OrderCompletedTemplate order={order} />
+  // Pass cart_id to template for potential order verification/polling
+  return <OrderCompletedTemplate order={order} cartId={searchParams.cart_id} />
 }
