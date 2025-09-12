@@ -108,6 +108,19 @@ async function handlePaymentIntentSucceeded(
 
     if (!cart) {
       console.error(`[Stripe Webhook] Cart not found: ${cartId}`)
+      // Check if order already exists with this cart ID
+      const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
+      try {
+        const orders = await orderService.listOrders({
+          cart_id: cartId
+        })
+        if (orders?.length > 0) {
+          console.log(`[Stripe Webhook] Order already exists for cart ${cartId}: ${orders[0].id}`)
+          return res.json({ received: true, info: "Order already exists", order_id: orders[0].id })
+        }
+      } catch (e) {
+        console.log("[Stripe Webhook] Could not check for existing orders")
+      }
       // Cart might already be completed
       return res.json({ received: true, info: "Cart not found or already completed" })
     }
@@ -118,7 +131,7 @@ async function handlePaymentIntentSucceeded(
     try {
       const { result } = await completeCartWorkflow.run({
         input: {
-          cart_id: cartId,
+          id: cartId,  // Changed from cart_id to id
         },
         container: req.scope,
       })
