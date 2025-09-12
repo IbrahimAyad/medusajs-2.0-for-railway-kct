@@ -111,15 +111,18 @@ async function handlePaymentIntentSucceeded(
       // Check if order already exists with this cart ID
       const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
       try {
+        // In Medusa v2, we need to use metadata to find orders by cart_id
         const orders = await orderService.listOrders({
-          cart_id: cartId
-        })
+          metadata: {
+            cart_id: cartId
+          }
+        } as any)
         if (orders?.length > 0) {
           console.log(`[Stripe Webhook] Order already exists for cart ${cartId}: ${orders[0].id}`)
           return res.json({ received: true, info: "Order already exists", order_id: orders[0].id })
         }
       } catch (e) {
-        console.log("[Stripe Webhook] Could not check for existing orders")
+        console.log("[Stripe Webhook] Could not check for existing orders:", e)
       }
       // Cart might already be completed
       return res.json({ received: true, info: "Cart not found or already completed" })
