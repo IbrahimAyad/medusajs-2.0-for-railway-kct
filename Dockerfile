@@ -11,8 +11,8 @@ RUN npm ci --only=production=false
 # Copy storefront application files
 COPY storefront/ .
 
-# Build the application
-RUN npm run build
+# Build the application (skip waiting for backend)
+RUN npm run build:next
 
 # Expose port
 EXPOSE 8000
