@@ -228,6 +228,7 @@ export async function initiatePaymentSession(
       method: "POST",
       headers: {
         "Content-Type": "application/json",
+        "x-publishable-api-key": process.env.NEXT_PUBLIC_MEDUSA_PUBLISHABLE_KEY || "",
         ...getAuthHeaders(),
       },
       body: JSON.stringify({
