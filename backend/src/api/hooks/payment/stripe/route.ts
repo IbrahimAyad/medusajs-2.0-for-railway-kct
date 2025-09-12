@@ -1,5 +1,5 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
-import { IOrderModuleService, IPaymentModuleService } from "@medusajs/framework/types"
+import { IOrderModuleService, IPaymentModuleService, ICustomerModuleService } from "@medusajs/framework/types"
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { completeCartWorkflow } from "@medusajs/medusa/core-flows"
 import Stripe from "stripe"
@@ -93,7 +93,8 @@ async function handlePaymentIntentSucceeded(
 
   if (!cartId) {
     console.warn("[Stripe Webhook] No cart ID in payment intent metadata")
-    return res.json({ received: true, warning: "No cart ID" })
+    // Still process the payment and create customer
+    // return res.json({ received: true, warning: "No cart ID" })
   }
 
   try {
@@ -106,7 +107,7 @@ async function handlePaymentIntentSucceeded(
       fields: ["id", "email", "total", "currency_code", "payment_collection.*"]
     })
 
-    if (!cart) {
+    if (!cart && cartId) {
       console.error(`[Stripe Webhook] Cart not found: ${cartId}`)
       // Check if order already exists with this cart ID
       const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
@@ -124,8 +125,37 @@ async function handlePaymentIntentSucceeded(
       } catch (e) {
         console.log("[Stripe Webhook] Could not check for existing orders:", e)
       }
+      
+      // Create customer even without cart
+      const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
+      if (email) {
+        try {
+          const { data: customers } = await query.graph({
+            entity: "customer",
+            filters: { email },
+            fields: ["id", "email", "first_name", "last_name", "has_account"]
+          })
+          
+          let customer = customers?.[0]
+          if (!customer) {
+            // Create guest customer
+            customer = await customerService.createCustomers({
+              email,
+              has_account: false,
+              metadata: {
+                source: 'stripe_webhook',
+                payment_intent_id: paymentIntent.id
+              }
+            })
+            console.log(`[Stripe Webhook] Created guest customer: ${customer.id}`)
+          }
+        } catch (customerError) {
+          console.error("[Stripe Webhook] Error creating customer:", customerError)
+        }
+      }
+      
       // Cart might already be completed
-      return res.json({ received: true, info: "Cart not found or already completed" })
+      return res.json({ received: true, info: "Cart not found but customer created if needed" })
     }
 
     console.log("[Stripe Webhook] Found cart, attempting to complete order")
@@ -142,6 +172,26 @@ async function handlePaymentIntentSucceeded(
       if (result) {
         console.log(`[Stripe Webhook] ✅ Order created successfully`)
         console.log(`[Stripe Webhook] Order result:`, result)
+        
+        // Update order with metadata for tracking
+        try {
+          const orderId = (result as any).id || (result as any).order_id
+          if (orderId) {
+            const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
+            await orderService.updateOrders({
+              id: orderId,
+              metadata: {
+                cart_id: cartId,
+                payment_intent_id: paymentIntent.id,
+                source: 'stripe_webhook'
+              }
+            } as any)
+            console.log(`[Stripe Webhook] Added metadata to order: ${orderId}`)
+          }
+        } catch (metaError) {
+          console.error("[Stripe Webhook] Error adding metadata:", metaError)
+        }
+        
         return res.json({ 
           received: true, 
           success: true, 
