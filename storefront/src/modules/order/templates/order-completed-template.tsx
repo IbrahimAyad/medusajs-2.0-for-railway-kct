@@ -8,16 +8,23 @@ import OnboardingCta from "@modules/order/components/onboarding-cta"
 import OrderDetails from "@modules/order/components/order-details"
 import ShippingDetails from "@modules/order/components/shipping-details"
 import PaymentDetails from "@modules/order/components/payment-details"
+import OrderStatusChecker from "@modules/order/components/order-status-checker"
 import { HttpTypes } from "@medusajs/types"
 
 type OrderCompletedTemplateProps = {
   order: HttpTypes.StoreOrder
+  cartId?: string
 }
 
 export default function OrderCompletedTemplate({
   order,
+  cartId,
 }: OrderCompletedTemplateProps) {
   const isOnboarding = cookies().get("_medusa_onboarding")?.value === "true"
+  
+  // Cart ID is now available for potential order verification/polling
+  // TODO: Implement polling logic when backend endpoint is ready
+  console.log("[Order Confirmation] Cart ID received:", cartId)
 
   return (
     <div className="py-6 min-h-[calc(100vh-64px)]">
@@ -34,6 +41,8 @@ export default function OrderCompletedTemplate({
             <span>Thank you!</span>
             <span>Your order was placed successfully.</span>
           </Heading>
+          {/* Order status verification component */}
+          <OrderStatusChecker cartId={cartId} orderId={order.id} />
           <OrderDetails order={order} />
           <Heading level="h2" className="flex flex-row text-3xl-regular">
             Summary
