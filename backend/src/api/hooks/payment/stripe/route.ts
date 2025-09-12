@@ -123,12 +123,13 @@ async function handlePaymentIntentSucceeded(
         container: req.scope,
       })
 
-      if (result?.orderId) {
-        console.log(`[Stripe Webhook] ✅ Order created successfully: ${result.orderId}`)
+      if (result) {
+        console.log(`[Stripe Webhook] ✅ Order created successfully`)
+        console.log(`[Stripe Webhook] Order result:`, result)
         return res.json({ 
           received: true, 
           success: true, 
-          order_id: result.orderId 
+          order: result 
         })
       } else {
         console.warn("[Stripe Webhook] Cart completion didn't create order")
