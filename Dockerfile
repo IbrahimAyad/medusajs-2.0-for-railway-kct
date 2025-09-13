@@ -1,6 +1,10 @@
 FROM node:20-alpine
 
+# Cache bust: 2025-09-12-19:45
 WORKDIR /app
+
+# Skip backend check during build
+ENV SKIP_BACKEND_CHECK=true
 
 # Copy storefront package files
 COPY storefront/package*.json ./
