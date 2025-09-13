@@ -122,9 +122,10 @@ export async function createOrderFromPaymentIntent(
 
     // Step 3: Create the order
     // Note: The exact method depends on your Medusa version and setup
-    const order = await orderService.createOrders(orderData as any)
+    const orders = await orderService.createOrders(orderData as any)
+    const order = Array.isArray(orders) ? orders[0] : orders
     
-    console.log(`[Fallback Order] ✅ Order created successfully: ${order.id}`)
+    console.log(`[Fallback Order] ✅ Order created successfully: ${order?.id || 'unknown'}`)
     
     return {
       success: true,
