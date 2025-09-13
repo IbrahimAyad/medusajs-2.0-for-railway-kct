@@ -7,6 +7,12 @@ export const listCartPaymentMethods = cache(async function (regionId: string) {
     // Add debug logging
     console.log("Fetching payment providers for region:", regionId)
     
+    // Don't make the request if regionId is empty or invalid
+    if (!regionId || regionId.trim() === "") {
+      console.warn("No region ID provided, skipping payment providers fetch")
+      return []
+    }
+    
     const response = await sdk.store.payment
       .listPaymentProviders(
         { region_id: regionId }

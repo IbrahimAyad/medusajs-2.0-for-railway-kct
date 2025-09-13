@@ -18,7 +18,9 @@ export default async function CheckoutForm({
   }
 
   const shippingMethods = await listCartShippingMethods(cart.id)
-  const paymentMethods = await listCartPaymentMethods(cart.region?.id ?? "")
+  const paymentMethods = cart.region?.id 
+    ? await listCartPaymentMethods(cart.region.id)
+    : []
 
   if (!shippingMethods || !paymentMethods) {
     return null

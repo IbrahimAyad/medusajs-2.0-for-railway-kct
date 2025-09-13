@@ -52,7 +52,30 @@ if (fs.existsSync(envPath)) {
 
 // Install dependencies
 console.log('Installing dependencies in .medusa/server...');
-execSync('npm ci --omit=dev', { 
-  cwd: MEDUSA_SERVER_PATH,
-  stdio: 'inherit'
-});
+
+// Check if pnpm is available, otherwise fall back to npm
+try {
+  execSync('which pnpm', { stdio: 'ignore' });
+  // pnpm is available
+  execSync('pnpm install --prod --frozen-lockfile', { 
+    cwd: MEDUSA_SERVER_PATH,
+    stdio: 'inherit'
+  });
+} catch (e) {
+  // pnpm not available, check for package-lock.json or skip
+  const packageLockPath = path.join(MEDUSA_SERVER_PATH, 'package-lock.json');
+  const npmLockPath = path.join(process.cwd(), 'package-lock.json');
+  
+  if (fs.existsSync(npmLockPath)) {
+    // Copy package-lock.json if it exists
+    fs.copyFileSync(npmLockPath, packageLockPath);
+    execSync('npm ci --omit=dev', {
+      cwd: MEDUSA_SERVER_PATH,
+      stdio: 'inherit'
+    });
+  } else {
+    // No lock file, skip dependency installation in build
+    console.log('No lock file found, skipping dependency installation in .medusa/server');
+    console.log('Dependencies will be handled by the main node_modules');
+  }
+}

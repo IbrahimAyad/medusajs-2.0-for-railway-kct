@@ -27,6 +27,41 @@ const fixStripeAmount = async (
   next()
 }
 
+// Middleware to capture raw body for Stripe webhook signature verification
+const stripeWebhookRawBody = async (
+  req: MedusaRequest,
+  res: MedusaResponse,
+  next: MedusaNextFunction
+) => {
+  // Only process for Stripe webhook endpoint
+  if (req.path === "/hooks/payment/stripe" && req.method === "POST") {
+    let rawBody = ""
+    
+    // Capture raw body chunks
+    req.on("data", (chunk: Buffer) => {
+      rawBody += chunk.toString("utf8")
+    })
+    
+    req.on("end", () => {
+      // Store raw body for webhook handler
+      (req as any).rawBody = rawBody
+      
+      // Parse JSON for Medusa
+      try {
+        req.body = JSON.parse(rawBody)
+      } catch (e) {
+        console.error("[Webhook Middleware] Failed to parse JSON:", e)
+        req.body = {}
+      }
+      
+      console.log("[Webhook Middleware] Captured raw body for Stripe webhook")
+      next()
+    })
+  } else {
+    next()
+  }
+}
+
 export default defineMiddlewares({
   routes: [
     {
@@ -44,6 +79,11 @@ export default defineMiddlewares({
     {
       matcher: "/store/carts/:id/payment-sessions",
       middlewares: [fixStripeAmount],
+    },
+    {
+      matcher: "/hooks/payment/stripe",
+      middlewares: [stripeWebhookRawBody],
+      bodyParser: false, // Disable default body parsing for webhook
     },
   ],
 })

@@ -34,17 +34,34 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
   let event: Stripe.Event
 
-  try {
-    // Verify webhook signature
-    const rawBody = req.body
-    event = stripe.webhooks.constructEvent(
-      typeof rawBody === 'string' ? rawBody : JSON.stringify(rawBody),
-      signature,
-      webhookSecret
-    )
-  } catch (err: any) {
-    console.error("[Stripe Webhook] Signature verification failed:", err.message)
-    return res.status(400).json({ error: `Webhook Error: ${err.message}` })
+  // Allow test mode in development without signature verification
+  const isDevelopment = process.env.NODE_ENV === 'development'
+  const isTestSignature = signature === 'test' || signature.includes('test_signature')
+  
+  if (isDevelopment && isTestSignature) {
+    console.log("[Stripe Webhook] ⚠️ Test mode: Bypassing signature verification")
+    event = req.body as Stripe.Event
+  } else {
+    try {
+      // Get raw body from middleware or fallback to stringified body
+      const rawBody = (req as any).rawBody || (typeof req.body === 'string' ? req.body : JSON.stringify(req.body))
+      
+      console.log("[Stripe Webhook] Verifying signature with raw body length:", rawBody.length)
+      
+      // Verify webhook signature
+      event = stripe.webhooks.constructEvent(
+        rawBody,
+        signature,
+        webhookSecret
+      )
+      
+      console.log("[Stripe Webhook] ✅ Signature verified successfully")
+    } catch (err: any) {
+      console.error("[Stripe Webhook] Signature verification failed:", err.message)
+      console.error("[Stripe Webhook] Webhook secret:", webhookSecret ? "Present" : "Missing")
+      console.error("[Stripe Webhook] Signature:", signature ? "Present" : "Missing")
+      return res.status(400).json({ error: `Webhook Error: ${err.message}` })
+    }
   }
 
   console.log(`[Stripe Webhook] Received event: ${event.type}`)
@@ -82,18 +99,27 @@ async function handlePaymentIntentSucceeded(
   event: Stripe.Event
 ) {
   const paymentIntent = event.data.object as Stripe.PaymentIntent
-  const cartId = paymentIntent.metadata?.cartId
+  const cartId = paymentIntent.metadata?.cartId || paymentIntent.metadata?.cart_id
+  const orderId = paymentIntent.metadata?.order_id
   const email = paymentIntent.metadata?.email
 
   console.log("[Stripe Webhook] Payment intent succeeded:", {
     id: paymentIntent.id,
     amount: paymentIntent.amount,
     cartId,
-    email
+    orderId,
+    email,
+    source: paymentIntent.metadata?.source
   })
 
+  // NEW: Handle order-first checkout flow
+  if (orderId) {
+    console.log("[Stripe Webhook] Order-first checkout detected, updating existing order:", orderId)
+    return await handleOrderFirstPayment(req, res, paymentIntent, orderId)
+  }
+
   if (!cartId) {
-    console.warn("[Stripe Webhook] No cart ID in payment intent metadata")
+    console.warn("[Stripe Webhook] No cart ID or order ID in payment intent metadata")
     // Still process the payment and create customer
     // return res.json({ received: true, warning: "No cart ID" })
   }
@@ -127,36 +153,48 @@ async function handlePaymentIntentSucceeded(
         console.log("[Stripe Webhook] Could not check for existing orders:", e)
       }
       
-      // Create customer even without cart
-      const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
-      if (email) {
-        try {
-          const { data: customers } = await query.graph({
-            entity: "customer",
-            filters: { email },
-            fields: ["id", "email", "first_name", "last_name", "has_account"]
-          })
-          
-          let customer = customers?.[0]
-          if (!customer) {
-            // Create guest customer
-            customer = await customerService.createCustomers({
-              email,
-              has_account: false,
-              metadata: {
-                source: 'stripe_webhook',
-                payment_intent_id: paymentIntent.id
-              }
-            })
-            console.log(`[Stripe Webhook] Created guest customer: ${customer.id}`)
-          }
-        } catch (customerError) {
-          console.error("[Stripe Webhook] Error creating customer:", customerError)
-        }
-      }
+      // Use fallback order creation when cart doesn't exist
+      console.log("[Stripe Webhook] Cart not found, using fallback order creation")
+      const fallbackResult = await createOrderFromPaymentIntent(req, paymentIntent)
       
-      // Cart might already be completed
-      return res.json({ received: true, info: "Cart not found but customer created if needed" })
+      if (fallbackResult.success) {
+        console.log(`[Stripe Webhook] ✅ Fallback order created successfully`)
+        return res.json({ 
+          received: true, 
+          success: true,
+          order: fallbackResult.order,
+          message: fallbackResult.message
+        })
+      } else {
+        console.error("[Stripe Webhook] Fallback order creation failed:", fallbackResult.error)
+        return res.json({ 
+          received: true, 
+          warning: "Cart not found and fallback order creation failed",
+          error: fallbackResult.error
+        })
+      }
+    }
+
+    // Check if we should use fallback
+    if (shouldUseFallback(cart)) {
+      console.log("[Stripe Webhook] Cart exists but using fallback due to:", {
+        hasCart: !!cart,
+        completedAt: cart?.completed_at,
+        itemCount: cart?.items?.length || 0,
+        hasPaymentCollection: !!cart?.payment_collection
+      })
+      
+      const fallbackResult = await createOrderFromPaymentIntent(req, paymentIntent)
+      
+      if (fallbackResult.success) {
+        console.log(`[Stripe Webhook] ✅ Fallback order created successfully`)
+        return res.json({ 
+          received: true, 
+          success: true,
+          order: fallbackResult.order,
+          message: fallbackResult.message
+        })
+      }
     }
 
     console.log("[Stripe Webhook] Found cart, attempting to complete order")
@@ -253,6 +291,105 @@ async function handlePaymentIntentSucceeded(
     return res.status(500).json({ 
       received: false, 
       error: error.message 
+    })
+  }
+}
+
+/**
+ * Handle order-first payment success
+ * Updates existing order status when payment is completed
+ */
+async function handleOrderFirstPayment(
+  req: MedusaRequest,
+  res: MedusaResponse,
+  paymentIntent: Stripe.PaymentIntent,
+  orderId: string
+) {
+  try {
+    const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
+    
+    console.log("[Stripe Webhook] Processing order-first payment for order:", orderId)
+
+    // Check if order exists
+    const orders = await orderService.listOrders({ id: orderId })
+    const order = orders?.[0]
+
+    if (!order) {
+      console.error(`[Stripe Webhook] Order not found: ${orderId}`)
+      return res.status(404).json({ 
+        received: false, 
+        error: `Order ${orderId} not found` 
+      })
+    }
+
+    console.log("[Stripe Webhook] Found order:", {
+      id: order.id,
+      total: order.total,
+      email: order.email,
+      metadata: order.metadata
+    })
+
+    // Check if order is already completed/captured via metadata
+    const isPaymentCaptured = order.metadata?.payment_captured === true || order.metadata?.stripe_payment_status === 'succeeded'
+    if (isPaymentCaptured) {
+      console.log(`[Stripe Webhook] Order ${orderId} already has captured payment`)
+      return res.json({ 
+        received: true, 
+        info: "Order already processed",
+        order_id: orderId,
+        payment_captured: true
+      })
+    }
+
+    // Verify payment amount matches order total
+    const orderAmountInCents = Math.round(Number(order.total) * 100) // Convert BigNumberValue to cents
+    if (Math.abs(paymentIntent.amount - orderAmountInCents) > 1) {
+      console.warn(`[Stripe Webhook] Payment amount mismatch for order ${orderId}:`, {
+        payment_amount: paymentIntent.amount,
+        order_amount: orderAmountInCents,
+        difference: Math.abs(paymentIntent.amount - orderAmountInCents)
+      })
+    }
+
+    // Update order status via metadata
+    const updateData = {
+      metadata: {
+        ...order.metadata,
+        payment_intent_id: paymentIntent.id,
+        payment_captured_at: new Date().toISOString(),
+        stripe_payment_status: paymentIntent.status,
+        payment_captured: true,
+        webhook_processed: true
+      }
+    }
+
+    console.log("[Stripe Webhook] Updating order metadata:", {
+      orderId,
+      paymentCaptured: true,
+      paymentIntentId: paymentIntent.id
+    })
+
+    await orderService.updateOrders({
+      id: orderId,
+      ...updateData
+    } as any)
+
+    console.log(`[Stripe Webhook] ✅ Order ${orderId} payment metadata updated`)
+
+    return res.json({
+      received: true,
+      success: true,
+      order_id: orderId,
+      payment_captured: true,
+      message: 'Order payment captured successfully'
+    })
+
+  } catch (error: any) {
+    console.error("[Stripe Webhook] Error processing order-first payment:", error)
+    return res.status(500).json({
+      received: false,
+      error: `Failed to process order-first payment: ${error.message}`,
+      order_id: orderId
     })
   }
 }
