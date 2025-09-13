@@ -3,6 +3,7 @@ import { IOrderModuleService, IPaymentModuleService, ICustomerModuleService } fr
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { completeCartWorkflow } from "@medusajs/medusa/core-flows"
 import Stripe from "stripe"
+import { createOrderFromPaymentIntent, shouldUseFallback } from "./create-order-fallback"
 
 /**
  * Stripe Webhook Handler for Payment Events
