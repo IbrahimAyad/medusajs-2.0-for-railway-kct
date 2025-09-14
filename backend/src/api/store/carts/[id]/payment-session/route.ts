@@ -37,9 +37,29 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       return res.status(404).json({ error: "Cart not found" })
     }
     
-    // Amount is already in cents from Medusa
-    const amountInCents = cart.total
+    // Convert BigNumber to integer - Medusa v2 stores amounts as BigNumber objects
+    const amountInCents = Math.round(Number(cart.total))
     console.log(`[STRIPE FIX] Cart total: ${amountInCents} cents ($${amountInCents/100})`)
+    
+    // Validate cart has items and valid total
+    if (amountInCents <= 0) {
+      console.error(`[STRIPE FIX] Cart has invalid total: ${cart.total}`)
+      return res.status(400).json({ 
+        error: "Cart is empty or has invalid total. Please add items to your cart.",
+        cart_total: String(cart.total),
+        cart_id: cartId
+      })
+    }
+    
+    // Stripe requires minimum amount of 50 cents
+    if (amountInCents < 50) {
+      console.error(`[STRIPE FIX] Cart total below Stripe minimum: ${amountInCents} cents`)
+      return res.status(400).json({ 
+        error: "Cart total must be at least $0.50",
+        cart_total: amountInCents / 100,
+        minimum_required: 0.50
+      })
+    }
     
     // Create or get payment collection
     let paymentCollectionId = cart.payment_collection?.id
@@ -48,7 +68,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         cart_id: cartId,
         region_id: cart.region_id,
         currency_code: cart.currency_code,
-        amount: amountInCents // Already in cents!
+        amount: amountInCents // Properly converted to integer cents
       } as any)
       paymentCollectionId = (collection as any).id
       console.log(`[STRIPE FIX] Created payment collection ${paymentCollectionId}`)
