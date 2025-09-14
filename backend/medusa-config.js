@@ -175,7 +175,7 @@ const medusaConfig = {
             options: {
               apiKey: STRIPE_API_KEY,
               webhookSecret: STRIPE_WEBHOOK_SECRET,
-              capture: false,  // Use manual capture to match our custom endpoint
+              capture: true,  // Use automatic capture for Medusa 2.0 standard flow
               payment_description: 'Order from KCT Menswear',
               automatic_payment_methods: true,
             },

@@ -99,7 +99,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         const paymentIntent = await stripe.paymentIntents.create({
         amount: amountInCents, // Already in cents, NO MULTIPLICATION!
         currency: cart.currency_code,
-        capture_method: 'manual', // CRITICAL: Use manual capture so backend can control it
+        capture_method: 'automatic', // Use automatic capture for Medusa 2.0 standard flow
         metadata: {
           cart_id: cartId,
           resource_id: cartId
