@@ -257,7 +257,7 @@ async function handlePaymentIntentSucceeded(
           })
           
           const stripeSession = paymentSessions.find(s => 
-            s.provider_id === 'stripe' || s.data?.id === paymentIntent.id
+            s.provider_id === 'pp_stripe_stripe' || s.data?.id === paymentIntent.id
           )
           
           if (stripeSession) {

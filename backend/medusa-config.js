@@ -171,7 +171,7 @@ const medusaConfig = {
         providers: [
           {
             resolve: '@medusajs/payment-stripe',
-            id: 'stripe',
+            id: 'pp_stripe_stripe',
             options: {
               apiKey: STRIPE_API_KEY,
               webhookSecret: STRIPE_WEBHOOK_SECRET,

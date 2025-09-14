@@ -4,7 +4,7 @@ export const POST = [
   async (req: MedusaRequest, res: MedusaResponse, next: any) => {
     // Intercept Stripe payment session creation
     const body = req.body as any
-    if (req.path.includes("payment-sessions") && body?.provider_id === "stripe") {
+    if (req.path.includes("payment-sessions") && (body?.provider_id === "stripe" || body?.provider_id === "pp_stripe_stripe")) {
       console.log("[STRIPE AMOUNT FIX] Intercepting payment session creation")
       
       // Store original amount for logging

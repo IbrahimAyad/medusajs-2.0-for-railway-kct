@@ -12,7 +12,7 @@ import Stripe from "stripe"
  */
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   const { id: cartId } = req.params
-  const { provider_id = "stripe" } = req.body as any
+  const { provider_id = "pp_stripe_stripe" } = req.body as any
   
   console.log(`[STRIPE FIX] Creating payment session for cart ${cartId}`)
   
@@ -79,7 +79,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     console.log(`[STRIPE FIX] Creating fresh payment session`)
     
     // For Stripe, create the payment intent directly with correct amount
-    if (provider_id === "stripe") {
+    if (provider_id === "pp_stripe_stripe") {
       const stripeKey = process.env.STRIPE_API_KEY || process.env.STRIPE_SECRET_KEY
       console.log(`[STRIPE FIX] Stripe key exists: ${!!stripeKey}`)
       
