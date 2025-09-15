@@ -3,7 +3,7 @@ import Stripe from "stripe"
 
 // Initialize Stripe with the secret key from environment
 const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
-  apiVersion: "2024-06-20",
+  apiVersion: "2025-08-27.basil",
 })
 
 interface CreatePaymentRequest {

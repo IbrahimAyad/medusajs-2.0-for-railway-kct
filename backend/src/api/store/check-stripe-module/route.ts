@@ -19,7 +19,7 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
       containerError = error.message
       // Also try the old ID format as fallback
       try {
-        const stripeProviderOld = container.resolve('stripe')
+        const stripeProviderOld = req.scope.resolve('stripe')
         stripeProviderExists = !!stripeProviderOld
         containerError = null // Clear error if fallback works
       } catch (error2: any) {

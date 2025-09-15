@@ -34,15 +34,14 @@ async function testStripeProvider() {
     const paymentResponse = await stripeProvider.initiatePayment({
       amount: 2999, // $29.99
       currency_code: 'usd',
-      resource_id: 'test-cart-123',
-      context: { cart_id: 'test-cart-123' }
+      context: {}
     })
     
     if ('error' in paymentResponse) {
       console.error('[TEST] ❌ Payment initiation failed:', paymentResponse.error)
     } else {
-      console.log('[TEST] ✅ Payment intent created:', paymentResponse.session_data.id)
-      console.log('[TEST] Client secret:', paymentResponse.session_data.client_secret ? 'Present' : 'Missing')
+      console.log('[TEST] ✅ Payment intent created:', paymentResponse.id)
+      console.log('[TEST] Client secret:', paymentResponse.data?.client_secret ? 'Present' : 'Missing')
     }
     
   } catch (error) {

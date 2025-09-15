@@ -68,22 +68,54 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     
     // Enhanced amount conversion to handle BigNumber objects properly
     const convertAmount = (amount: any): number => {
+      // First log what we're receiving for debugging
+      console.log(`[STRIPE ENHANCED] Raw amount type: ${typeof amount}`)
+      console.log(`[STRIPE ENHANCED] Raw amount value:`, JSON.stringify(amount, null, 2))
+      
       if (typeof amount === 'object' && amount !== null) {
-        // Handle BigNumber objects
+        // Handle Medusa v2 BigNumber/MikroORM numeric objects
+        if (amount.raw_ && amount.raw_.value !== undefined) {
+          // This is a MikroORM numeric type
+          const value = parseFloat(amount.raw_.value)
+          console.log(`[STRIPE ENHANCED] Extracted from raw_.value: ${value}`)
+          return Math.round(value)
+        }
+        
+        // Handle numeric_ property
+        if (amount.numeric_ !== undefined) {
+          const value = parseFloat(amount.numeric_)
+          console.log(`[STRIPE ENHANCED] Extracted from numeric_: ${value}`)
+          return Math.round(value)
+        }
+        
+        // Handle BigNumber objects with toNumber method
         if ('toNumber' in amount && typeof amount.toNumber === 'function') {
-          return Math.round(amount.toNumber())
-        } else if ('toString' in amount) {
-          return Math.round(parseFloat(amount.toString()))
+          const value = amount.toNumber()
+          console.log(`[STRIPE ENHANCED] Extracted via toNumber(): ${value}`)
+          return Math.round(value)
+        }
+        
+        // Handle objects with toString method
+        if ('toString' in amount && typeof amount.toString === 'function') {
+          const str = amount.toString()
+          // Avoid parsing object representations like "[object Object]"
+          if (!str.includes('[object')) {
+            const value = parseFloat(str)
+            console.log(`[STRIPE ENHANCED] Extracted via toString(): ${value}`)
+            return Math.round(value)
+          }
         }
       }
       
+      // Simple conversion for numbers and strings
       const numAmount = Number(amount)
-      if (isNaN(numAmount)) {
-        console.warn(`[STRIPE ENHANCED] Invalid amount received:`, amount)
-        return 0
+      if (!isNaN(numAmount)) {
+        console.log(`[STRIPE ENHANCED] Direct conversion: ${numAmount}`)
+        return Math.round(numAmount)
       }
       
-      return Math.round(numAmount)
+      console.error(`[STRIPE ENHANCED] Could not convert amount to number:`, amount)
+      return 0
     }
     
     const amountInCents = convertAmount(cart.total)
@@ -137,16 +169,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
           const paymentResponse = await stripeProvider.initiatePayment({
             amount: amountInCents,
             currency_code: cart.currency_code || 'usd',
-            resource_id: cartId,
-            customer: cart.customer_id ? { id: cart.customer_id } : undefined,
-            context: { cart_id: cartId }
+            context: {}
           })
           
           if ('error' in paymentResponse) {
             throw new Error(`Custom Stripe provider error: ${paymentResponse.error}`)
           }
           
-          console.log(`[STRIPE ENHANCED] ✅ Custom provider created payment intent:`, paymentResponse.session_data.id)
+          console.log(`[STRIPE ENHANCED] ✅ Custom provider created payment intent:`, paymentResponse.id)
           
           // Create payment session in Medusa using custom provider response
           const session = await paymentService.createPaymentSession(
@@ -155,7 +185,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
               provider_id: provider_id,
               currency_code: cart.currency_code,
               amount: amountInCents,
-              data: paymentResponse.session_data,
+              data: paymentResponse.data,
               context: {
                 cart_id: cartId
               }
@@ -166,8 +196,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             payment_session: {
               ...session,
               data: {
-                id: paymentResponse.session_data.id,
-                client_secret: paymentResponse.session_data.client_secret
+                id: paymentResponse.id,
+                client_secret: paymentResponse.data?.client_secret
               }
             },
             payment_collection_id: paymentCollectionId,
@@ -194,7 +224,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       
       try {
         const stripe = new Stripe(stripeKey, {
-          apiVersion: '2024-12-18.acacia'
+          apiVersion: '2025-08-27.basil'
         })
         
         console.log(`[STRIPE ENHANCED] Creating PaymentIntent with amount: ${amountInCents}`)
@@ -228,9 +258,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
               client_secret: paymentIntent.client_secret,
               status: paymentIntent.status
             },
-            context: {
-              cart_id: cartId
-            }
+            context: {}
           } as any
         )
         

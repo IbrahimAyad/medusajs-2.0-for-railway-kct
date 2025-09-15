@@ -41,10 +41,7 @@ export default async (container: MedusaContainer): Promise<void> => {
     // Verify registration
     try {
       const stripeService = container.resolve('stripe')
-      logger.info('[StripeLoader] ✅ Stripe service verification successful:', {
-        identifier: StripeProviderService.identifier,
-        hasService: !!stripeService
-      })
+      logger.info('[StripeLoader] ✅ Stripe service verification successful')
     } catch (verificationError) {
       logger.error('[StripeLoader] ❌ Stripe service verification failed:', verificationError)
     }
