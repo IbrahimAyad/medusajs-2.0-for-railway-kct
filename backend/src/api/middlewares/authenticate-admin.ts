@@ -2,6 +2,14 @@ import { MedusaRequest, MedusaResponse, MedusaNextFunction } from "@medusajs/fra
 import { Modules } from "@medusajs/framework/utils"
 import jwt from "jsonwebtoken"
 
+// Extend MedusaRequest to include user properties
+declare module "@medusajs/framework" {
+  interface MedusaRequest {
+    user?: any
+    userId?: string
+  }
+}
+
 /**
  * Middleware to authenticate admin users
  * This ensures all admin routes require proper JWT authentication
@@ -85,8 +93,8 @@ export const authenticateAdmin = async (
       }
 
       // Add user to request context
-      req.user = user
-      req.userId = userId
+      ;(req as any).user = user
+      ;(req as any).userId = userId
 
       console.log('[Auth Middleware] Authentication successful for user:', user.email)
       next()
@@ -150,8 +158,8 @@ export const authenticateAdminOptional = async (
         const user = await userService.retrieveUser(userId)
         
         if (user) {
-          req.user = user
-          req.userId = userId
+          ;(req as any).user = user
+          ;(req as any).userId = userId
         }
       }
     } catch (error) {

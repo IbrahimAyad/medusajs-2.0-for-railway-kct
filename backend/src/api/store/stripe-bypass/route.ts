@@ -1,13 +1,19 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import Stripe from "stripe"
 
+interface StripeBypassRequestBody {
+  amount: number
+  currency?: string
+  metadata?: Record<string, any>
+}
+
 const stripe = new Stripe(process.env.STRIPE_API_KEY || process.env.STRIPE_SECRET_KEY || "", {
   apiVersion: "2025-08-27.acacia" as any
 })
 
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
-    const { amount, currency = "usd", metadata = {} } = req.body
+    const { amount, currency = "usd", metadata = {} } = req.body as StripeBypassRequestBody
     
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(amount),

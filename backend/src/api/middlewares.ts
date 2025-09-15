@@ -129,7 +129,7 @@ export default defineMiddlewares({
     {
       matcher: "/hooks/payment/stripe",
       middlewares: [stripeWebhookRawBody],
-      bodyParser: { type: ["text/plain", "application/json"] }, // Enable body parsing but capture raw too
+      bodyParser: false, // Disable default body parsing to capture raw body
     },
   ],
 })

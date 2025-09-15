@@ -45,7 +45,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     console.log("[Stripe Webhook] Request body type:", typeof req.body)
     console.log("[Stripe Webhook] Request body keys:", req.body ? Object.keys(req.body) : 'no body')
     // Ensure we have a valid event object from request body
-    if (req.body && typeof req.body === 'object' && req.body.type) {
+    if (req.body && typeof req.body === 'object' && (req.body as any).type) {
       event = req.body as Stripe.Event
       console.log("[Stripe Webhook] Using test event:", event.type)
     } else {
@@ -433,8 +433,7 @@ async function handleOrderFirstPayment(
         for (const collection of paymentCollections) {
           console.log(`[Stripe Webhook] Updating payment collection ${collection.id} for order ${orderId}`)
           
-          await paymentService.updatePaymentCollections({
-            id: collection.id,
+          await paymentService.updatePaymentCollections(collection.id, {
             metadata: {
               ...collection.metadata,
               payment_captured: true,
