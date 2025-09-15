@@ -1,5 +1,6 @@
 import { defineMiddlewares } from "@medusajs/medusa"
 import { MedusaRequest, MedusaResponse, MedusaNextFunction } from "@medusajs/framework"
+import { authenticateAdmin } from "./middlewares/authenticate-admin"
 
 // Middleware to fix Stripe amount calculation
 const fixStripeAmount = async (
@@ -72,9 +73,23 @@ export default defineMiddlewares({
       matcher: "/store/checkout-status",
       middlewares: [],
     },
+    // Apply authentication to all admin routes
+    {
+      matcher: "/admin/**",
+      middlewares: [authenticateAdmin],
+    },
+    // Exceptions for certain admin routes that don't need auth (like login)
+    {
+      matcher: "/admin/auth/**",
+      middlewares: [],
+    },
+    {
+      matcher: "/admin/login",
+      middlewares: [],
+    },
     {
       matcher: "/admin/setup-product-pricing",
-      middlewares: [],
+      middlewares: [authenticateAdmin],
     },
     {
       matcher: "/store/carts/:id/payment-sessions",
