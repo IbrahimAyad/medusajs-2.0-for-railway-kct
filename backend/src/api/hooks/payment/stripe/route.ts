@@ -108,7 +108,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       case 'charge.succeeded':
         // Also handle charge.succeeded for compatibility
         console.log("[Stripe Webhook] Charge succeeded:", event.data.object)
-        return res.json({ received: true })
+        return res.status(200).json({ received: true })
         
       case 'checkout.session.completed':
         // Handle standard checkout sessions if used
@@ -116,7 +116,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         
       default:
         console.log(`[Stripe Webhook] Unhandled event type: ${event.type}`)
-        return res.json({ received: true })
+        return res.status(200).json({ received: true })
     }
   } catch (error: any) {
     console.error("[Stripe Webhook] Error processing event:", error)
@@ -477,7 +477,7 @@ async function handlePaymentIntentFailed(
   
   // You could update order status or notify customer here
   
-  res.json({ received: true })
+  return res.status(200).json({ received: true })
 }
 
 async function handleCheckoutSessionCompleted(
@@ -497,5 +497,5 @@ async function handleCheckoutSessionCompleted(
   // Similar logic to handlePaymentIntentSucceeded
   // but for checkout.session.completed events
   
-  res.json({ received: true })
+  return res.status(200).json({ received: true })
 }

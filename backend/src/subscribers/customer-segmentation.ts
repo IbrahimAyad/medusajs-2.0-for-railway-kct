@@ -304,15 +304,21 @@ function calculateConversionRate(guestTracking: any[]): number {
   return Math.round((converted / guestTracking.length) * 100)
 }
 
-// Export configurations
-export const guestPurchaseConfig: SubscriberConfig = {
-  event: 'order.placed'
-}
-
-export const customerRegistrationConfig: SubscriberConfig = {
-  event: 'customer.created'
-}
-
-export const customerPurchaseConfig: SubscriberConfig = {
-  event: 'order.placed'
-}
+// Export subscriber definitions
+export default [
+  {
+    identifier: 'guest-purchase-tracker',
+    event: 'order.placed',
+    subscriber: handleGuestPurchase,
+  },
+  {
+    identifier: 'customer-registration-tracker',
+    event: 'customer.created',
+    subscriber: handleCustomerRegistration,
+  },
+  {
+    identifier: 'customer-purchase-tracker',
+    event: 'order.placed',
+    subscriber: handleCustomerPurchase,
+  },
+]
