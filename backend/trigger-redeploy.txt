@@ -1,3 +1,1 @@
-# Trigger redeploy with fixed Stripe key
-# Reverting to correct Stripe key ending in glir
-Webhook handler added: Thu Sep 11 19:55:53 EDT 2025
+Fixed Stripe integration - runtime environment variable loading solution

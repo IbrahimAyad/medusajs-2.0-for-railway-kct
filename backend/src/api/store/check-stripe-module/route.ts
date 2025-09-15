@@ -12,11 +12,19 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
     
     try {
       const container = req.scope
-      // Try to resolve the stripe provider
-      const stripeProvider = container.resolve('stripe')
+      // Try to resolve the stripe provider with correct Medusa v2 ID
+      const stripeProvider = container.resolve('pp_stripe')
       stripeProviderExists = !!stripeProvider
     } catch (error: any) {
       containerError = error.message
+      // Also try the old ID format as fallback
+      try {
+        const stripeProviderOld = container.resolve('stripe')
+        stripeProviderExists = !!stripeProviderOld
+        containerError = null // Clear error if fallback works
+      } catch (error2: any) {
+        containerError = `Both pp_stripe and stripe failed: ${error.message} | ${error2.message}`
+      }
     }
     
     // Check if payment module is loaded
