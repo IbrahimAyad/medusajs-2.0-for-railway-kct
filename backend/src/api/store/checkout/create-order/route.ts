@@ -2,6 +2,7 @@ import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
 import { IOrderModuleService, ICustomerModuleService, IRegionModuleService } from "@medusajs/framework/types"
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import Stripe from "stripe"
+import { calculateTax, getTaxSummary } from "../../../../utils/tax-calculator"
 
 /**
  * Create Order Endpoint - Order-First Checkout Flow
@@ -135,17 +136,38 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     // Step 2: Get default region
     const regionId = "reg_01K3S6NDGAC1DSWH9MCZCWBWWD"
 
-    // Step 3: Calculate totals
+    // Step 3: Calculate totals with tax
     const subtotal = items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0)
-    const tax_total = 0 // You may want to calculate tax here
+    
+    // Calculate tax based on shipping address
+    const taxBreakdown = calculateTax({
+      subtotal,
+      shipping_address: {
+        country_code: shipping_address.country_code,
+        province: shipping_address.province,
+        city: shipping_address.city,
+        postal_code: shipping_address.postal_code
+      },
+      currency_code
+    })
+    
+    const tax_total = taxBreakdown.tax_total
     const shipping_total = 0 // You may want to calculate shipping here
     const discount_total = 0
-    const total = subtotal + tax_total + shipping_total - discount_total
-
-    // Validate amount matches calculated total
-    if (Math.abs(total - amount) > 1) { // Allow 1 cent difference for rounding
-      console.warn(`[Create Order] Amount mismatch: calculated ${total}, provided ${amount}`)
-    }
+    const calculated_total = subtotal + tax_total + shipping_total - discount_total
+    
+    // Use calculated total with tax, not the provided amount
+    const final_total = calculated_total
+    
+    console.log(`[Create Order] Tax calculation:`, {
+      subtotal,
+      tax_rate: (taxBreakdown.tax_rate * 100).toFixed(2) + '%',
+      tax_name: taxBreakdown.tax_name,
+      tax_total,
+      calculated_total,
+      provided_amount: amount,
+      using_calculated_total: final_total
+    })
 
     // Step 4: Create the order with "pending" status
     const orderData = {
@@ -173,7 +195,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       })),
 
       // Totals
-      total: amount, // Use provided amount
+      total: final_total, // Use calculated total with tax
       subtotal: subtotal,
       tax_total: tax_total,
       shipping_total: shipping_total,
@@ -189,7 +211,13 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         created_from: 'order_first_checkout',
         source: 'create_order_endpoint',
         checkout_type: 'order_first',
-        original_amount: amount
+        original_amount: amount,
+        tax_calculation: {
+          tax_rate: taxBreakdown.tax_rate,
+          tax_name: taxBreakdown.tax_name,
+          tax_jurisdiction: taxBreakdown.tax_details[0]?.jurisdiction || 'Unknown',
+          tax_summary: getTaxSummary(taxBreakdown, currency_code)
+        }
       }
     }
 
@@ -214,7 +242,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Step 5: Create Stripe payment intent with order_id in metadata
     const paymentIntentData: Stripe.PaymentIntentCreateParams = {
-      amount: amount,
+      amount: final_total, // Use calculated total with tax
       currency: currency_code,
       automatic_payment_methods: {
         enabled: true,
@@ -224,6 +252,10 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         email: email,
         customer_name: customer_name || `${shipping_address.first_name} ${shipping_address.last_name}`,
         source: 'order_first_checkout',
+        subtotal: subtotal.toString(),
+        tax_total: tax_total.toString(),
+        tax_rate: (taxBreakdown.tax_rate * 100).toFixed(2) + '%',
+        tax_name: taxBreakdown.tax_name,
         ...(cart_id && { cart_id }) // Keep cart_id if provided for backwards compatibility
       },
       description: `Order ${order.id} - ${items.length} item(s)`,
@@ -260,9 +292,17 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       success: true,
       order_id: order.id,
       client_secret: paymentIntent.client_secret,
-      amount: amount,
+      amount: final_total,
       currency: currency_code,
       payment_intent_id: paymentIntent.id,
+      tax_breakdown: {
+        subtotal,
+        tax_total,
+        tax_rate: taxBreakdown.tax_rate,
+        tax_name: taxBreakdown.tax_name,
+        total: final_total,
+        tax_summary: getTaxSummary(taxBreakdown, currency_code)
+      },
       order: {
         id: order.id,
         status: order.status,

@@ -12,6 +12,8 @@ import { createOrderFromPaymentIntent, shouldUseFallback } from "./create-order-
  * This handles payment_intent.succeeded events from our custom checkout flow
  */
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
+  console.log("[Stripe Webhook] POST request received")
+  
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
   const stripeKey = process.env.STRIPE_API_KEY
 
@@ -34,19 +36,39 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
   let event: Stripe.Event
 
-  // Allow test mode in development without signature verification
+  // Check for development mode bypass
   const isDevelopment = process.env.NODE_ENV === 'development'
   const isTestSignature = signature === 'test' || signature.includes('test_signature')
   
   if (isDevelopment && isTestSignature) {
     console.log("[Stripe Webhook] ⚠️ Test mode: Bypassing signature verification")
-    event = req.body as Stripe.Event
+    console.log("[Stripe Webhook] Request body type:", typeof req.body)
+    console.log("[Stripe Webhook] Request body keys:", req.body ? Object.keys(req.body) : 'no body')
+    // Ensure we have a valid event object from request body
+    if (req.body && typeof req.body === 'object' && req.body.type) {
+      event = req.body as Stripe.Event
+      console.log("[Stripe Webhook] Using test event:", event.type)
+    } else {
+      console.error("[Stripe Webhook] Invalid test event body:", JSON.stringify(req.body, null, 2))
+      return res.status(400).json({ error: "Invalid test event body" })
+    }
   } else {
     try {
-      // Get raw body from middleware or fallback to stringified body
-      const rawBody = (req as any).rawBody || (typeof req.body === 'string' ? req.body : JSON.stringify(req.body))
+      // Try to get raw body from middleware
+      let rawBody = (req as any).rawBody
+
+      // If no raw body from middleware, try to reconstruct from parsed body
+      if (!rawBody) {
+        if (typeof req.body === 'string') {
+          rawBody = req.body
+        } else if (typeof req.body === 'object') {
+          rawBody = JSON.stringify(req.body)
+        } else {
+          throw new Error("Unable to get raw body for signature verification")
+        }
+      }
       
-      console.log("[Stripe Webhook] Verifying signature with raw body length:", rawBody.length)
+      console.log("[Stripe Webhook] Verifying signature with raw body length:", rawBody ? rawBody.length : 'undefined')
       
       // Verify webhook signature
       event = stripe.webhooks.constructEvent(
@@ -60,36 +82,48 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       console.error("[Stripe Webhook] Signature verification failed:", err.message)
       console.error("[Stripe Webhook] Webhook secret:", webhookSecret ? "Present" : "Missing")
       console.error("[Stripe Webhook] Signature:", signature ? "Present" : "Missing")
+      console.error("[Stripe Webhook] Raw body available:", !!(req as any).rawBody)
+      console.error("[Stripe Webhook] Request body type:", typeof req.body)
       return res.status(400).json({ error: `Webhook Error: ${err.message}` })
     }
   }
 
-  console.log(`[Stripe Webhook] Received event: ${event.type}`)
+  // Verify event is properly parsed
+  if (!event || !event.type) {
+    console.error("[Stripe Webhook] Invalid event object:", event)
+    return res.status(400).json({ error: "Invalid event object" })
+  }
 
-  // Handle the event
-  switch (event.type) {
-    case 'payment_intent.succeeded':
-      await handlePaymentIntentSucceeded(req, res, event)
-      break
-      
-    case 'payment_intent.payment_failed':
-      await handlePaymentIntentFailed(req, res, event)
-      break
-      
-    case 'charge.succeeded':
-      // Also handle charge.succeeded for compatibility
-      console.log("[Stripe Webhook] Charge succeeded:", event.data.object)
-      res.json({ received: true })
-      break
-      
-    case 'checkout.session.completed':
-      // Handle standard checkout sessions if used
-      await handleCheckoutSessionCompleted(req, res, event)
-      break
-      
-    default:
-      console.log(`[Stripe Webhook] Unhandled event type: ${event.type}`)
-      res.json({ received: true })
+  console.log(`[Stripe Webhook] Processing event: ${event.type}`)
+
+  try {
+    // Handle the event
+    switch (event.type) {
+      case 'payment_intent.succeeded':
+        return await handlePaymentIntentSucceeded(req, res, event)
+        
+      case 'payment_intent.payment_failed':
+        return await handlePaymentIntentFailed(req, res, event)
+        
+      case 'charge.succeeded':
+        // Also handle charge.succeeded for compatibility
+        console.log("[Stripe Webhook] Charge succeeded:", event.data.object)
+        return res.json({ received: true })
+        
+      case 'checkout.session.completed':
+        // Handle standard checkout sessions if used
+        return await handleCheckoutSessionCompleted(req, res, event)
+        
+      default:
+        console.log(`[Stripe Webhook] Unhandled event type: ${event.type}`)
+        return res.json({ received: true })
+    }
+  } catch (error: any) {
+    console.error("[Stripe Webhook] Error processing event:", error)
+    return res.status(500).json({ 
+      received: false, 
+      error: error.message 
+    })
   }
 }
 
@@ -351,7 +385,7 @@ async function handleOrderFirstPayment(
       })
     }
 
-    // Update order status via metadata
+    // Update order metadata (payment_status doesn't exist on Order model in Medusa v2)
     const updateData = {
       metadata: {
         ...order.metadata,
@@ -359,14 +393,17 @@ async function handleOrderFirstPayment(
         payment_captured_at: new Date().toISOString(),
         stripe_payment_status: paymentIntent.status,
         payment_captured: true,
-        webhook_processed: true
+        webhook_processed: true,
+        webhook_source: 'stripe_payment_intent_succeeded',
+        payment_status: 'captured' // Store in metadata instead
       }
     }
 
-    console.log("[Stripe Webhook] Updating order metadata:", {
+    console.log("[Stripe Webhook] Updating order with payment captured metadata:", {
       orderId,
       paymentCaptured: true,
-      paymentIntentId: paymentIntent.id
+      paymentIntentId: paymentIntent.id,
+      paymentStatus: 'captured'
     })
 
     await orderService.updateOrders({
@@ -374,7 +411,43 @@ async function handleOrderFirstPayment(
       ...updateData
     } as any)
 
-    console.log(`[Stripe Webhook] ✅ Order ${orderId} payment metadata updated`)
+    console.log(`[Stripe Webhook] ✅ Order ${orderId} payment captured metadata updated`)
+
+    // Also try to update any associated payment collections
+    try {
+      const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
+      
+      // Find payment collections for this order
+      const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+      const { data: paymentCollections } = await query.graph({
+        entity: "payment_collection",
+        filters: {
+          metadata: {
+            order_id: orderId
+          }
+        },
+        fields: ["id", "status", "amount", "metadata"]
+      })
+
+      if (paymentCollections && paymentCollections.length > 0) {
+        for (const collection of paymentCollections) {
+          console.log(`[Stripe Webhook] Updating payment collection ${collection.id} for order ${orderId}`)
+          
+          await paymentService.updatePaymentCollections({
+            id: collection.id,
+            metadata: {
+              ...collection.metadata,
+              payment_captured: true,
+              payment_intent_id: paymentIntent.id,
+              webhook_processed: true
+            }
+          } as any)
+        }
+      }
+    } catch (paymentError) {
+      console.warn("[Stripe Webhook] Could not update payment collections:", paymentError)
+      // Don't fail the webhook if payment collection update fails
+    }
 
     return res.json({
       received: true,

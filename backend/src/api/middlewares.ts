@@ -36,27 +36,58 @@ const stripeWebhookRawBody = async (
 ) => {
   // Only process for Stripe webhook endpoint
   if (req.path === "/hooks/payment/stripe" && req.method === "POST") {
-    let rawBody = ""
+    console.log("[Webhook Middleware] Processing Stripe webhook request")
     
-    // Capture raw body chunks
+    let rawBody = Buffer.alloc(0)
+    
+    // Save original request properties that we might override
+    const originalOn = req.on.bind(req)
+    
+    // If the body has already been read, try to reconstruct
+    if (req.body !== undefined) {
+      console.log("[Webhook Middleware] Body already parsed, reconstructing raw body")
+      try {
+        const bodyString = typeof req.body === 'string' ? req.body : JSON.stringify(req.body)
+        ;(req as any).rawBody = bodyString
+        console.log("[Webhook Middleware] Raw body reconstructed from parsed body")
+        return next()
+      } catch (e) {
+        console.error("[Webhook Middleware] Failed to reconstruct raw body:", e)
+      }
+    }
+    
+    // Override the readable stream to capture raw data
+    const chunks: Buffer[] = []
+    
     req.on("data", (chunk: Buffer) => {
-      rawBody += chunk.toString("utf8")
+      chunks.push(chunk)
     })
     
     req.on("end", () => {
-      // Store raw body for webhook handler
-      (req as any).rawBody = rawBody
+      // Combine all chunks
+      rawBody = Buffer.concat(chunks)
       
-      // Parse JSON for Medusa
-      try {
-        req.body = JSON.parse(rawBody)
-      } catch (e) {
-        console.error("[Webhook Middleware] Failed to parse JSON:", e)
-        req.body = {}
+      // Store both raw buffer and string versions
+      ;(req as any).rawBody = rawBody.toString("utf8")
+      ;(req as any).rawBodyBuffer = rawBody
+      
+      // Parse JSON for Medusa if not already parsed
+      if (req.body === undefined) {
+        try {
+          req.body = JSON.parse(rawBody.toString("utf8"))
+        } catch (e) {
+          console.error("[Webhook Middleware] Failed to parse JSON:", e)
+          req.body = {}
+        }
       }
       
-      console.log("[Webhook Middleware] Captured raw body for Stripe webhook")
+      console.log("[Webhook Middleware] ✅ Captured raw body for Stripe webhook:", rawBody.length, "bytes")
       next()
+    })
+    
+    req.on("error", (err) => {
+      console.error("[Webhook Middleware] Error reading request:", err)
+      next(err)
     })
   } else {
     next()
@@ -98,7 +129,7 @@ export default defineMiddlewares({
     {
       matcher: "/hooks/payment/stripe",
       middlewares: [stripeWebhookRawBody],
-      bodyParser: false, // Disable default body parsing for webhook
+      bodyParser: { type: ["text/plain", "application/json"] }, // Enable body parsing but capture raw too
     },
   ],
 })

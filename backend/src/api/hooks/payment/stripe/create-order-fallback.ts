@@ -92,11 +92,18 @@ export async function createOrderFromPaymentIntent(
         stripe_amount: paymentIntent.amount,
         created_from: 'webhook_fallback',
         source: 'stripe_webhook',
-        fallback_reason: 'cart_not_found'
+        fallback_reason: 'cart_not_found',
+        payment_captured: true,
+        payment_captured_at: new Date().toISOString(),
+        webhook_processed: true
       },
 
-      // Payment status
+      // Payment status - mark as captured since payment already succeeded
       payment_status: 'captured',
+      fulfillment_status: 'not_fulfilled',
+      
+      // Order status
+      status: 'pending', // Order created but fulfillment pending
       
       // Items would need to be reconstructed from metadata or defaults
       items: [
