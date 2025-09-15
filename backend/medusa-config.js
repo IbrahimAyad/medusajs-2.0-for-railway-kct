@@ -34,7 +34,20 @@ import {
   SHOPIFY_LOCATION_ID
 } from './src/lib/constants';
 
+// Dynamic Stripe configuration function
+
 loadEnv(process.env.NODE_ENV, process.cwd());
+
+// Ensure environment variables are loaded for Railway production
+if (process.env.NODE_ENV === 'production') {
+  console.log('=== PRODUCTION ENVIRONMENT LOADING ===');
+  console.log('NODE_ENV:', process.env.NODE_ENV);
+  console.log('Railway Domain:', process.env.RAILWAY_PUBLIC_DOMAIN_VALUE);
+  console.log('Environment variables available at config time:');
+  Object.keys(process.env).filter(k => k.includes('STRIPE')).forEach(key => {
+    console.log(`  ${key}: ${process.env[key] ? '[SET]' : '[NOT SET]'}`);
+  });
+}
 
 
 const medusaConfig = {
@@ -164,42 +177,79 @@ const medusaConfig = {
         ]
       }
     }] : []),
-    ...(STRIPE_API_KEY && STRIPE_WEBHOOK_SECRET ? [{
-      key: Modules.PAYMENT,
-      resolve: '@medusajs/payment',
-      options: {
-        providers: [
-          {
-            resolve: '@medusajs/payment-stripe',
-            id: 'pp_stripe_stripe',
-            options: {
-              apiKey: STRIPE_API_KEY,
-              webhookSecret: STRIPE_WEBHOOK_SECRET,
-              capture: true,  // Use automatic capture for Medusa 2.0 standard flow
-              payment_description: 'Order from KCT Menswear',
-              automatic_payment_methods: true,
-            },
+    // Enhanced Stripe configuration with runtime environment variable checking
+    ...(() => {
+      // Force re-evaluation of environment variables at runtime
+      const runtimeStripeApiKey = process.env.STRIPE_API_KEY || STRIPE_API_KEY;
+      const runtimeStripeWebhookSecret = process.env.STRIPE_WEBHOOK_SECRET || STRIPE_WEBHOOK_SECRET;
+      
+      console.log('=== RUNTIME STRIPE MODULE LOADING ===');
+      console.log('Environment:', process.env.NODE_ENV);
+      console.log('Runtime STRIPE_API_KEY available:', !!runtimeStripeApiKey);
+      console.log('Runtime STRIPE_WEBHOOK_SECRET available:', !!runtimeStripeWebhookSecret);
+      console.log('Constants STRIPE_API_KEY available:', !!STRIPE_API_KEY);
+      console.log('Constants STRIPE_WEBHOOK_SECRET available:', !!STRIPE_WEBHOOK_SECRET);
+      
+      const stripeEnabled = runtimeStripeApiKey && runtimeStripeWebhookSecret;
+      console.log('Stripe module will be loaded:', stripeEnabled);
+      
+      if (stripeEnabled) {
+        console.log('✅ Loading Stripe payment module with runtime config');
+        return [{
+          key: Modules.PAYMENT,
+          resolve: '@medusajs/payment',
+          options: {
+            providers: [
+              {
+                resolve: '@medusajs/payment-stripe',
+                id: 'stripe',  // MUST be 'stripe' - the module hardcodes this identifier
+                options: {
+                  apiKey: runtimeStripeApiKey,
+                  webhookSecret: runtimeStripeWebhookSecret,
+                  capture: true,  // Use automatic capture for Medusa 2.0 standard flow
+                  payment_description: 'Order from KCT Menswear',
+                  automatic_payment_methods: true,
+                },
+              },
+            ],
           },
-        ],
-      },
-    }] : []),
-    // Stripe Tax Provider for automated tax calculation
-    ...(STRIPE_API_KEY ? [{
-      key: Modules.TAX,
-      resolve: '@medusajs/tax',
-      options: {
-        providers: [
-          {
-            resolve: './src/modules/stripe-tax',
-            id: 'stripe-tax',
-            options: {
-              api_key: STRIPE_API_KEY,
-              automatic_tax: true,
-            },
+        }];
+      } else {
+        console.log('❌ Stripe module NOT loaded - missing environment variables');
+        console.log('  Runtime STRIPE_API_KEY:', runtimeStripeApiKey ? '[SET]' : '[NOT SET]');
+        console.log('  Runtime STRIPE_WEBHOOK_SECRET:', runtimeStripeWebhookSecret ? '[SET]' : '[NOT SET]');
+        console.log('  Constants STRIPE_API_KEY:', STRIPE_API_KEY ? '[SET]' : '[NOT SET]');
+        console.log('  Constants STRIPE_WEBHOOK_SECRET:', STRIPE_WEBHOOK_SECRET ? '[SET]' : '[NOT SET]');
+        return [];
+      }
+    })(),
+    // Stripe Tax Provider for automated tax calculation (also with runtime check)
+    ...(() => {
+      const runtimeStripeApiKey = process.env.STRIPE_API_KEY || STRIPE_API_KEY;
+      
+      if (runtimeStripeApiKey) {
+        console.log('✅ Loading Stripe Tax module with runtime config');
+        return [{
+          key: Modules.TAX,
+          resolve: '@medusajs/tax',
+          options: {
+            providers: [
+              {
+                resolve: './src/modules/stripe-tax',
+                id: 'stripe-tax',
+                options: {
+                  api_key: runtimeStripeApiKey,
+                  automatic_tax: true,
+                },
+              },
+            ],
           },
-        ],
-      },
-    }] : [])
+        }];
+      } else {
+        console.log('❌ Stripe Tax module NOT loaded - missing STRIPE_API_KEY');
+        return [];
+      }
+    })()
   ],
   plugins: [
     ...(SHOPIFY_DOMAIN && SHOPIFY_ACCESS_TOKEN ? [{
