@@ -69,19 +69,47 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       case 'charge.failed': {
         const paymentData = event.data.object as any
         
-        // Try to get order_id from different possible locations
+        // Try to get order_id from different possible locations with backward compatibility
         const orderId = 
           paymentData.metadata?.order_id || 
           paymentData.metadata?.resource_id ||
           null
+        
+        const cartId = paymentData.metadata?.cartId || paymentData.metadata?.cart_id || null
 
-        if (!orderId) {
-          console.log("[Stripe Fallback] No order_id found in webhook metadata")
+        // If no order_id found, try to find order by cart_id (backward compatibility)
+        let targetOrderId = orderId
+        
+        if (!targetOrderId && cartId) {
+          console.log("[Stripe Fallback] No order_id found, searching by cart_id:", cartId)
+          try {
+            const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
+            const orders = await orderService.listOrders({
+              metadata: {
+                cart_id: cartId
+              }
+            } as any)
+            
+            if (orders && orders.length > 0) {
+              targetOrderId = orders[0].id
+              console.log(`[Stripe Fallback] Found order ${targetOrderId} by cart_id: ${cartId}`)
+            }
+          } catch (error) {
+            console.warn("[Stripe Fallback] Error searching for order by cart_id:", error)
+          }
+        }
+
+        if (!targetOrderId) {
+          console.log("[Stripe Fallback] No order_id or cart_id found in webhook metadata", {
+            metadata: paymentData.metadata,
+            hasOrderId: !!orderId,
+            hasCartId: !!cartId
+          })
           // This might be a legitimate non-order payment, return success
           return res.status(200).json({ received: true })
         }
 
-        console.log(`[Stripe Fallback] Processing payment for order: ${orderId}`)
+        console.log(`[Stripe Fallback] Processing payment for order: ${targetOrderId}`)
 
         // Resolve services
         const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
@@ -90,12 +118,12 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         // Get the order
         const { data: orders } = await query.graph({
           entity: "order",
-          filters: { id: orderId },
+          filters: { id: targetOrderId },
           fields: ["id", "total", "metadata", "status", "payment_status"]
         })
 
         if (!orders || orders.length === 0) {
-          console.error(`[Stripe Fallback] Order not found: ${orderId}`)
+          console.error(`[Stripe Fallback] Order not found: ${targetOrderId}`)
           return res.status(404).json({ error: "Order not found" })
         }
 
@@ -103,7 +131,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
         // Check if payment was already captured
         if (order.metadata?.payment_captured === true) {
-          console.log(`[Stripe Fallback] Payment already captured for order: ${orderId}`)
+          console.log(`[Stripe Fallback] Payment already captured for order: ${targetOrderId}`)
           return res.status(200).json({ received: true })
         }
 
@@ -120,7 +148,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
           const paymentIntentId = paymentData.id || paymentData.payment_intent
           const updateResult = await capturePaymentUtil(
             orderService,
-            orderId,
+            targetOrderId,
             paymentIntentId,
             'succeeded',
             {
@@ -132,14 +160,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
           )
 
           if (updateResult.success) {
-            console.log(`[Stripe Fallback] ✅ Order ${orderId} payment captured via fallback`)
+            console.log(`[Stripe Fallback] ✅ Order ${targetOrderId} payment captured via fallback`)
           } else {
             console.error(`[Stripe Fallback] Failed to update order: ${updateResult.error}`)
           }
         } else if (event.type === 'payment_intent.payment_failed' || event.type === 'charge.failed') {
           // Update order with failure status
           await orderService.updateOrders({
-            id: orderId,
+            id: targetOrderId,
             metadata: {
               ...order.metadata,
               payment_status: 'failed',
@@ -150,7 +178,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
             }
           } as any)
           
-          console.log(`[Stripe Fallback] Order ${orderId} marked as payment failed`)
+          console.log(`[Stripe Fallback] Order ${targetOrderId} marked as payment failed`)
         }
 
         break

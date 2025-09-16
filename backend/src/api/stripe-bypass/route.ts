@@ -1,5 +1,9 @@
 import { MedusaRequest, MedusaResponse } from "@medusajs/framework/http"
+import { IOrderModuleService, ICustomerModuleService, IRegionModuleService } from "@medusajs/framework/types"
+import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import Stripe from "stripe"
+import { calculateTax, getTaxSummary } from "../../utils/tax-calculator"
+import { createInitialPaymentMetadata } from "../../utils/payment-capture"
 
 // Initialize Stripe with the secret key from environment
 const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
@@ -7,15 +11,48 @@ const stripe = new Stripe(process.env.STRIPE_API_KEY!, {
 })
 
 interface CreatePaymentRequest {
-  cart_id: string
-  customer_email?: string
-  shipping_address?: any
-  billing_address?: any
+  cart_id?: string
+  email?: string
+  customer_email?: string  // Support both field names
+  shipping_address: {
+    first_name: string
+    last_name: string
+    address_1: string
+    address_2?: string
+    city: string
+    postal_code: string
+    province: string
+    country_code: string
+    phone?: string
+  }
+  billing_address?: {
+    first_name: string
+    last_name: string
+    address_1: string
+    address_2?: string
+    city: string
+    postal_code: string
+    province: string
+    country_code: string
+    phone?: string
+  }
+  items: Array<{
+    title: string
+    variant_id?: string
+    product_id?: string
+    quantity: number
+    unit_price: number
+    metadata?: any
+  }>
+  amount: number // in cents
+  currency_code?: string
+  customer_name?: string
+  metadata?: any
 }
 
-// This endpoint completely bypasses ALL Medusa middleware and validation
+// This endpoint creates orders FIRST, then payments - fixing the "Not paid" issue
 export async function POST(req: MedusaRequest, res: MedusaResponse) {
-  console.log("🚀🚀🚀 TOTAL STRIPE BYPASS - NO MEDUSA VALIDATION")
+  console.log("🚀🚀🚀 STRIPE BYPASS WITH ORDER CREATION - Order-First Checkout")
   
   try {
     // Set CORS headers immediately
@@ -23,114 +60,278 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
     res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-publishable-api-key')
     
-    const { cart_id, customer_email, shipping_address, billing_address } = req.body as CreatePaymentRequest
+    const {
+      cart_id,
+      email: bodyEmail,
+      customer_email,
+      shipping_address,
+      billing_address,
+      items,
+      amount,
+      currency_code = 'usd',
+      customer_name,
+      metadata = {}
+    } = req.body as CreatePaymentRequest
+    
+    // Support both field names for backward compatibility
+    const email = bodyEmail || customer_email
 
-    console.log(`🛒 Request data:`, { cart_id, customer_email })
+    console.log("[Bypass Order-First] Creating order-first checkout:", {
+      email,
+      amount,
+      itemCount: items?.length,
+      cart_id
+    })
 
-    if (!cart_id) {
-      console.error("❌ No cart_id provided")
-      return res.status(400).json({
+    // Validate required fields for order creation
+    if (!email || !shipping_address || !items || !amount) {
+      return res.status(400).json({ 
         success: false,
-        error: "cart_id is required"
+        error: "Missing required fields: email, shipping_address, items, amount" 
       })
     }
 
-    // For immediate testing, create a fixed amount payment intent
-    let cartTotal = 2999 // $29.99 for testing
-    let currency = "usd"
+    if (!Array.isArray(items) || items.length === 0) {
+      return res.status(400).json({ 
+        success: false,
+        error: "Items array is required and cannot be empty" 
+      })
+    }
 
-    try {
-      // Try to get cart data if available
-      const container = req.scope
-      if (container) {
-        const query = container.resolve("query")
-        const { data: carts } = await query.graph({
-          entity: "cart",
-          fields: ["id", "total", "currency_code", "email"],
-          filters: { id: cart_id }
-        })
+    // Resolve services
+    const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
+    const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
+    const customerService = req.scope.resolve<ICustomerModuleService>(Modules.CUSTOMER)
+    const regionService = req.scope.resolve<IRegionModuleService>(Modules.REGION)
 
-        const cart = carts?.[0]
-        if (cart && cart.total > 0) {
-          cartTotal = Math.round(cart.total)
-          currency = cart.currency_code?.toLowerCase() || "usd"
-          console.log(`✅ Cart found - Total: ${cartTotal}, Currency: ${currency}`)
+    // Step 1: Find or create customer
+    let customer = null
+    if (email) {
+      const { data: customers } = await query.graph({
+        entity: "customer",
+        filters: { email },
+        fields: ["id", "email", "first_name", "last_name", "has_account"]
+      })
+
+      if (customers && customers.length > 0) {
+        customer = customers[0]
+        console.log(`[Bypass Order-First] Found existing customer: ${customer.id}`)
+      } else {
+        // Create guest customer
+        const nameParts = customer_name?.split(' ') || shipping_address?.first_name ? [shipping_address.first_name, shipping_address.last_name] : ['Guest', 'Customer']
+        const customerData = {
+          email,
+          first_name: nameParts[0] || shipping_address?.first_name || 'Guest',
+          last_name: nameParts.slice(1).join(' ') || shipping_address?.last_name || 'Customer',
+          has_account: false,
+          metadata: {
+            source: 'bypass_order_first_checkout',
+            created_via: 'stripe_bypass_endpoint'
+          }
+        }
+        
+        customer = await customerService.createCustomers(customerData)
+        console.log(`[Bypass Order-First] Created guest customer: ${customer.id}`)
+      }
+    }
+
+    // Step 2: Get default region
+    const regionId = "reg_01K3S6NDGAC1DSWH9MCZCWBWWD"
+
+    // Step 3: Calculate totals with tax
+    const subtotal = items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0)
+    
+    // Calculate tax based on shipping address
+    const taxBreakdown = calculateTax({
+      subtotal,
+      shipping_address: {
+        country_code: shipping_address.country_code,
+        province: shipping_address.province,
+        city: shipping_address.city,
+        postal_code: shipping_address.postal_code
+      },
+      currency_code
+    })
+    
+    const tax_total = taxBreakdown.tax_total
+    const shipping_total = 0 // You may want to calculate shipping here
+    const discount_total = 0
+    const calculated_total = subtotal + tax_total + shipping_total - discount_total
+    
+    // Use calculated total with tax, not the provided amount
+    const final_total = calculated_total
+    
+    console.log(`[Bypass Order-First] Tax calculation:`, {
+      subtotal,
+      tax_rate: (taxBreakdown.tax_rate * 100).toFixed(2) + '%',
+      tax_name: taxBreakdown.tax_name,
+      tax_total,
+      calculated_total,
+      provided_amount: amount,
+      using_calculated_total: final_total
+    })
+
+    // Step 4: Create the order with "pending" status
+    const orderData = {
+      email: email,
+      currency_code: currency_code,
+      customer_id: customer?.id,
+      region_id: regionId,
+      
+      // Use billing address if provided, otherwise use shipping address
+      billing_address: billing_address || shipping_address,
+      shipping_address: shipping_address,
+
+      // Order items
+      items: items.map(item => ({
+        title: item.title,
+        variant_id: item.variant_id,
+        product_id: item.product_id,
+        quantity: item.quantity,
+        unit_price: item.unit_price,
+        total: item.unit_price * item.quantity,
+        metadata: {
+          ...item.metadata,
+          source: 'bypass_order_first_checkout'
+        }
+      })),
+
+      // Totals
+      total: final_total, // Use calculated total with tax
+      subtotal: subtotal,
+      tax_total: tax_total,
+      shipping_total: shipping_total,
+      discount_total: discount_total,
+
+      // Store important metadata including payment status
+      metadata: {
+        ...metadata,
+        cart_id: cart_id || 'direct_bypass_order',
+        created_from: 'bypass_order_first_checkout',
+        source: 'stripe_bypass_endpoint',
+        checkout_type: 'bypass_order_first',
+        original_amount: amount,
+        // Add payment status tracking
+        payment_captured: false,
+        payment_status: 'pending',
+        webhook_processed: false,
+        ready_for_fulfillment: false,
+        bypass_reason: "medusa_payment_system_failed",
+        tax_calculation: {
+          tax_rate: taxBreakdown.tax_rate,
+          tax_name: taxBreakdown.tax_name,
+          tax_jurisdiction: taxBreakdown.tax_details[0]?.jurisdiction || 'Unknown',
+          tax_summary: getTaxSummary(taxBreakdown, currency_code)
         }
       }
-    } catch (dbError) {
-      console.warn("⚠️ Could not query cart, using test amount:", dbError)
     }
 
-    // Ensure minimum amount for Stripe (50 cents)
-    if (cartTotal < 50) {
-      cartTotal = 2999 // $29.99 minimum
+    console.log("[Bypass Order-First] Creating order with data:", {
+      email: orderData.email,
+      customer_id: orderData.customer_id,
+      region_id: orderData.region_id,
+      total: orderData.total,
+      itemCount: orderData.items.length,
+      metadata: orderData.metadata
+    })
+
+    // Create the order
+    const orders = await orderService.createOrders(orderData as any)
+    const order = Array.isArray(orders) ? orders[0] : orders
+    
+    if (!order) {
+      throw new Error("Failed to create order")
     }
 
-    console.log(`💰 Creating payment for: ${cartTotal} cents (${currency})`)
+    console.log(`[Bypass Order-First] ✅ Order created successfully: ${order.id}`)
 
-    // Create payment intent directly with Stripe API - NO MEDUSA
+    // Step 5: Create Stripe payment intent with order_id in metadata
     const paymentIntentData: Stripe.PaymentIntentCreateParams = {
-      amount: cartTotal,
-      currency: currency,
+      amount: final_total, // Use calculated total with tax
+      currency: currency_code,
       automatic_payment_methods: {
         enabled: true,
       },
       metadata: {
-        cart_id: cart_id,
-        source: "total_medusa_bypass",
+        order_id: order.id, // This is the key change - use order_id instead of cart_id
+        email: email,
+        customer_name: customer_name || `${shipping_address.first_name} ${shipping_address.last_name}`,
+        source: 'bypass_order_first_checkout',
+        subtotal: subtotal.toString(),
+        tax_total: tax_total.toString(),
+        tax_rate: (taxBreakdown.tax_rate * 100).toFixed(2) + '%',
+        tax_name: taxBreakdown.tax_name,
+        bypass_reason: "medusa_payment_system_failed",
         created_at: new Date().toISOString(),
-        bypass_reason: "medusa_payment_system_failed"
-      }
+        ...(cart_id && { cart_id }) // Keep cart_id if provided for backwards compatibility
+      },
+      description: `Order ${order.id} - ${items.length} item(s) (BYPASS)`,
+      receipt_email: email,
+      shipping: {
+        name: `${shipping_address.first_name} ${shipping_address.last_name}`,
+        address: {
+          line1: shipping_address.address_1,
+          line2: shipping_address.address_2 || undefined,
+          city: shipping_address.city,
+          state: shipping_address.province,
+          postal_code: shipping_address.postal_code,
+          country: shipping_address.country_code.toUpperCase(),
+        },
+      },
     }
-
-    // Add customer email if available
-    if (customer_email) {
-      paymentIntentData.receipt_email = customer_email
-    }
-
-    // Add shipping info if available
-    if (shipping_address) {
-      if (shipping_address.first_name || shipping_address.last_name) {
-        paymentIntentData.shipping = {
-          name: `${shipping_address.first_name || ''} ${shipping_address.last_name || ''}`.trim() || 'Customer',
-          address: {
-            line1: shipping_address.address_1 || 'Address',
-            line2: shipping_address.address_2 || undefined,
-            city: shipping_address.city || 'City',
-            state: shipping_address.province || '',
-            postal_code: shipping_address.postal_code || '00000',
-            country: shipping_address.country_code || 'US',
-          }
-        }
-      }
-    }
-
-    console.log("💳 Creating Stripe Payment Intent (DIRECT API)...")
 
     const paymentIntent = await stripe.paymentIntents.create(paymentIntentData)
 
-    console.log(`✅ Payment Intent created: ${paymentIntent.id}`)
-    console.log(`Client Secret: ${paymentIntent.client_secret?.substring(0, 20)}...`)
+    console.log(`[Bypass Order-First] ✅ Payment intent created: ${paymentIntent.id}`)
 
-    // Return success response
+    // Step 6: Update order with payment intent information
+    const paymentMetadata = createInitialPaymentMetadata(paymentIntent.id, cart_id)
+    await orderService.updateOrders({
+      id: order.id,
+      metadata: {
+        ...order.metadata,
+        ...paymentMetadata,
+        stripe_client_secret: paymentIntent.client_secret,
+        stripe_payment_amount: final_total
+      }
+    } as any)
+
+    // Return response with order_id and client_secret
     const response = {
       success: true,
+      order_id: order.id, // Now we return the order_id!
       client_secret: paymentIntent.client_secret,
+      amount: final_total,
+      currency: currency_code,
       payment_intent_id: paymentIntent.id,
-      amount: cartTotal,
-      currency: currency,
       cart_id: cart_id,
-      message: "TOTAL BYPASS - Direct Stripe payment intent created",
-      method: "stripe_direct_bypass",
-      timestamp: new Date().toISOString()
+      message: "BYPASS ORDER-FIRST - Order created first, then payment intent",
+      method: "stripe_bypass_order_first",
+      timestamp: new Date().toISOString(),
+      tax_breakdown: {
+        subtotal,
+        tax_total,
+        tax_rate: taxBreakdown.tax_rate,
+        tax_name: taxBreakdown.tax_name,
+        total: final_total,
+        tax_summary: getTaxSummary(taxBreakdown, currency_code)
+      },
+      order: {
+        id: order.id,
+        status: order.status,
+        payment_captured: order.metadata?.payment_captured || false,
+        total: order.total,
+        currency_code: order.currency_code,
+        email: order.email
+      }
     }
 
-    console.log("🎉 BYPASS SUCCESS:", response)
+    console.log("🎉 BYPASS ORDER-FIRST SUCCESS:", response)
     
     return res.status(200).json(response)
 
   } catch (error) {
-    console.error("❌ BYPASS ERROR:", error)
+    console.error("❌ BYPASS ORDER-FIRST ERROR:", error)
     
     // Set CORS headers for errors too
     res.setHeader('Access-Control-Allow-Origin', '*')
@@ -139,9 +340,9 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     
     return res.status(500).json({
       success: false,
-      error: error instanceof Error ? error.message : "Payment creation failed",
+      error: error instanceof Error ? error.message : "Order and payment creation failed",
       details: error instanceof Error ? error.stack : undefined,
-      method: "stripe_direct_bypass",
+      method: "stripe_bypass_order_first",
       timestamp: new Date().toISOString()
     })
   }
@@ -157,17 +358,26 @@ export async function OPTIONS(req: MedusaRequest, res: MedusaResponse) {
 
 // Handle GET requests for testing
 export async function GET(req: MedusaRequest, res: MedusaResponse) {
-  console.log("🔍 BYPASS endpoint health check")
+  console.log("🔍 BYPASS ORDER-FIRST endpoint health check")
   
   res.setHeader('Access-Control-Allow-Origin', '*')
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS')
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Authorization, x-publishable-api-key')
   
   return res.status(200).json({
-    message: "TOTAL BYPASS Stripe endpoint operational",
+    message: "STRIPE BYPASS ORDER-FIRST endpoint operational",
+    description: "Creates orders FIRST, then payments - fixes 'Not paid' issue",
     timestamp: new Date().toISOString(),
     stripe_configured: !!process.env.STRIPE_API_KEY,
     endpoint: "POST /stripe-bypass",
-    status: "ready_to_bypass_medusa"
+    method: "order_first_checkout",
+    features: [
+      "Creates Medusa orders before payment",
+      "Includes order_id in Stripe metadata", 
+      "Calculates tax automatically",
+      "Creates guest customers",
+      "Returns order_id + client_secret"
+    ],
+    status: "ready_for_order_first_bypass"
   })
 }

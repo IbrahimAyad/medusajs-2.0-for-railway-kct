@@ -185,9 +185,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         return await handlePaymentIntentCanceled(req, res, event)
         
       case 'charge.succeeded':
-        // Also handle charge.succeeded for compatibility
-        console.log("[Stripe Webhook] Charge succeeded:", event.data.object)
-        return res.status(200).json({ received: true })
+        // Also handle charge.succeeded for compatibility and order updates
+        return await handleChargeSucceeded(req, res, event)
         
       case 'checkout.session.completed':
         // Handle standard checkout sessions if used
@@ -601,6 +600,66 @@ async function handlePaymentIntentCanceled(
   }
   
   return res.status(200).json({ received: true })
+}
+
+async function handleChargeSucceeded(
+  req: MedusaRequest,
+  res: MedusaResponse,
+  event: Stripe.Event
+) {
+  const charge = event.data.object as Stripe.Charge
+  const orderId = charge.metadata?.order_id
+  const cartId = charge.metadata?.cartId || charge.metadata?.cart_id
+  
+  console.log("[Stripe Webhook] Charge succeeded:", {
+    id: charge.id,
+    amount: charge.amount,
+    orderId,
+    cartId,
+    payment_intent: charge.payment_intent,
+    metadata: charge.metadata
+  })
+
+  // Try to find associated order by order_id first, then by payment_intent_id
+  if (orderId) {
+    console.log("[Stripe Webhook] Found order_id in charge metadata:", orderId)
+    
+    // Create a mock payment intent structure for compatibility with existing handler
+    const mockPaymentIntent = {
+      id: charge.payment_intent as string || charge.id,
+      amount: charge.amount,
+      amount_received: charge.amount,
+      currency: charge.currency,
+      status: 'succeeded',
+      payment_method_types: [charge.payment_method_details?.type || 'card'],
+      metadata: charge.metadata
+    } as Stripe.PaymentIntent
+    
+    return await handleOrderFirstPayment(req, res, mockPaymentIntent, orderId, event)
+  }
+
+  // If no direct order_id, try to find order by payment_intent_id
+  if (charge.payment_intent) {
+    const orderByPaymentIntent = await findOrderByPaymentIntentId(req, charge.payment_intent as string)
+    if (orderByPaymentIntent) {
+      console.log("[Stripe Webhook] Found order by payment_intent_id:", orderByPaymentIntent.id)
+      
+      const mockPaymentIntent = {
+        id: charge.payment_intent as string,
+        amount: charge.amount,
+        amount_received: charge.amount,
+        currency: charge.currency,
+        status: 'succeeded',
+        payment_method_types: [charge.payment_method_details?.type || 'card'],
+        metadata: charge.metadata
+      } as Stripe.PaymentIntent
+      
+      return await handleOrderFirstPayment(req, res, mockPaymentIntent, orderByPaymentIntent.id, event)
+    }
+  }
+
+  console.log("[Stripe Webhook] Charge succeeded but no associated order found")
+  return res.status(200).json({ received: true, info: "Charge processed but no order association found" })
 }
 
 async function handleCheckoutSessionCompleted(
