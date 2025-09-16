@@ -3,6 +3,7 @@ import { IOrderModuleService, ICustomerModuleService, IRegionModuleService } fro
 import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import Stripe from "stripe"
 import { calculateTax, getTaxSummary } from "../../../../utils/tax-calculator"
+import { createInitialPaymentMetadata } from "../../../../utils/payment-capture"
 
 /**
  * Create Order Endpoint - Order-First Checkout Flow
@@ -14,7 +15,8 @@ import { calculateTax, getTaxSummary } from "../../../../utils/tax-calculator"
 
 interface CreateOrderRequest {
   cart_id?: string
-  email: string
+  email?: string
+  customer_email?: string  // Support both field names
   shipping_address: {
     first_name: string
     last_name: string
@@ -66,7 +68,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   try {
     const {
       cart_id,
-      email,
+      email: bodyEmail,
+      customer_email,
       shipping_address,
       billing_address,
       items,
@@ -75,6 +78,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       customer_name,
       metadata = {}
     } = req.body as CreateOrderRequest
+    
+    // Support both field names for backward compatibility
+    const email = bodyEmail || customer_email
 
     console.log("[Create Order] Creating order-first checkout:", {
       email,
@@ -203,8 +209,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
       // Metadata to track payment status
       // Note: Medusa v2 doesn't have direct payment_status field on OrderDTO
+      // We'll use metadata to track payment status throughout the order lifecycle
 
-      // Store important metadata
+      // Store important metadata including payment status
       metadata: {
         ...metadata,
         cart_id: cart_id || 'direct_order',
@@ -212,6 +219,11 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         source: 'create_order_endpoint',
         checkout_type: 'order_first',
         original_amount: amount,
+        // Add payment status tracking
+        payment_captured: false,
+        payment_status: 'pending',
+        webhook_processed: false,
+        ready_for_fulfillment: false,
         tax_calculation: {
           tax_rate: taxBreakdown.tax_rate,
           tax_name: taxBreakdown.tax_name,
@@ -278,12 +290,14 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     console.log(`[Create Order] ✅ Payment intent created: ${paymentIntent.id}`)
 
     // Step 6: Update order with payment intent information
+    const paymentMetadata = createInitialPaymentMetadata(paymentIntent.id, cart_id)
     await orderService.updateOrders({
       id: order.id,
       metadata: {
         ...order.metadata,
-        payment_intent_id: paymentIntent.id,
-        stripe_client_secret: paymentIntent.client_secret
+        ...paymentMetadata,
+        stripe_client_secret: paymentIntent.client_secret,
+        stripe_payment_amount: final_total
       }
     } as any)
 

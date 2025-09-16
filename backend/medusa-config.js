@@ -62,6 +62,8 @@ const medusaConfig = {
       storeCors: STORE_CORS,
       jwtSecret: JWT_SECRET,
       cookieSecret: COOKIE_SECRET,
+      // CRITICAL: Preserve raw body for Stripe webhook signature verification
+      preserveRawBody: true,
       // Add CSP headers for Cloudflare Stream videos
       additionalHeaders: {
         "Content-Security-Policy": "default-src 'self' https:; frame-src 'self' https://customer-6njalxhlz5ulnoaq.cloudflarestream.com; media-src 'self' https://customer-6njalxhlz5ulnoaq.cloudflarestream.com blob:; img-src 'self' data: https: blob:; font-src 'self' https://fonts.googleapis.com https://fonts.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://customer-6njalxhlz5ulnoaq.cloudflarestream.com",

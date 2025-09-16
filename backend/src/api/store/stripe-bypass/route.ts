@@ -59,7 +59,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   }
 
   const stripe = new Stripe(stripeKey, {
-    apiVersion: "2025-08-27.acacia" as any
+    apiVersion: "2025-08-27.basil" as any
   })
 
   try {
