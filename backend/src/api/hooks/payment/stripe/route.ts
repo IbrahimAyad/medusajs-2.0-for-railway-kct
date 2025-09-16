@@ -4,6 +4,13 @@ import { Modules, ContainerRegistrationKeys } from "@medusajs/framework/utils"
 import { completeCartWorkflow } from "@medusajs/medusa/core-flows"
 import Stripe from "stripe"
 import { createOrderFromPaymentIntent, shouldUseFallback } from "./create-order-fallback"
+import { 
+  captureOrderPayment, 
+  failOrderPayment, 
+  cancelOrderPayment, 
+  findOrderByPaymentIntentId,
+  createInitialPaymentMetadata 
+} from "../../../../utils/payment-capture"
 
 /**
  * Stripe Webhook Handler for Payment Events
@@ -44,13 +51,32 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     console.log("[Stripe Webhook] ⚠️ Test mode: Bypassing signature verification")
     console.log("[Stripe Webhook] Request body type:", typeof req.body)
     console.log("[Stripe Webhook] Request body keys:", req.body ? Object.keys(req.body) : 'no body')
-    // Ensure we have a valid event object from request body
+    
+    // Try to get event from various sources in test mode
+    let testEvent = null
+    
     if (req.body && typeof req.body === 'object' && (req.body as any).type) {
-      event = req.body as Stripe.Event
+      testEvent = req.body as Stripe.Event
+    } else if ((req as any).rawBody) {
+      try {
+        const parsed = JSON.parse((req as any).rawBody)
+        if (parsed && parsed.type) {
+          testEvent = parsed as Stripe.Event
+        }
+      } catch (e) {
+        console.log("[Stripe Webhook] Could not parse raw body as JSON:", e)
+      }
+    }
+    
+    if (testEvent && testEvent.type) {
+      event = testEvent
       console.log("[Stripe Webhook] Using test event:", event.type)
     } else {
-      console.error("[Stripe Webhook] Invalid test event body:", JSON.stringify(req.body, null, 2))
-      return res.status(400).json({ error: "Invalid test event body" })
+      console.error("[Stripe Webhook] Invalid test event body:", {
+        body: req.body,
+        rawBody: (req as any).rawBody ? 'present' : 'missing'
+      })
+      return res.status(400).json({ error: "Invalid test event body - no event.type found" })
     }
   } else {
     try {
@@ -105,6 +131,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       case 'payment_intent.payment_failed':
         return await handlePaymentIntentFailed(req, res, event)
         
+      case 'payment_intent.canceled':
+        return await handlePaymentIntentCanceled(req, res, event)
+        
       case 'charge.succeeded':
         // Also handle charge.succeeded for compatibility
         console.log("[Stripe Webhook] Charge succeeded:", event.data.object)
@@ -120,9 +149,11 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     }
   } catch (error: any) {
     console.error("[Stripe Webhook] Error processing event:", error)
-    return res.status(500).json({ 
-      received: false, 
-      error: error.message 
+    // Always return 200 to prevent Stripe retries
+    return res.status(200).json({ 
+      received: true, 
+      error: error.message,
+      warning: "Error occurred but returning 200 to prevent retries"
     })
   }
 }
@@ -143,19 +174,31 @@ async function handlePaymentIntentSucceeded(
     cartId,
     orderId,
     email,
-    source: paymentIntent.metadata?.source
+    source: paymentIntent.metadata?.source,
+    metadata: paymentIntent.metadata
   })
 
-  // NEW: Handle order-first checkout flow
+  // Enhanced order finding logic:
+  // 1. First try to find order by order_id from payment intent metadata (order-first flow)
   if (orderId) {
-    console.log("[Stripe Webhook] Order-first checkout detected, updating existing order:", orderId)
-    return await handleOrderFirstPayment(req, res, paymentIntent, orderId)
+    console.log("[Stripe Webhook] Step 1: Order-first checkout detected, updating existing order:", orderId)
+    return await handleOrderFirstPayment(req, res, paymentIntent, orderId, event)
   }
 
+  // 2. If no order_id, try to find order by payment_intent_id in order metadata
+  const orderByPaymentIntent = await findOrderByPaymentIntentId(req, paymentIntent.id)
+  if (orderByPaymentIntent) {
+    console.log("[Stripe Webhook] Step 2: Found existing order by payment_intent_id:", orderByPaymentIntent.id)
+    return await handleOrderFirstPayment(req, res, paymentIntent, orderByPaymentIntent.id, event)
+  }
+
+  // 3. If still no order, try to find cart and its associated order (legacy fallback)
   if (!cartId) {
-    console.warn("[Stripe Webhook] No cart ID or order ID in payment intent metadata")
-    // Still process the payment and create customer
-    // return res.json({ received: true, warning: "No cart ID" })
+    console.warn("[Stripe Webhook] Step 3: No cart ID or order ID in payment intent metadata")
+    console.log("[Stripe Webhook] Will attempt fallback order creation from payment intent data")
+    // Continue to fallback order creation below
+  } else {
+    console.log("[Stripe Webhook] Step 3: Found cart ID, checking for associated order:", cartId)
   }
 
   try {
@@ -246,23 +289,40 @@ async function handlePaymentIntentSucceeded(
         console.log(`[Stripe Webhook] ✅ Order created successfully`)
         console.log(`[Stripe Webhook] Order result:`, result)
         
-        // Update order with metadata for tracking
+        // Update order with comprehensive payment metadata for tracking
         try {
           const orderId = (result as any).id || (result as any).order_id
           if (orderId) {
             const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
+            
+            // Use the utility to create comprehensive payment metadata
+            const paymentMetadata = createInitialPaymentMetadata(paymentIntent.id, cartId)
+            
             await orderService.updateOrders({
               id: orderId,
               metadata: {
+                ...paymentMetadata,
                 cart_id: cartId,
-                payment_intent_id: paymentIntent.id,
-                source: 'stripe_webhook'
+                source: 'stripe_webhook',
+                // Immediately capture since payment was successful
+                payment_captured: true,
+                payment_status: 'captured',
+                payment_captured_at: new Date().toISOString(),
+                stripe_payment_status: paymentIntent.status,
+                stripe_payment_method: paymentIntent.payment_method_types?.[0] || 'unknown',
+                stripe_amount_received: paymentIntent.amount_received || paymentIntent.amount,
+                stripe_currency: paymentIntent.currency,
+                webhook_processed: true,
+                webhook_source: 'stripe_payment_intent_succeeded',
+                last_webhook_event: 'payment_intent.succeeded',
+                last_webhook_processed_at: new Date().toISOString(),
+                ready_for_fulfillment: true
               }
             } as any)
-            console.log(`[Stripe Webhook] Added metadata to order: ${orderId}`)
+            console.log(`[Stripe Webhook] Added comprehensive payment metadata to order: ${orderId}`)
           }
         } catch (metaError) {
-          console.error("[Stripe Webhook] Error adding metadata:", metaError)
+          console.error("[Stripe Webhook] Error adding payment metadata:", metaError)
         }
         
         return res.json({ 
@@ -314,7 +374,8 @@ async function handlePaymentIntentSucceeded(
         }
       }
       
-      return res.json({ 
+      // Always return 200 to prevent Stripe retries
+      return res.status(200).json({ 
         received: true, 
         error: "Could not complete order",
         details: completeError.message 
@@ -322,9 +383,11 @@ async function handlePaymentIntentSucceeded(
     }
   } catch (error: any) {
     console.error("[Stripe Webhook] Error processing payment:", error)
-    return res.status(500).json({ 
-      received: false, 
-      error: error.message 
+    // Always return 200 to prevent Stripe retries
+    return res.status(200).json({ 
+      received: true, 
+      error: error.message,
+      warning: "Error occurred but returning 200 to prevent retries"
     })
   }
 }
@@ -337,131 +400,49 @@ async function handleOrderFirstPayment(
   req: MedusaRequest,
   res: MedusaResponse,
   paymentIntent: Stripe.PaymentIntent,
-  orderId: string
+  orderId: string,
+  event?: Stripe.Event
 ) {
   try {
-    const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
-    
     console.log("[Stripe Webhook] Processing order-first payment for order:", orderId)
 
-    // Check if order exists
-    const orders = await orderService.listOrders({ id: orderId })
-    const order = orders?.[0]
+    // Use the new payment capture utility
+    const result = await captureOrderPayment(
+      req, 
+      orderId, 
+      paymentIntent, 
+      event?.type || 'payment_intent.succeeded'
+    )
 
-    if (!order) {
-      console.error(`[Stripe Webhook] Order not found: ${orderId}`)
-      return res.status(404).json({ 
-        received: false, 
-        error: `Order ${orderId} not found` 
-      })
-    }
-
-    console.log("[Stripe Webhook] Found order:", {
-      id: order.id,
-      total: order.total,
-      email: order.email,
-      metadata: order.metadata
-    })
-
-    // Check if order is already completed/captured via metadata
-    const isPaymentCaptured = order.metadata?.payment_captured === true || order.metadata?.stripe_payment_status === 'succeeded'
-    if (isPaymentCaptured) {
-      console.log(`[Stripe Webhook] Order ${orderId} already has captured payment`)
-      return res.json({ 
-        received: true, 
-        info: "Order already processed",
-        order_id: orderId,
-        payment_captured: true
-      })
-    }
-
-    // Verify payment amount matches order total
-    const orderAmountInCents = Math.round(Number(order.total) * 100) // Convert BigNumberValue to cents
-    if (Math.abs(paymentIntent.amount - orderAmountInCents) > 1) {
-      console.warn(`[Stripe Webhook] Payment amount mismatch for order ${orderId}:`, {
-        payment_amount: paymentIntent.amount,
-        order_amount: orderAmountInCents,
-        difference: Math.abs(paymentIntent.amount - orderAmountInCents)
-      })
-    }
-
-    // Update order metadata (payment_status doesn't exist on Order model in Medusa v2)
-    const updateData = {
-      metadata: {
-        ...order.metadata,
-        payment_intent_id: paymentIntent.id,
-        payment_captured_at: new Date().toISOString(),
-        stripe_payment_status: paymentIntent.status,
+    if (result.success) {
+      console.log(`[Stripe Webhook] ✅ Order ${orderId} payment captured via utility`)
+      return res.json({
+        received: true,
+        success: true,
+        order_id: result.order_id,
         payment_captured: true,
-        webhook_processed: true,
-        webhook_source: 'stripe_payment_intent_succeeded',
-        payment_status: 'captured' // Store in metadata instead
-      }
-    }
-
-    console.log("[Stripe Webhook] Updating order with payment captured metadata:", {
-      orderId,
-      paymentCaptured: true,
-      paymentIntentId: paymentIntent.id,
-      paymentStatus: 'captured'
-    })
-
-    await orderService.updateOrders({
-      id: orderId,
-      ...updateData
-    } as any)
-
-    console.log(`[Stripe Webhook] ✅ Order ${orderId} payment captured metadata updated`)
-
-    // Also try to update any associated payment collections
-    try {
-      const paymentService = req.scope.resolve<IPaymentModuleService>(Modules.PAYMENT)
-      
-      // Find payment collections for this order
-      const query = req.scope.resolve(ContainerRegistrationKeys.QUERY)
-      const { data: paymentCollections } = await query.graph({
-        entity: "payment_collection",
-        filters: {
-          metadata: {
-            order_id: orderId
-          }
-        },
-        fields: ["id", "status", "amount", "metadata"]
+        payment_status: result.payment_status,
+        message: result.message
       })
-
-      if (paymentCollections && paymentCollections.length > 0) {
-        for (const collection of paymentCollections) {
-          console.log(`[Stripe Webhook] Updating payment collection ${collection.id} for order ${orderId}`)
-          
-          await paymentService.updatePaymentCollections(collection.id, {
-            metadata: {
-              ...collection.metadata,
-              payment_captured: true,
-              payment_intent_id: paymentIntent.id,
-              webhook_processed: true
-            }
-          } as any)
-        }
-      }
-    } catch (paymentError) {
-      console.warn("[Stripe Webhook] Could not update payment collections:", paymentError)
-      // Don't fail the webhook if payment collection update fails
+    } else {
+      console.error(`[Stripe Webhook] Failed to capture payment for order ${orderId}:`, result.error)
+      // Always return 200 to prevent Stripe retries
+      return res.status(200).json({
+        received: true,
+        error: `Failed to capture payment: ${result.error}`,
+        order_id: orderId,
+        warning: "Error occurred but returning 200 to prevent retries"
+      })
     }
-
-    return res.json({
-      received: true,
-      success: true,
-      order_id: orderId,
-      payment_captured: true,
-      message: 'Order payment captured successfully'
-    })
 
   } catch (error: any) {
     console.error("[Stripe Webhook] Error processing order-first payment:", error)
-    return res.status(500).json({
-      received: false,
+    // Always return 200 to prevent Stripe retries
+    return res.status(200).json({
+      received: true,
       error: `Failed to process order-first payment: ${error.message}`,
-      order_id: orderId
+      order_id: orderId,
+      warning: "Error occurred but returning 200 to prevent retries"
     })
   }
 }
@@ -472,9 +453,102 @@ async function handlePaymentIntentFailed(
   event: Stripe.Event
 ) {
   const paymentIntent = event.data.object as Stripe.PaymentIntent
-  console.log("[Stripe Webhook] Payment failed:", paymentIntent.id)
+  const orderId = paymentIntent.metadata?.order_id
+  const cartId = paymentIntent.metadata?.cartId || paymentIntent.metadata?.cart_id
   
-  // You could update order status or notify customer here
+  console.log("[Stripe Webhook] Payment failed:", {
+    paymentIntentId: paymentIntent.id,
+    orderId,
+    cartId,
+    lastPaymentError: paymentIntent.last_payment_error,
+    amount: paymentIntent.amount
+  })
+  
+  try {
+    // Try to find and update the associated order
+    let targetOrderId = orderId
+    
+    if (!targetOrderId) {
+      const orderByPaymentIntent = await findOrderByPaymentIntentId(req, paymentIntent.id)
+      targetOrderId = orderByPaymentIntent?.id
+    }
+    
+    if (targetOrderId) {
+      console.log(`[Stripe Webhook] Updating order ${targetOrderId} with payment failed status`)
+      
+      // Use the new payment failure utility
+      const result = await failOrderPayment(
+        req, 
+        targetOrderId, 
+        paymentIntent, 
+        event.type
+      )
+      
+      if (result.success) {
+        console.log(`[Stripe Webhook] ✅ Order ${targetOrderId} updated with payment failed status via utility`)
+      } else {
+        console.error(`[Stripe Webhook] Failed to update order ${targetOrderId} with failure status:`, result.error)
+      }
+    } else {
+      console.warn("[Stripe Webhook] No order found to update with payment failure")
+    }
+  } catch (error: any) {
+    console.error("[Stripe Webhook] Error updating order for failed payment:", error)
+    // Continue - don't fail the webhook
+  }
+  
+  return res.status(200).json({ received: true })
+}
+
+async function handlePaymentIntentCanceled(
+  req: MedusaRequest,
+  res: MedusaResponse,
+  event: Stripe.Event
+) {
+  const paymentIntent = event.data.object as Stripe.PaymentIntent
+  const orderId = paymentIntent.metadata?.order_id
+  const cartId = paymentIntent.metadata?.cartId || paymentIntent.metadata?.cart_id
+  
+  console.log("[Stripe Webhook] Payment intent canceled:", {
+    paymentIntentId: paymentIntent.id,
+    orderId,
+    cartId,
+    cancellationReason: paymentIntent.cancellation_reason,
+    amount: paymentIntent.amount
+  })
+  
+  try {
+    // Try to find and update the associated order
+    let targetOrderId = orderId
+    
+    if (!targetOrderId) {
+      const orderByPaymentIntent = await findOrderByPaymentIntentId(req, paymentIntent.id)
+      targetOrderId = orderByPaymentIntent?.id
+    }
+    
+    if (targetOrderId) {
+      console.log(`[Stripe Webhook] Updating order ${targetOrderId} with payment canceled status`)
+      
+      // Use the new payment cancellation utility
+      const result = await cancelOrderPayment(
+        req, 
+        targetOrderId, 
+        paymentIntent, 
+        event.type
+      )
+      
+      if (result.success) {
+        console.log(`[Stripe Webhook] ✅ Order ${targetOrderId} updated with payment canceled status via utility`)
+      } else {
+        console.error(`[Stripe Webhook] Failed to update order ${targetOrderId} with cancellation status:`, result.error)
+      }
+    } else {
+      console.warn("[Stripe Webhook] No order found to update with payment cancellation")
+    }
+  } catch (error: any) {
+    console.error("[Stripe Webhook] Error updating order for canceled payment:", error)
+    // Continue - don't fail the webhook
+  }
   
   return res.status(200).json({ received: true })
 }
@@ -498,3 +572,4 @@ async function handleCheckoutSessionCompleted(
   
   return res.status(200).json({ received: true })
 }
+
