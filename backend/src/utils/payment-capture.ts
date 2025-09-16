@@ -387,6 +387,80 @@ export async function updatePaymentCollections(
 }
 
 /**
+ * Simplified payment capture utility that doesn't require request object
+ * Used by webhook handlers and confirmation endpoints
+ */
+export async function capturePaymentUtil(
+  orderService: IOrderModuleService,
+  orderId: string,
+  paymentIntentId: string,
+  stripeStatus: string,
+  additionalMetadata?: any
+): Promise<PaymentCaptureResult> {
+  try {
+    console.log(`[Payment Util] Capturing payment for order: ${orderId}`)
+    
+    // Get the current order
+    const orders = await orderService.listOrders({ id: orderId })
+    const order = orders?.[0]
+    
+    if (!order) {
+      throw new Error(`Order ${orderId} not found`)
+    }
+    
+    const currentMetadata = order.metadata as PaymentCaptureMetadata || {}
+    
+    // Check if already captured
+    if (currentMetadata.payment_captured === true) {
+      console.log(`[Payment Util] Payment already captured for order: ${orderId}`)
+      return {
+        success: true,
+        order_id: orderId,
+        payment_status: 'captured',
+        message: 'Payment already captured'
+      }
+    }
+    
+    // Prepare capture metadata
+    const captureMetadata: PaymentCaptureMetadata = {
+      ...currentMetadata,
+      payment_captured: true,
+      payment_status: 'captured',
+      payment_intent_id: paymentIntentId,
+      payment_captured_at: new Date().toISOString(),
+      stripe_payment_status: stripeStatus,
+      webhook_processed: true,
+      ready_for_fulfillment: true,
+      ...additionalMetadata
+    }
+    
+    // Update order with capture metadata
+    await orderService.updateOrders({
+      id: orderId,
+      metadata: captureMetadata
+    } as any)
+    
+    console.log(`[Payment Util] ✅ Order ${orderId} payment captured successfully`)
+    
+    return {
+      success: true,
+      order_id: orderId,
+      payment_status: 'captured',
+      message: 'Payment captured and order ready for fulfillment'
+    }
+    
+  } catch (error: any) {
+    console.error(`[Payment Util] Error capturing payment for order ${orderId}:`, error)
+    return {
+      success: false,
+      order_id: orderId,
+      payment_status: 'pending',
+      error: error.message
+    }
+  }
+}
+
+/**
  * Create comprehensive payment metadata for new orders
  */
 export function createInitialPaymentMetadata(
