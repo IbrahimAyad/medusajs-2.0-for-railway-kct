@@ -139,6 +139,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     const regionId = "reg_01K3S6NDGAC1DSWH9MCZCWBWWD"
 
     // Step 3: Calculate totals with tax
+    // IMPORTANT: unit_price from frontend is already in cents (e.g., 106 = $1.06)
+    // We keep everything in cents for accuracy
     const subtotal = items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0)
     
     // Calculate tax based on shipping address
@@ -182,17 +184,24 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       billing_address: billing_address || shipping_address,
       shipping_address: shipping_address,
 
-      // Order items
+      // Order items with enhanced product details
       items: items.map(item => ({
         title: item.title,
         variant_id: item.variant_id,
         product_id: item.product_id,
         quantity: item.quantity,
-        unit_price: item.unit_price,
+        unit_price: item.unit_price, // Already in cents
         total: item.unit_price * item.quantity,
+        // Add product details if available
+        thumbnail: item.thumbnail || null,
+        variant_sku: item.variant?.sku || null,
+        variant_title: item.variant?.title || null,
+        product_handle: item.product?.handle || null,
         metadata: {
           ...item.metadata,
-          source: 'bypass_order_first_checkout'
+          source: 'bypass_order_first_checkout',
+          variant_details: item.variant || {},
+          product_details: item.product || {}
         }
       })),
 
@@ -203,7 +212,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       shipping_total: shipping_total,
       discount_total: discount_total,
 
-      // Store important metadata including payment status
+      // Store important metadata including payment status and activity log
       metadata: {
         ...metadata,
         cart_id: cart_id || 'direct_bypass_order',
@@ -214,6 +223,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         // Add payment status tracking
         payment_captured: false,
         payment_status: 'pending',
+        payment_intent_id: null, // Will be updated after Stripe payment
         webhook_processed: false,
         ready_for_fulfillment: false,
         bypass_reason: "medusa_payment_system_failed",
@@ -222,7 +232,17 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
           tax_name: taxBreakdown.tax_name,
           tax_jurisdiction: taxBreakdown.tax_details[0]?.jurisdiction || 'Unknown',
           tax_summary: getTaxSummary(taxBreakdown, currency_code)
-        }
+        },
+        // Activity timeline
+        activity_log: [
+          {
+            timestamp: new Date().toISOString(),
+            action: 'order_placed',
+            details: `Order created via bypass checkout. Total: $${(final_total / 100).toFixed(2)}`,
+            user: 'system',
+            status: 'pending'
+          }
+        ]
       }
     }
 
@@ -291,8 +311,21 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       metadata: {
         ...order.metadata,
         ...paymentMetadata,
+        payment_intent_id: paymentIntent.id, // Store for later confirmation
         stripe_client_secret: paymentIntent.client_secret,
-        stripe_payment_amount: final_total
+        stripe_payment_amount: final_total,
+        // Update activity log
+        activity_log: [
+          ...order.metadata.activity_log,
+          {
+            timestamp: new Date().toISOString(),
+            action: 'payment_initiated',
+            details: `Stripe payment intent created: ${paymentIntent.id}`,
+            user: 'system',
+            status: 'pending',
+            payment_intent_id: paymentIntent.id
+          }
+        ]
       }
     } as any)
 
