@@ -42,6 +42,9 @@ interface CreatePaymentRequest {
     product_id?: string
     quantity: number
     unit_price: number
+    thumbnail?: string
+    variant?: any
+    product?: any
     metadata?: any
   }>
   amount: number // in cents
@@ -234,7 +237,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
           tax_summary: getTaxSummary(taxBreakdown, currency_code)
         },
         // Activity timeline
-        activity_log: [
+        activity_log: JSON.stringify([
           {
             timestamp: new Date().toISOString(),
             action: 'order_placed',
@@ -242,7 +245,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             user: 'system',
             status: 'pending'
           }
-        ]
+        ])
       }
     }
 
@@ -315,8 +318,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         stripe_client_secret: paymentIntent.client_secret,
         stripe_payment_amount: final_total,
         // Update activity log
-        activity_log: [
-          ...order.metadata.activity_log,
+        activity_log: JSON.stringify([
+          ...(order.metadata.activity_log ? JSON.parse(order.metadata.activity_log) : []),
           {
             timestamp: new Date().toISOString(),
             action: 'payment_initiated',
@@ -325,7 +328,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
             status: 'pending',
             payment_intent_id: paymentIntent.id
           }
-        ]
+        ])
       }
     } as any)
 

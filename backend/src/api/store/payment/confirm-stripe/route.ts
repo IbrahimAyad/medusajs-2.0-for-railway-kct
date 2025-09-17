@@ -115,7 +115,11 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
     }
 
     // Step 5: Update order with payment confirmation
-    const existingActivityLog = order.metadata?.activity_log || []
+    const existingActivityLog = order.metadata?.activity_log 
+      ? (typeof order.metadata.activity_log === 'string' 
+          ? JSON.parse(order.metadata.activity_log) 
+          : order.metadata.activity_log)
+      : []
     
     const updatedMetadata = {
       ...order.metadata,
@@ -125,10 +129,10 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       payment_confirmed_at: new Date().toISOString(),
       stripe_payment_status: paymentIntent.status,
       stripe_payment_amount: paymentIntent.amount,
-      stripe_receipt_url: paymentIntent.charges?.data?.[0]?.receipt_url || null,
+      stripe_receipt_url: (paymentIntent as any).charges?.data?.[0]?.receipt_url || null,
       ready_for_fulfillment: true,
-      // Update activity log
-      activity_log: [
+      // Update activity log (store as JSON string)
+      activity_log: JSON.stringify([
         ...existingActivityLog,
         {
           timestamp: new Date().toISOString(),
@@ -139,7 +143,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
           payment_intent_id: payment_intent_id,
           stripe_status: paymentIntent.status
         }
-      ]
+      ])
     }
 
     // Update the order
@@ -162,7 +166,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       payment_status: "captured",
       amount: paymentIntent.amount,
       currency: paymentIntent.currency,
-      receipt_url: paymentIntent.charges?.data?.[0]?.receipt_url || null,
+      receipt_url: (paymentIntent as any).charges?.data?.[0]?.receipt_url || null,
       confirmed_at: new Date().toISOString()
     }
 
