@@ -45,6 +45,9 @@ interface CreateOrderRequest {
     product_id?: string
     quantity: number
     unit_price: number
+    thumbnail?: string
+    variant?: any
+    product?: any
     metadata?: any
   }>
   amount: number // in cents
@@ -186,17 +189,25 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       billing_address: billing_address || shipping_address,
       shipping_address: shipping_address,
 
-      // Order items
+      // Order items with enhanced product details
       items: items.map(item => ({
-        title: item.title,
+        // Include size in title for visibility in admin
+        title: item.variant?.title ? `${item.title} - ${item.variant.title}` : item.title,
         variant_id: item.variant_id,
         product_id: item.product_id,
         quantity: item.quantity,
         unit_price: item.unit_price,
         total: item.unit_price * item.quantity,
+        // Add product details
+        thumbnail: item.thumbnail || null,
+        variant_sku: item.variant?.sku || null,
+        variant_title: item.variant?.title || null,
+        product_handle: item.product?.handle || null,
         metadata: {
           ...item.metadata,
-          source: 'order_first_checkout'
+          source: 'order_first_checkout',
+          variant_details: item.variant || {},
+          product_details: item.product || {}
         }
       })),
 

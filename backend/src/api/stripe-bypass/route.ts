@@ -189,7 +189,8 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
 
       // Order items with enhanced product details
       items: items.map(item => ({
-        title: item.title,
+        // Include size in title for visibility in admin
+        title: item.variant?.title ? `${item.title} - ${item.variant.title}` : item.title,
         variant_id: item.variant_id,
         product_id: item.product_id,
         quantity: item.quantity,
@@ -319,7 +320,7 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
         stripe_payment_amount: final_total,
         // Update activity log
         activity_log: JSON.stringify([
-          ...(order.metadata.activity_log ? JSON.parse(order.metadata.activity_log) : []),
+          ...(order.metadata.activity_log ? JSON.parse(order.metadata.activity_log as string) : []),
           {
             timestamp: new Date().toISOString(),
             action: 'payment_initiated',
