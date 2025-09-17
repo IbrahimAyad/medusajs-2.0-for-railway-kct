@@ -85,6 +85,15 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       itemCount: items?.length,
       cart_id
     })
+    
+    // DEBUG: Log the actual item data to see what we're receiving
+    console.log("[DEBUG] Items received:", JSON.stringify(items?.map(item => ({
+      title: item.title,
+      variant: item.variant,
+      variant_title: item.variant?.title,
+      has_variant: !!item.variant,
+      variant_keys: item.variant ? Object.keys(item.variant) : []
+    })), null, 2))
 
     // Validate required fields for order creation
     if (!email || !shipping_address || !items || !amount) {
@@ -187,27 +196,49 @@ export async function POST(req: MedusaRequest, res: MedusaResponse) {
       billing_address: billing_address || shipping_address,
       shipping_address: shipping_address,
 
-      // Order items with enhanced product details
+      // Order items with enhanced product details and proper variant expansion
       items: items.map(item => ({
-        // Include size in title for visibility in admin
+        // Include size in title for visibility in admin - enhanced formatting
         title: item.variant?.title ? `${item.title} - ${item.variant.title}` : item.title,
         variant_id: item.variant_id,
         product_id: item.product_id,
         quantity: item.quantity,
         unit_price: item.unit_price, // Already in cents
         total: item.unit_price * item.quantity,
-        // Add product details if available
+        
+        // Enhanced product and variant details for admin visibility
         thumbnail: item.thumbnail || null,
         variant_sku: item.variant?.sku || null,
         variant_title: item.variant?.title || null,
         product_handle: item.product?.handle || null,
+        
+        // Store variant options for size display
+        variant_options: item.variant?.options || [],
+        
+        // Comprehensive metadata for admin visibility
         metadata: {
           ...item.metadata,
           source: 'bypass_order_first_checkout',
-          variant_details: item.variant || {},
-          product_details: item.product || {}
+          // Size information for admin display
+          size: item.variant?.title || 'Standard',
+          variant_size: item.variant?.title,
+          // Store full variant details
+          variant_details: {
+            title: item.variant?.title,
+            sku: item.variant?.sku,
+            options: item.variant?.options || [],
+            ...item.variant
+          },
+          product_details: {
+            title: item.title,
+            handle: item.product?.handle,
+            ...item.product
+          },
+          // Admin display helpers
+          display_name: item.variant?.title ? `${item.title} - ${item.variant.title}` : item.title,
+          admin_title: item.variant?.title ? `${item.title} (${item.variant.title})` : item.title
         }
-      })),
+      }),
 
       // Totals
       total: final_total, // Use calculated total with tax
