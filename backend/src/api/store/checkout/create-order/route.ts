@@ -231,7 +231,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
           display_name: item.variant?.title ? `${item.title} - ${item.variant.title}` : item.title,
           admin_title: item.variant?.title ? `${item.title} (${item.variant.title})` : item.title
         }
-      }),
+      })),
 
       // Totals
       total: final_total, // Use calculated total with tax
