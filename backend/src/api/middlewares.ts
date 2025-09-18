@@ -34,8 +34,8 @@ const stripeWebhookRawBody = async (
   res: MedusaResponse,
   next: MedusaNextFunction
 ) => {
-  // Only process for Stripe webhook endpoint
-  if (req.path === "/hooks/payment/stripe" && req.method === "POST") {
+  // Only process for Stripe webhook endpoints (both paths)
+  if ((req.path === "/hooks/payment/stripe" || req.path === "/webhooks/stripe") && req.method === "POST") {
     console.log("[Webhook Middleware] Processing Stripe webhook request")
     
     let rawBody = Buffer.alloc(0)
@@ -112,6 +112,11 @@ export default defineMiddlewares({
     },
     {
       matcher: "/hooks/payment/stripe",
+      middlewares: [stripeWebhookRawBody],
+      bodyParser: false, // Disable body parsing for raw body access
+    },
+    {
+      matcher: "/webhooks/stripe",
       middlewares: [stripeWebhookRawBody],
       bodyParser: false, // Disable body parsing for raw body access
     },
