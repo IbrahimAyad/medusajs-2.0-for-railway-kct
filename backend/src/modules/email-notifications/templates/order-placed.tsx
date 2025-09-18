@@ -1,4 +1,4 @@
-import { Text, Section, Hr } from '@react-email/components'
+import { Text, Section, Hr, Img, Row, Column, Button } from '@react-email/components'
 import * as React from 'react'
 import { Base } from './base'
 import { OrderDTO, OrderAddressDTO } from '@medusajs/framework/types'
@@ -21,86 +21,297 @@ export const isOrderPlacedTemplateData = (data: any): data is OrderPlacedTemplat
 
 export const OrderPlacedTemplate: React.FC<OrderPlacedTemplateProps> & {
   PreviewProps: OrderPlacedPreviewProps
-} = ({ order, shippingAddress, preview = 'Your order has been placed!' }) => {
+} = ({ order, shippingAddress, preview = 'Your order has been confirmed!' }) => {
+  const formatCurrency = (amount: number, currencyCode: string) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: currencyCode.toUpperCase()
+    }).format(amount / 100)
+  }
+
   return (
     <Base preview={preview}>
-      <Section>
-        <Text style={{ fontSize: '24px', fontWeight: 'bold', textAlign: 'center', margin: '0 0 30px' }}>
-          Order Confirmation
+      {/* Header with KCT Menswear Branding */}
+      <Section style={{ backgroundColor: '#1a1a1a', padding: '20px 0', textAlign: 'center' }}>
+        <Text style={{ 
+          fontSize: '28px', 
+          fontWeight: 'bold', 
+          color: '#ffffff', 
+          margin: '0',
+          letterSpacing: '2px'
+        }}>
+          KCT MENSWEAR
+        </Text>
+        <Text style={{ 
+          fontSize: '14px', 
+          color: '#cccccc', 
+          margin: '5px 0 0',
+          letterSpacing: '1px'
+        }}>
+          PREMIUM MEN'S FORMAL WEAR
+        </Text>
+      </Section>
+
+      {/* Order Confirmation Message */}
+      <Section style={{ padding: '40px 20px 20px' }}>
+        <Text style={{ 
+          fontSize: '26px', 
+          fontWeight: 'bold', 
+          textAlign: 'center', 
+          margin: '0 0 10px',
+          color: '#1a1a1a'
+        }}>
+          Order Confirmed!
+        </Text>
+        
+        <Text style={{ 
+          fontSize: '16px',
+          textAlign: 'center',
+          margin: '0 0 30px',
+          color: '#666666'
+        }}>
+          Thank you for choosing KCT Menswear. Your order is being processed.
         </Text>
 
-        <Text style={{ margin: '0 0 15px' }}>
+        <Text style={{ 
+          fontSize: '18px',
+          margin: '0 0 15px',
+          color: '#1a1a1a'
+        }}>
           Dear {shippingAddress.first_name} {shippingAddress.last_name},
         </Text>
 
-        <Text style={{ margin: '0 0 30px' }}>
-          Thank you for your recent order! Here are your order details:
+        <Text style={{ 
+          fontSize: '16px',
+          lineHeight: '1.6',
+          margin: '0 0 30px',
+          color: '#444444'
+        }}>
+          We're excited to confirm that your order has been received and is now being prepared. 
+          You'll receive another email with tracking information once your items have shipped.
         </Text>
+      </Section>
 
-        <Text style={{ fontSize: '18px', fontWeight: 'bold', margin: '0 0 10px' }}>
-          Order Summary
-        </Text>
-        <Text style={{ margin: '0 0 5px' }}>
-          Order ID: {order.display_id}
-        </Text>
-        <Text style={{ margin: '0 0 5px' }}>
-          Order Date: {new Date(order.created_at).toLocaleDateString()}
-        </Text>
-        <Text style={{ margin: '0 0 20px' }}>
-          Total: {order.summary.raw_current_order_total.value} {order.currency_code}
-        </Text>
+      {/* Order Summary Card */}
+      <Section style={{ padding: '0 20px' }}>
+        <div style={{
+          backgroundColor: '#f8f8f8',
+          border: '1px solid #e0e0e0',
+          borderRadius: '8px',
+          padding: '20px',
+          margin: '0 0 30px'
+        }}>
+          <Text style={{ 
+            fontSize: '20px', 
+            fontWeight: 'bold', 
+            margin: '0 0 15px',
+            color: '#1a1a1a'
+          }}>
+            Order Summary
+          </Text>
+          
+          <Row>
+            <Column>
+              <Text style={{ margin: '0 0 8px', color: '#666666' }}>
+                <strong>Order ID:</strong> {order.display_id}
+              </Text>
+              <Text style={{ margin: '0 0 8px', color: '#666666' }}>
+                <strong>Order Date:</strong> {new Date(order.created_at).toLocaleDateString('en-US', {
+                  year: 'numeric',
+                  month: 'long',
+                  day: 'numeric'
+                })}
+              </Text>
+            </Column>
+            <Column align="right">
+              <Text style={{ 
+                fontSize: '24px',
+                fontWeight: 'bold',
+                margin: '0',
+                color: '#1a1a1a'
+              }}>
+                {formatCurrency(order.summary.raw_current_order_total.value, order.currency_code)}
+              </Text>
+            </Column>
+          </Row>
+        </div>
+      </Section>
 
-        <Hr style={{ margin: '20px 0' }} />
-
-        <Text style={{ fontSize: '18px', fontWeight: 'bold', margin: '0 0 10px' }}>
-          Shipping Address
-        </Text>
-        <Text style={{ margin: '0 0 5px' }}>
-          {shippingAddress.address_1}
-        </Text>
-        <Text style={{ margin: '0 0 5px' }}>
-          {shippingAddress.city}, {shippingAddress.province} {shippingAddress.postal_code}
-        </Text>
-        <Text style={{ margin: '0 0 20px' }}>
-          {shippingAddress.country_code}
-        </Text>
-
-        <Hr style={{ margin: '20px 0' }} />
-
-        <Text style={{ fontSize: '18px', fontWeight: 'bold', margin: '0 0 15px' }}>
+      {/* Order Items */}
+      <Section style={{ padding: '0 20px' }}>
+        <Text style={{ 
+          fontSize: '20px', 
+          fontWeight: 'bold', 
+          margin: '0 0 20px',
+          color: '#1a1a1a'
+        }}>
           Order Items
         </Text>
 
         <div style={{
-          width: '100%',
-          borderCollapse: 'collapse',
-          border: '1px solid #ddd',
-          margin: '10px 0'
+          border: '1px solid #e0e0e0',
+          borderRadius: '8px',
+          overflow: 'hidden'
         }}>
+          {/* Table Header */}
           <div style={{
+            backgroundColor: '#1a1a1a',
+            padding: '15px',
             display: 'flex',
             justifyContent: 'space-between',
-            backgroundColor: '#f2f2f2',
-            padding: '8px',
-            borderBottom: '1px solid #ddd'
+            alignItems: 'center'
           }}>
-            <Text style={{ fontWeight: 'bold' }}>Item</Text>
-            <Text style={{ fontWeight: 'bold' }}>Quantity</Text>
-            <Text style={{ fontWeight: 'bold' }}>Price</Text>
+            <Text style={{ fontWeight: 'bold', color: '#ffffff', margin: '0', flex: '2' }}>Item</Text>
+            <Text style={{ fontWeight: 'bold', color: '#ffffff', margin: '0', textAlign: 'center', flex: '1' }}>Qty</Text>
+            <Text style={{ fontWeight: 'bold', color: '#ffffff', margin: '0', textAlign: 'right', flex: '1' }}>Price</Text>
           </div>
-          {order.items.map((item) => (
+
+          {/* Table Rows */}
+          {order.items.map((item, index) => (
             <div key={item.id} style={{
+              padding: '15px',
+              borderBottom: index < order.items.length - 1 ? '1px solid #e0e0e0' : 'none',
               display: 'flex',
               justifyContent: 'space-between',
-              padding: '8px',
-              borderBottom: '1px solid #ddd'
+              alignItems: 'center',
+              backgroundColor: index % 2 === 0 ? '#ffffff' : '#f9f9f9'
             }}>
-              <Text>{item.title} - {item.product_title}</Text>
-              <Text>{item.quantity}</Text>
-              <Text>{item.unit_price} {order.currency_code}</Text>
+              <div style={{ flex: '2' }}>
+                <Text style={{ 
+                  margin: '0 0 5px',
+                  fontWeight: 'bold',
+                  color: '#1a1a1a'
+                }}>
+                  {item.product_title}
+                </Text>
+                <Text style={{ 
+                  margin: '0',
+                  fontSize: '14px',
+                  color: '#666666'
+                }}>
+                  {item.title}
+                </Text>
+              </div>
+              <Text style={{ 
+                margin: '0',
+                textAlign: 'center',
+                flex: '1',
+                color: '#1a1a1a'
+              }}>
+                {item.quantity}
+              </Text>
+              <Text style={{ 
+                margin: '0',
+                textAlign: 'right',
+                flex: '1',
+                fontWeight: 'bold',
+                color: '#1a1a1a'
+              }}>
+                {formatCurrency(item.unit_price * item.quantity, order.currency_code)}
+              </Text>
             </div>
           ))}
         </div>
+      </Section>
+
+      {/* Shipping Information */}
+      <Section style={{ padding: '30px 20px 20px' }}>
+        <Text style={{ 
+          fontSize: '20px', 
+          fontWeight: 'bold', 
+          margin: '0 0 15px',
+          color: '#1a1a1a'
+        }}>
+          Shipping Address
+        </Text>
+        
+        <div style={{
+          backgroundColor: '#f8f8f8',
+          border: '1px solid #e0e0e0',
+          borderRadius: '8px',
+          padding: '20px'
+        }}>
+          <Text style={{ margin: '0 0 5px', color: '#1a1a1a', fontWeight: 'bold' }}>
+            {shippingAddress.first_name} {shippingAddress.last_name}
+          </Text>
+          <Text style={{ margin: '0 0 5px', color: '#666666' }}>
+            {shippingAddress.address_1}
+          </Text>
+          {shippingAddress.address_2 && (
+            <Text style={{ margin: '0 0 5px', color: '#666666' }}>
+              {shippingAddress.address_2}
+            </Text>
+          )}
+          <Text style={{ margin: '0 0 5px', color: '#666666' }}>
+            {shippingAddress.city}, {shippingAddress.province} {shippingAddress.postal_code}
+          </Text>
+          <Text style={{ margin: '0', color: '#666666' }}>
+            {shippingAddress.country_code?.toUpperCase()}
+          </Text>
+        </div>
+      </Section>
+
+      {/* Next Steps */}
+      <Section style={{ padding: '20px', backgroundColor: '#f8f8f8' }}>
+        <Text style={{ 
+          fontSize: '18px', 
+          fontWeight: 'bold', 
+          margin: '0 0 15px',
+          color: '#1a1a1a'
+        }}>
+          What's Next?
+        </Text>
+        
+        <Text style={{ 
+          fontSize: '16px',
+          lineHeight: '1.6',
+          margin: '0 0 15px',
+          color: '#444444'
+        }}>
+          • We'll process your order within 1-2 business days<br/>
+          • You'll receive tracking information via email once shipped<br/>
+          • Estimated delivery: 3-7 business days<br/>
+          • For any questions, contact us at info@kctmenswear.com
+        </Text>
+
+        <div style={{ textAlign: 'center', margin: '30px 0 0' }}>
+          <Button
+            href="mailto:info@kctmenswear.com"
+            style={{
+              backgroundColor: '#1a1a1a',
+              color: '#ffffff',
+              padding: '12px 30px',
+              textDecoration: 'none',
+              borderRadius: '5px',
+              fontWeight: 'bold',
+              display: 'inline-block'
+            }}
+          >
+            Contact Us
+          </Button>
+        </div>
+      </Section>
+
+      {/* Footer */}
+      <Section style={{ 
+        padding: '30px 20px',
+        textAlign: 'center',
+        backgroundColor: '#1a1a1a'
+      }}>
+        <Text style={{ 
+          fontSize: '14px',
+          color: '#cccccc',
+          margin: '0 0 10px'
+        }}>
+          Thank you for choosing KCT Menswear
+        </Text>
+        <Text style={{ 
+          fontSize: '12px',
+          color: '#999999',
+          margin: '0'
+        }}>
+          Premium Men's Formal Wear | Suits • Tuxedos • Accessories
+        </Text>
       </Section>
     </Base>
   )

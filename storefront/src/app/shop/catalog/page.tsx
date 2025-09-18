@@ -275,7 +275,7 @@ export default function CatalogPage() {
                   key={product.id}
                   className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-md transition-shadow relative"
                 >
-                  <Link href={`/products/medusa/${product.handle || product.id}`}>
+                  <Link href={`/products/${product.handle || product.id}`}>
                     {/* Image */}
                     <div className="relative aspect-[3/4] bg-gray-100">
                       {product.thumbnail ? (

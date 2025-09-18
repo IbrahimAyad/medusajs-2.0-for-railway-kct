@@ -29,8 +29,8 @@ export async function POST(request: NextRequest) {
     if (type === 'product') {
       // Revalidate specific product page
       if (handle) {
-        revalidatePath(`/products/medusa/${handle}`);
-        console.log(`[Revalidation] Product page revalidated: /products/medusa/${handle}`);
+        revalidatePath(`/products/${handle}`);
+        console.log(`[Revalidation] Product page revalidated: /products/${handle}`);
       }
       
       // Also revalidate products list

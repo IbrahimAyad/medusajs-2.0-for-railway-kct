@@ -119,7 +119,7 @@ export default function TestMedusaProductsPage() {
 
                   <div className="flex gap-2">
                     <Link
-                      href={`/products/medusa/${product.handle}`}
+                      href={`/products/${product.handle}`}
                       className="inline-flex items-center gap-1 px-3 py-1 bg-burgundy-600 text-white rounded hover:bg-burgundy-700"
                     >
                       <ExternalLink className="h-3 w-3" />

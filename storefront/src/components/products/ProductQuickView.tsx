@@ -352,7 +352,7 @@ export default function ProductQuickView({
 
           {/* View Full Details Link */}
           <a
-            href={`/products/medusa/${product.handle || product.id}`}
+            href={`/products/${product.handle || product.id}`}
             className="block text-center text-sm text-gray-600 underline hover:text-black transition-colors"
           >
             View Full Product Details

@@ -18,14 +18,14 @@ export interface ProductLinkData {
 export function getProductUrl(product: ProductLinkData): string {
   // Priority 1: Use handle for Medusa products
   if (product.handle) {
-    return `/products/medusa/${product.handle}`;
+    return `/products/${product.handle}`;
   }
   
   // Priority 2: Use slug (some products might have slug instead of handle)
   if (product.slug) {
     // Check if slug looks like a Medusa handle
     if (product.slug.includes('-')) {
-      return `/products/medusa/${product.slug}`;
+      return `/products/${product.slug}`;
     }
     // Otherwise use the slug as-is
     return `/products/${product.slug}`;
@@ -37,12 +37,12 @@ export function getProductUrl(product: ProductLinkData): string {
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, '-')
       .replace(/^-|-$/g, '');
-    return `/products/medusa/${generatedSlug}`;
+    return `/products/${generatedSlug}`;
   }
   
   // Priority 4: Use ID as last resort
   if (product.id) {
-    return `/products/medusa/${product.id}`;
+    return `/products/${product.id}`;
   }
   
   // Fallback to products page if no identifiers

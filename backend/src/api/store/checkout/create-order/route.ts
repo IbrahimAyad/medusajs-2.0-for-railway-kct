@@ -165,17 +165,19 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const discount_total = 0
     const calculated_total = subtotal + tax_total + shipping_total - discount_total
     
-    // Use calculated total with tax, not the provided amount
-    const final_total = calculated_total
+    // Use the provided amount (actual Stripe payment amount) instead of calculated total
+    // This ensures order total matches what customer actually paid
+    const final_total = amount
     
-    console.log(`[Create Order] Tax calculation:`, {
+    console.log(`[Create Order] Payment amount vs calculated:`, {
       subtotal,
       tax_rate: (taxBreakdown.tax_rate * 100).toFixed(2) + '%',
       tax_name: taxBreakdown.tax_name,
       tax_total,
       calculated_total,
       provided_amount: amount,
-      using_calculated_total: final_total
+      using_provided_amount: final_total,
+      amount_difference: amount - calculated_total
     })
 
     // Step 4: Create the order with "pending" status
@@ -287,7 +289,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Step 5: Create Stripe payment intent with order_id in metadata
     const paymentIntentData: Stripe.PaymentIntentCreateParams = {
-      amount: final_total, // Use calculated total with tax
+      amount: final_total, // Use the actual amount customer is paying
       currency: currency_code,
       automatic_payment_methods: {
         enabled: true,
@@ -330,7 +332,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         ...order.metadata,
         ...paymentMetadata,
         stripe_client_secret: paymentIntent.client_secret,
-        stripe_payment_amount: final_total
+        stripe_payment_amount: final_total,
+        actual_stripe_amount: amount
       }
     } as any)
 

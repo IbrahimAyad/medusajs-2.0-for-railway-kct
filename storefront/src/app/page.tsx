@@ -472,7 +472,7 @@ export default function HomePage() {
                   viewport={{ once: true }}
                   transition={{ delay: index * 0.1 }}
                 >
-                  <Link href={`/products/medusa/${product.handle}`} className="group block">
+                  <Link href={`/products/${product.handle}`} className="group block">
                     <div className="relative aspect-[3/4] overflow-hidden bg-gray-100 mb-4">
                       {product.thumbnail && (
                         <Image

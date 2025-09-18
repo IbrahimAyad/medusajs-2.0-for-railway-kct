@@ -178,7 +178,7 @@ export default function OptimizedCatalogPage() {
             
             return (
               <div key={product.id} className="group bg-white rounded-lg overflow-hidden shadow-sm hover:shadow-lg transition-shadow">
-                <Link href={`/products/medusa/${product.handle}`}>
+                <Link href={`/products/${product.handle}`}>
                   <div className="aspect-[3/4] relative bg-gray-100">
                     {product.thumbnail ? (
                       <Image

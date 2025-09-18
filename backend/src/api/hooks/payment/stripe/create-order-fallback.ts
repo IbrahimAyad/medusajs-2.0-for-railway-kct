@@ -109,10 +109,15 @@ export async function createOrderFromPaymentIntent(
       items: [
         {
           title: paymentIntent.description || 'Product (details pending)',
+          variant_title: 'Standard', // Default size for fallback orders
           quantity: 1,
           unit_price: paymentIntent.amount,
           metadata: {
-            payment_intent_id: paymentIntent.id
+            payment_intent_id: paymentIntent.id,
+            size: 'Standard',
+            display_name: paymentIntent.description || 'Product (details pending)',
+            admin_title: paymentIntent.description || 'Product (details pending)',
+            fallback_order: true
           }
         }
       ],

@@ -341,7 +341,7 @@ function CollectionsContent() {
                 return (
                   <Link 
                     key={product.id} 
-                    href={`/products/medusa/${product.handle}`}
+                    href={`/products/${product.handle}`}
                     className="group"
                   >
                     <div className="bg-white rounded-lg overflow-hidden hover:shadow-lg transition-shadow">
