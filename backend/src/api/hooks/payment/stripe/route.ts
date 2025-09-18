@@ -52,6 +52,86 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       }
     }
   }
+
+  // RAILWAY FALLBACK: If body is still missing, poll Stripe for recent payments
+  if (!req.body || Object.keys(req.body).length === 0) {
+    console.log("[Stripe Webhook] ⚠️ RAILWAY ISSUE: No webhook body received, polling Stripe for recent payments...")
+
+    const stripeKey = process.env.STRIPE_API_KEY
+    if (!stripeKey) {
+      return res.status(500).json({ error: "Stripe not configured" })
+    }
+
+    const stripe = new Stripe(stripeKey, {
+      apiVersion: '2025-08-27.basil',
+    })
+
+    try {
+      // Get events from last 5 minutes
+      const fiveMinutesAgo = Math.floor(Date.now() / 1000) - 300
+
+      const events = await stripe.events.list({
+        limit: 10,
+        types: ['payment_intent.succeeded'],
+        created: { gte: fiveMinutesAgo }
+      })
+
+      console.log(`[Stripe Webhook] Found ${events.data.length} recent payment events`)
+
+      if (events.data.length === 0) {
+        return res.json({
+          received: true,
+          message: "No recent payments to process"
+        })
+      }
+
+      // Process the most recent unprocessed payment
+      const orderService = req.scope.resolve<IOrderModuleService>(Modules.ORDER)
+
+      for (const event of events.data) {
+        const paymentIntent = event.data.object as Stripe.PaymentIntent
+
+        // Check if already processed
+        const existingOrders = await orderService.listOrders({
+          metadata: {
+            payment_intent_id: paymentIntent.id
+          }
+        } as any)
+
+        if (!existingOrders || existingOrders.length === 0) {
+          console.log(`[Stripe Webhook] Processing unprocessed payment: ${paymentIntent.id}`)
+
+          // Create a synthetic event to process
+          const syntheticEvent: Stripe.Event = {
+            id: event.id,
+            object: 'event',
+            api_version: event.api_version,
+            created: event.created,
+            data: { object: paymentIntent },
+            livemode: event.livemode,
+            pending_webhooks: 0,
+            request: event.request,
+            type: 'payment_intent.succeeded'
+          }
+
+          // Process this payment using existing handler
+          return await handlePaymentIntentSucceeded(req, res, syntheticEvent)
+        }
+      }
+
+      return res.json({
+        received: true,
+        message: "All recent payments already processed"
+      })
+
+    } catch (error: any) {
+      console.error("[Stripe Webhook] Polling error:", error.message)
+      return res.status(500).json({
+        error: "Failed to poll Stripe",
+        message: error.message
+      })
+    }
+  }
   
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
   const stripeKey = process.env.STRIPE_API_KEY
