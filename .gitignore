@@ -111,4 +111,7 @@ admin-build/
 # Never commit these specific files with sensitive data
 backend/create-admin-direct.sql
 backend/src/api/link-auth/route.ts
-backend/src/api/debug-auth/route.ts*.env
+backend/src/api/debug-auth/route.ts
+backend/RAILWAY_ENVIRONMENT_VARIABLES.md
+backend/RAILWAY_ENV_VARIABLES.md
+*.env
