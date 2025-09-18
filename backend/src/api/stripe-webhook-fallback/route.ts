@@ -207,7 +207,8 @@ async function processPaymentIntent(
       }
     }
 
-    const order = await orderService.createOrders(orderData as any)
+    const orders = await orderService.createOrders(orderData as any)
+    const order = Array.isArray(orders) ? orders[0] : orders
     console.log(`[Webhook Fallback] ✅ Created fallback order:`, order.id)
 
     res.json({

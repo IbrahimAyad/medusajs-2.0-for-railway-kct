@@ -132,7 +132,8 @@ export const GET = async (req: MedusaRequest, res: MedusaResponse) => {
           }
         }
 
-        const order = await orderService.createOrders(orderData as any)
+        const orders = await orderService.createOrders(orderData as any)
+        const order = Array.isArray(orders) ? orders[0] : orders
         console.log(`[Payment Processor] Created order ${order.id}`)
         processedCount++
         createdOrders.push({
@@ -256,7 +257,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       }
     }
 
-    const order = await orderService.createOrders(orderData as any)
+    const orders = await orderService.createOrders(orderData as any)
+    const order = Array.isArray(orders) ? orders[0] : orders
 
     return res.json({
       success: true,
