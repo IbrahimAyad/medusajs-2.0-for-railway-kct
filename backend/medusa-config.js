@@ -144,13 +144,13 @@ const medusaConfig = {
       resolve: '@medusajs/cache-redis',
       options: {
         redisUrl: REDIS_URL,
-        ttl: 60, // 60 seconds TTL for cached data
+        ttl: 300, // 5 minutes TTL for cached data (increased for better performance)
       }
     }] : [{
       key: Modules.CACHE,
       resolve: '@medusajs/cache-inmemory',
       options: {
-        ttl: 60 // 60 seconds TTL for in-memory cache
+        ttl: 300 // 5 minutes TTL for in-memory cache (increased for better performance)
       }
     }]),
     ...(SENDGRID_API_KEY && SENDGRID_FROM_EMAIL || RESEND_API_KEY && RESEND_FROM_EMAIL ? [{

@@ -111,7 +111,7 @@ export async function createOrderFromPaymentIntent(
           title: paymentIntent.description || 'Product (details pending)',
           variant_title: 'Standard', // Default size for fallback orders
           quantity: 1,
-          unit_price: paymentIntent.amount,
+          unit_price: Math.round(paymentIntent.amount / 100), // Convert cents to dollars
           metadata: {
             payment_intent_id: paymentIntent.id,
             size: 'Standard',
@@ -122,9 +122,9 @@ export async function createOrderFromPaymentIntent(
         }
       ],
 
-      // Total amounts
-      total: paymentIntent.amount,
-      subtotal: paymentIntent.amount,
+      // Total amounts - convert from cents to dollars
+      total: Math.round(paymentIntent.amount / 100),
+      subtotal: Math.round(paymentIntent.amount / 100),
       tax_total: 0,
       shipping_total: 0,
       discount_total: 0
