@@ -34,6 +34,8 @@ const stripeWebhookRawBody = async (
   res: MedusaResponse,
   next: MedusaNextFunction
 ) => {
+  console.log("[Webhook Middleware] Path:", req.path, "Method:", req.method)
+
   // Only process for Stripe webhook endpoints (both paths)
   if ((req.path === "/hooks/payment/stripe" || req.path === "/webhooks/stripe") && req.method === "POST") {
     console.log("[Webhook Middleware] Processing Stripe webhook request")

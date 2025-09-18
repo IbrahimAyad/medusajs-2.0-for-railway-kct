@@ -20,6 +20,38 @@ import {
  */
 export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
   console.log("[Stripe Webhook] POST request received")
+  console.log("[Stripe Webhook] Content-Type:", req.headers['content-type'])
+  console.log("[Stripe Webhook] Body type:", typeof req.body)
+  console.log("[Stripe Webhook] Has rawBody:", !!(req as any).rawBody)
+
+  // If body is undefined, try to read it manually
+  if (req.body === undefined && req.readable) {
+    console.log("[Stripe Webhook] Body is undefined and request is readable, attempting manual read...")
+
+    const chunks: Buffer[] = []
+    const bodyPromise = new Promise<string>((resolve) => {
+      req.on('data', (chunk) => {
+        chunks.push(chunk)
+      })
+      req.on('end', () => {
+        const rawBody = Buffer.concat(chunks).toString('utf8')
+        console.log("[Stripe Webhook] Manually read body, length:", rawBody.length)
+        resolve(rawBody)
+      })
+      setTimeout(() => resolve(''), 5000) // Timeout after 5 seconds
+    })
+
+    const manualBody = await bodyPromise
+    if (manualBody) {
+      try {
+        req.body = JSON.parse(manualBody)
+        ;(req as any).rawBody = manualBody
+        console.log("[Stripe Webhook] Successfully parsed manual body")
+      } catch (e) {
+        console.error("[Stripe Webhook] Failed to parse manual body:", e)
+      }
+    }
+  }
   
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET
   const stripeKey = process.env.STRIPE_API_KEY
