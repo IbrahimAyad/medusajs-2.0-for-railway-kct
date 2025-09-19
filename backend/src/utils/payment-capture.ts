@@ -105,13 +105,22 @@ export async function captureOrderPayment(
       last_webhook_processed_at: new Date().toISOString(),
       ready_for_fulfillment: true
     }
-    
-    // Update order with capture metadata
-    await orderService.updateOrders({
+
+    // Update order with capture metadata and payment totals
+    // In Medusa v2, we need to track payment through metadata since there's no direct payment_status field
+    const updateData: any = {
       id: orderId,
       metadata: captureMetadata
-    } as any)
-    
+    }
+
+    // If the order service supports paid_total, update it
+    // This helps the admin UI recognize the payment
+    if (paymentIntent.amount_received) {
+      updateData.paid_total = paymentIntent.amount_received / 100 // Convert cents to dollars
+    }
+
+    await orderService.updateOrders(updateData)
+
     console.log(`[Payment Capture] ✅ Order ${orderId} payment captured successfully`)
     
     // Update associated payment collections if they exist

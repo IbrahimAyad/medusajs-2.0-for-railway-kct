@@ -146,7 +146,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const regionId = "reg_01K3S6NDGAC1DSWH9MCZCWBWWD"
 
     // Step 3: Calculate totals with tax
-    const subtotal = items.reduce((sum, item) => sum + (item.unit_price * item.quantity), 0)
+    // Convert item prices from cents to dollars (items come with unit_price in cents)
+    const subtotal = items.reduce((sum, item) => sum + ((item.unit_price / 100) * item.quantity), 0)
     
     // Calculate tax based on shipping address
     const taxBreakdown = calculateTax({
@@ -198,8 +199,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         variant_id: item.variant_id,
         product_id: item.product_id,
         quantity: item.quantity,
-        unit_price: item.unit_price,
-        total: item.unit_price * item.quantity,
+        unit_price: item.unit_price / 100, // Convert from cents to dollars
+        total: (item.unit_price / 100) * item.quantity, // Convert from cents to dollars
         
         // Enhanced product and variant details for admin visibility
         thumbnail: item.thumbnail || null,
@@ -235,8 +236,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         }
       })),
 
-      // Totals
-      total: final_total, // Use calculated total with tax
+      // Totals - all in dollars (Medusa expects dollars, not cents)
+      total: subtotal + tax_total + shipping_total - discount_total, // Use properly calculated total
       subtotal: subtotal,
       tax_total: tax_total,
       shipping_total: shipping_total,
@@ -333,8 +334,8 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         ...paymentMetadata,
         stripe_client_secret: paymentIntent.client_secret,
         stripe_payment_amount_cents: amount,
-        stripe_payment_amount_dollars: final_total,
-        order_total_dollars: final_total
+        stripe_payment_amount_dollars: amount / 100,
+        order_total_dollars: subtotal + tax_total
       }
     } as any)
 
@@ -351,7 +352,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         tax_total,
         tax_rate: taxBreakdown.tax_rate,
         tax_name: taxBreakdown.tax_name,
-        total: final_total,
+        total: subtotal + tax_total,
         tax_summary: getTaxSummary(taxBreakdown, currency_code)
       },
       order: {
