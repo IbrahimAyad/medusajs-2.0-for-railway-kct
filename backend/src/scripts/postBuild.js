@@ -35,6 +35,20 @@ if (fs.existsSync(srcLibPath)) {
   console.log('Copied src/lib to .medusa/server/src/lib');
 }
 
+// Copy src/subscribers directory to .medusa/server/src/subscribers
+const srcSubscribersPath = path.join(process.cwd(), 'src', 'subscribers');
+const destSubscribersPath = path.join(MEDUSA_SERVER_PATH, 'src', 'subscribers');
+if (fs.existsSync(srcSubscribersPath)) {
+  // Create src directory if it doesn't exist
+  const destSrcPath = path.join(MEDUSA_SERVER_PATH, 'src');
+  if (!fs.existsSync(destSrcPath)) {
+    fs.mkdirSync(destSrcPath, { recursive: true });
+  }
+  // Copy subscribers directory recursively
+  fs.cpSync(srcSubscribersPath, destSubscribersPath, { recursive: true });
+  console.log('Copied src/subscribers to .medusa/server/src/subscribers');
+}
+
 // Copy pnpm-lock.yaml
 fs.copyFileSync(
   path.join(process.cwd(), 'pnpm-lock.yaml'),
