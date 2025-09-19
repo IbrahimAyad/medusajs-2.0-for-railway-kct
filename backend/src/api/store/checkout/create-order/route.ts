@@ -165,9 +165,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
     const discount_total = 0
     const calculated_total = subtotal + tax_total + shipping_total - discount_total
     
-    // Use the provided amount (actual Stripe payment amount) instead of calculated total
-    // This ensures order total matches what customer actually paid
-    const final_total = amount
+    // Convert amount from cents to dollars for Medusa
+    // Stripe uses cents, but Medusa expects dollars
+    const final_total = Math.round(amount / 100)
     
     console.log(`[Create Order] Payment amount vs calculated:`, {
       subtotal,
@@ -289,7 +289,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
 
     // Step 5: Create Stripe payment intent with order_id in metadata
     const paymentIntentData: Stripe.PaymentIntentCreateParams = {
-      amount: final_total, // Use the actual amount customer is paying
+      amount: amount, // Use the original amount in cents for Stripe
       currency: currency_code,
       automatic_payment_methods: {
         enabled: true,
@@ -332,8 +332,9 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
         ...order.metadata,
         ...paymentMetadata,
         stripe_client_secret: paymentIntent.client_secret,
-        stripe_payment_amount: final_total,
-        actual_stripe_amount: amount
+        stripe_payment_amount_cents: amount,
+        stripe_payment_amount_dollars: final_total,
+        order_total_dollars: final_total
       }
     } as any)
 
@@ -342,7 +343,7 @@ export const POST = async (req: MedusaRequest, res: MedusaResponse) => {
       success: true,
       order_id: order.id,
       client_secret: paymentIntent.client_secret,
-      amount: final_total,
+      amount: amount, // Return amount in cents for frontend
       currency: currency_code,
       payment_intent_id: paymentIntent.id,
       tax_breakdown: {
