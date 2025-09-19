@@ -57,7 +57,8 @@ export async function handleAuthIdentityCreated({
       customerData.last_name = data.provider_metadata?.last_name || data.last_name
     }
 
-    const customer = await customerModuleService.createCustomers(customerData)
+    const customers = await customerModuleService.createCustomers(customerData)
+    const customer = Array.isArray(customers) ? customers[0] : customers
 
     console.log(`✅ Customer record created for ${email}`, {
       customer_id: customer.id,
@@ -70,12 +71,13 @@ export async function handleAuthIdentityCreated({
     if (data.id) {
       try {
         // Store the customer ID in auth metadata for quick lookup
-        await authModuleService.updateAuthIdentity(data.id, {
+        await authModuleService.updateAuthIdentities([{
+          id: data.id,
           app_metadata: {
             ...(data.app_metadata || {}),
             customer_id: customer.id
           }
-        })
+        }])
         console.log(`🔗 Linked auth identity to customer ${customer.id}`)
       } catch (linkError) {
         console.log('Could not update auth identity metadata:', linkError)
@@ -115,11 +117,12 @@ export async function handleCustomerRegistration({
 
     if (existingCustomers.length === 0) {
       // Create customer with registration data
-      const customer = await customerModuleService.createCustomers({
+      const customers = await customerModuleService.createCustomers({
         email: email,
         first_name: provider_metadata?.first_name || '',
         last_name: provider_metadata?.last_name || '',
       })
+      const customer = Array.isArray(customers) ? customers[0] : customers
 
       console.log(`✅ Customer created from registration: ${customer.id}`)
     }
