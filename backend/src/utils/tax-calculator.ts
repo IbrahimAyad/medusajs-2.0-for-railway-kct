@@ -37,8 +37,8 @@ export function calculateTax(options: TaxCalculationOptions): TaxBreakdown {
   // Get tax rate based on location
   const taxInfo = getTaxRate(shipping_address)
   
-  // Calculate tax amount
-  const tax_total = Math.round(subtotal * taxInfo.rate)
+  // Calculate tax amount (keep precision, don't round to integer)
+  const tax_total = parseFloat((subtotal * taxInfo.rate).toFixed(2))
   const total = subtotal + tax_total
   
   return {
