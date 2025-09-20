@@ -63,16 +63,17 @@ export default async function ensureCustomerOnAuthLoader(
 
         // Create the customer
         const customer = await customerService.createCustomers({
-          email,
+          email: email as string,
           has_account: true,
         })
 
         // Link auth identity to customer
-        await authService.updateAuthIdentity(authIdentityId, {
+        await authService.updateAuthIdentities([{
+          id: authIdentityId,
           app_metadata: {
             customer_id: customer.id,
           },
-        })
+        }])
 
         console.log(`✅ Customer created via loader: ${customer.id} for ${email}`)
       } catch (error) {
