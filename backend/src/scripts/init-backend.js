@@ -3,7 +3,6 @@
 const fs = require('fs');
 const path = require('path');
 const { execSync } = require('child_process');
-const axios = require('axios').default;
 
 // Copy medusa-config to .medusa/server if it exists
 const medusaServerPath = path.join(process.cwd(), '.medusa', 'server');
