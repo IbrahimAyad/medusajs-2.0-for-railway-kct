@@ -1,5 +1,8 @@
 #!/bin/bash
 
+# Run init-backend script first
+node src/scripts/init-backend.js
+
 # Debug: Show environment variables are available at runtime
 echo "=== RAILWAY PRODUCTION ENVIRONMENT CHECK ==="
 echo "NODE_ENV: $NODE_ENV"
@@ -35,6 +38,10 @@ if [ -f medusa-config.js ] && [ -d .medusa/server ]; then
 fi
 
 echo "=== STARTING MEDUSA BACKEND ==="
+
+# Export PORT for Medusa to use
+export PORT=${PORT:-9000}
+echo "Starting Medusa on PORT: $PORT"
 
 # Start Medusa directly from the built directory
 cd .medusa/server && npx medusa start
