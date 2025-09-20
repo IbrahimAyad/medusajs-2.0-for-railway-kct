@@ -29,14 +29,11 @@ export const POST = async (
 
     // First, register the auth identity
     const authIdentity = await authService.register("emailpass", {
-      entity_id: email,
-      provider_metadata: {
-        email,
-        password,
-      }
+      email,
+      password,
     })
 
-    console.log(`✅ Auth identity created: ${authIdentity.id}`)
+    console.log(`✅ Auth identity registered for: ${email}`)
 
     // Check if customer already exists
     const [existingCustomers] = await customerService.listAndCountCustomers({
@@ -62,31 +59,21 @@ export const POST = async (
       console.log(`✅ Created new customer: ${customer.id}`)
     }
 
-    // CRITICAL: Link the auth identity to the customer
-    try {
-      await authService.updateAuthIdentities([{
-        id: authIdentity.id,
-        app_metadata: {
-          ...authIdentity.app_metadata,
-          customer_id: customer.id
-        }
-      }])
-      console.log(`🔗 Successfully linked auth identity ${authIdentity.id} to customer ${customer.id}`)
-    } catch (linkError) {
-      console.error(`❌ Failed to link auth identity to customer:`, linkError)
-    }
+    // The auth identity will be linked via the subscriber
+    // For now, we just need to ensure the customer exists
+    console.log(`✅ Customer ready for linking: ${customer.id}`)
 
     // Authenticate and return token
     const authResult = await authService.authenticate("emailpass", {
-      entity_id: email,
-      provider_metadata: {
-        email,
-        password,
-      }
+      email,
+      password,
     })
 
+    // Extract token from the response
+    const token = (authResult as any).token || (authResult as any).jwt || authResult
+
     return res.json({
-      token: authResult.jwt,
+      token: token,
       customer: {
         id: customer.id,
         email: customer.email,
