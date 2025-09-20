@@ -57,29 +57,18 @@ export const POST = async (
       if (authUser) {
         console.log(`🔗 Found authenticated user: ${authUser}`)
 
-        // Find auth identity for the authenticated user - try different approaches
+        // Find auth identity for the authenticated user - search by email
         let authIdentities = []
 
-        // Try to find by actor_id
         try {
+          // Search for auth identity by email in provider_identities
           authIdentities = await authService.listAuthIdentities({
-            actor_id: authUser
+            provider_identities: {
+              entity_id: email
+            }
           })
         } catch (e) {
-          console.log(`⚠️ Could not search by actor_id: ${e.message}`)
-        }
-
-        // If not found, try to find by email in provider_identities
-        if (authIdentities.length === 0) {
-          try {
-            authIdentities = await authService.listAuthIdentities({
-              provider_identities: {
-                entity_id: email
-              }
-            })
-          } catch (e) {
-            console.log(`⚠️ Could not search by email: ${e.message}`)
-          }
+          console.log(`⚠️ Could not search by email: ${e.message}`)
         }
 
         if (authIdentities.length > 0) {
