@@ -43,9 +43,10 @@ async function testCompleteFlow() {
       throw new Error(`Registration failed: ${error}`)
     }
 
-    const { token } = await registerResponse.json()
+    const registerData = await registerResponse.json()
+    const token = registerData.token || registerData.jwt || registerData
     console.log('✅ Registration successful')
-    console.log(`   Token: ${token.substring(0, 20)}...`)
+    console.log(`   Token: ${typeof token === 'string' ? token.substring(0, 20) + '...' : 'Token received'}`)
 
     // Wait for async processing
     console.log('⏳ Waiting 3 seconds for async processing...')
@@ -129,8 +130,9 @@ async function testCompleteFlow() {
 
     if (loginResponse.ok) {
       const loginData = await loginResponse.json()
+      const loginToken = loginData.token || loginData.jwt || loginData
       console.log('✅ Login successful')
-      console.log(`   Token: ${loginData.token.substring(0, 20)}...`)
+      console.log(`   Token: ${typeof loginToken === 'string' ? loginToken.substring(0, 20) + '...' : 'Token received'}`)
 
       // Try sync again after login
       console.log('\n📤 STEP 5: SYNC AFTER LOGIN')
@@ -139,12 +141,12 @@ async function testCompleteFlow() {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${loginData.token}`,
+          'Authorization': `Bearer ${loginToken}`,
           'x-publishable-api-key': PUBLISHABLE_KEY
         },
         body: JSON.stringify({
           email: testEmail,
-          token: loginData.token
+          token: loginToken
         })
       })
 
