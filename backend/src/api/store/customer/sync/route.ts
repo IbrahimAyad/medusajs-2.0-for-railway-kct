@@ -50,16 +50,37 @@ export const POST = async (
     try {
       const authService = req.scope.resolve(Modules.AUTH)
 
-      // Get current authenticated user from request context
-      const authUser = req.auth?.actor_id || req.user?.id || req.auth?.user?.id
+      // Get current authenticated user from request context - using safe property access
+      const authContext = req as any
+      const authUser = authContext.auth?.actor_id || authContext.user?.customer_id || authContext.user?.userId
 
       if (authUser) {
         console.log(`🔗 Found authenticated user: ${authUser}`)
 
-        // Find auth identity for the authenticated user
-        const authIdentities = await authService.listAuthIdentities({
-          entity_id: authUser
-        })
+        // Find auth identity for the authenticated user - try different approaches
+        let authIdentities = []
+
+        // Try to find by actor_id
+        try {
+          authIdentities = await authService.listAuthIdentities({
+            actor_id: authUser
+          })
+        } catch (e) {
+          console.log(`⚠️ Could not search by actor_id: ${e.message}`)
+        }
+
+        // If not found, try to find by email in provider_identities
+        if (authIdentities.length === 0) {
+          try {
+            authIdentities = await authService.listAuthIdentities({
+              provider_identities: {
+                entity_id: email
+              }
+            })
+          } catch (e) {
+            console.log(`⚠️ Could not search by email: ${e.message}`)
+          }
+        }
 
         if (authIdentities.length > 0) {
           const authIdentity = authIdentities[0]
@@ -82,26 +103,30 @@ export const POST = async (
 
         // Fallback: Try to find auth identity by email
         if (token) {
-          const authIdentities = await authService.listAuthIdentities({
-            provider_identities: {
-              entity_id: email
-            }
-          })
+          try {
+            const authIdentities = await authService.listAuthIdentities({
+              provider_identities: {
+                entity_id: email
+              }
+            })
 
-          if (authIdentities.length > 0) {
-            const authIdentity = authIdentities[0]
-            await authService.updateAuthIdentities([{
-              id: authIdentity.id,
-              app_metadata: {
-                ...authIdentity.app_metadata,
-                customer_id: customer.id,
-              },
-            }])
-            console.log(`✅ Linked auth identity via email fallback`)
+            if (authIdentities.length > 0) {
+              const authIdentity = authIdentities[0]
+              await authService.updateAuthIdentities([{
+                id: authIdentity.id,
+                app_metadata: {
+                  ...authIdentity.app_metadata,
+                  customer_id: customer.id,
+                },
+              }])
+              console.log(`✅ Linked auth identity via email fallback`)
+            }
+          } catch (e) {
+            console.log(`⚠️ Email fallback failed: ${e.message}`)
           }
         }
       }
-    } catch (linkError) {
+    } catch (linkError: any) {
       console.log("⚠️ Could not link auth identity:", linkError.message)
       // Continue anyway - customer is created
     }
