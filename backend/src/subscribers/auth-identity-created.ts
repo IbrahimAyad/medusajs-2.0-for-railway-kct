@@ -11,6 +11,7 @@ export default async function authIdentityCreatedHandler({
   event: { data },
   container,
 }: SubscriberArgs<any>) {
+  console.log('🔥🔥🔥 AUTH IDENTITY CREATED SUBSCRIBER LOADED!')
   const customerModuleService: ICustomerModuleService = container.resolve(Modules.CUSTOMER)
 
   try {
