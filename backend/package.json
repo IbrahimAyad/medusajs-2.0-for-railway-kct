@@ -13,10 +13,10 @@
     "medusa"
   ],
   "scripts": {
-    "build": "node src/scripts/compileSubscribers.js && medusa build && node src/scripts/postBuild.js",
+    "build": "medusa build",
     "seed": "medusa exec ./src/scripts/seed.ts",
     "ib": "init-backend",
-    "start": "node src/scripts/init-backend.js && cp medusa-config.js .medusa/server/medusa-config.js 2>/dev/null; mkdir -p .medusa/server/src && cp -r src/lib .medusa/server/src/lib 2>/dev/null; cp -r src/subscribers .medusa/server/src/subscribers 2>/dev/null; cd .medusa/server && medusa start",
+    "start": "cd .medusa/server && medusa start",
     "dev": "medusa develop",
     "email:dev": "email dev --dir=./src/modules/email-notifications/templates --port=3002"
   },
