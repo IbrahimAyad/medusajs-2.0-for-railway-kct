@@ -7,8 +7,7 @@ import {
   MedusaRequest,
   MedusaResponse,
 } from "@medusajs/framework/http"
-import { Modules } from "@medusajs/framework/utils"
-import jwt from "jsonwebtoken"
+import { Modules, verifyJwtToken } from "@medusajs/framework/utils"
 
 export const GET = async (
   req: MedusaRequest,
@@ -29,15 +28,20 @@ export const GET = async (
         const token = authHeader.substring(7)
         
         try {
-          // Decode JWT token (without verification for now, since we don't have the secret here)
-          const decoded = jwt.decode(token) as any
+          // Get JWT secret from environment
+          const secret = process.env.JWT_SECRET || "supersecret"
+          
+          // Verify and decode JWT token
+          const decoded = verifyJwtToken(token, {
+            secret
+          }) as any
           
           console.log("🔍 Decoded JWT token:", JSON.stringify(decoded, null, 2))
           
           // Get customer_id from app_metadata
           customerId = decoded?.app_metadata?.customer_id
         } catch (error) {
-          console.error("Failed to decode JWT token:", error)
+          console.error("Failed to verify JWT token:", error)
         }
       }
     }
