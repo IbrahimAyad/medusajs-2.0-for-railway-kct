@@ -35,18 +35,60 @@ if (fs.existsSync(srcLibPath)) {
   console.log('Copied src/lib to .medusa/server/src/lib');
 }
 
-// Copy src/subscribers directory to .medusa/server/src/subscribers
-const srcSubscribersPath = path.join(process.cwd(), 'src', 'subscribers');
-const destSubscribersPath = path.join(MEDUSA_SERVER_PATH, 'src', 'subscribers');
-if (fs.existsSync(srcSubscribersPath)) {
+// Copy JavaScript subscribers that were compiled BEFORE medusa build
+// These are needed in .medusa/server for production runtime
+const subscriberSrcPath = path.join(process.cwd(), 'src', 'subscribers');
+const subscriberDestPath = path.join(MEDUSA_SERVER_PATH, 'src', 'subscribers');
+if (fs.existsSync(subscriberSrcPath)) {
   // Create src directory if it doesn't exist
   const destSrcPath = path.join(MEDUSA_SERVER_PATH, 'src');
   if (!fs.existsSync(destSrcPath)) {
     fs.mkdirSync(destSrcPath, { recursive: true });
   }
-  // Copy subscribers directory recursively
-  fs.cpSync(srcSubscribersPath, destSubscribersPath, { recursive: true });
-  console.log('Copied src/subscribers to .medusa/server/src/subscribers');
+  // Create subscribers directory
+  if (!fs.existsSync(subscriberDestPath)) {
+    fs.mkdirSync(subscriberDestPath, { recursive: true });
+  }
+
+  // Copy ONLY the three specific JavaScript files we compiled for auth
+  // Skip TypeScript files and other JS files to avoid conflicts
+  const authSubscribers = [
+    'auth-identity-created.js',
+    'auth-password-registered.js',
+    'customer-created.js'
+  ];
+
+  authSubscribers.forEach(file => {
+    const srcFile = path.join(subscriberSrcPath, file);
+    const destFile = path.join(subscriberDestPath, file);
+    if (fs.existsSync(srcFile)) {
+      fs.copyFileSync(srcFile, destFile);
+    }
+  });
+
+  console.log('Copied subscribers to .medusa/server/src/subscribers');
+
+  // Verify the compiled files exist
+  if (fs.existsSync(subscriberDestPath)) {
+    const copiedFiles = fs.readdirSync(subscriberDestPath);
+    console.log(`Subscriber files (JS):`, copiedFiles.filter(f => f.endsWith('.js')));
+    console.log(`Subscriber files (TS):`, copiedFiles.filter(f => f.endsWith('.ts')));
+    console.log('IMPORTANT: JavaScript files in src/subscribers will be loaded by Medusa');
+  }
+}
+
+// Copy src/api directory to .medusa/server/src/api - CRITICAL FOR HEALTH ENDPOINT
+const srcApiPath = path.join(process.cwd(), 'src', 'api');
+const destApiPath = path.join(MEDUSA_SERVER_PATH, 'src', 'api');
+if (fs.existsSync(srcApiPath)) {
+  // Create src directory if it doesn't exist
+  const destSrcPath = path.join(MEDUSA_SERVER_PATH, 'src');
+  if (!fs.existsSync(destSrcPath)) {
+    fs.mkdirSync(destSrcPath, { recursive: true });
+  }
+  // Copy api directory recursively
+  fs.cpSync(srcApiPath, destApiPath, { recursive: true });
+  console.log('Copied src/api to .medusa/server/src/api - Including health endpoint');
 }
 
 // Copy pnpm-lock.yaml

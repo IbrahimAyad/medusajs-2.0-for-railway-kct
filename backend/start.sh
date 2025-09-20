@@ -4,82 +4,69 @@
 set -e
 
 echo "=== STARTING RAILWAY BACKEND DEPLOYMENT ==="
-echo "Current directory: $(pwd)"
-echo "Contents of current directory:"
-ls -la
-
-# Check if we're in the right directory
-if [ ! -f "medusa-config.js" ]; then
-    echo "ERROR: medusa-config.js not found in current directory!"
-    exit 1
-fi
-
-# Run init-backend script first
-echo "=== Running init-backend script ==="
-if [ -f "src/scripts/init-backend.js" ]; then
-    node src/scripts/init-backend.js || {
-        echo "ERROR: init-backend.js failed!"
-        exit 1
-    }
-else
-    echo "WARNING: init-backend.js not found, skipping..."
-fi
-
-# Debug: Show environment variables
-echo ""
-echo "=== ENVIRONMENT CHECK ==="
 echo "NODE_ENV: $NODE_ENV"
 echo "PORT: ${PORT:-NOT SET}"
 echo "DATABASE_URL: ${DATABASE_URL:+[SET]}"
 echo "REDIS_URL: ${REDIS_URL:+[SET]}"
-echo "Railway Domain: $RAILWAY_PUBLIC_DOMAIN_VALUE"
-echo ""
 
-# Export PORT for Medusa
-export PORT=${PORT:-9000}
-echo "=== PORT CONFIGURATION ==="
-echo "PORT is set to: $PORT"
-echo ""
-
-# Check if .medusa/server exists
-if [ ! -d ".medusa/server" ]; then
-    echo "ERROR: .medusa/server directory not found!"
-    echo "Build may have failed. Contents of current directory:"
-    ls -la
-    exit 1
+# Run init-backend script first
+if [ -f "src/scripts/init-backend.js" ]; then
+    echo "Running init-backend script..."
+    node src/scripts/init-backend.js || echo "WARNING: init-backend.js had issues"
 fi
 
-# Copy necessary files to .medusa/server
-echo "=== Copying configuration files ==="
-cp medusa-config.js .medusa/server/medusa-config.js || echo "WARNING: Failed to copy medusa-config.js"
-
-if [ -d "src/lib" ]; then
+# Copy api directory if it exists (backup in case postBuild didn't run)
+if [ -d "../src/api" ] && [ ! -d ".medusa/server/src/api" ]; then
+    echo "Copying src/api to .medusa/server/src/api..."
     mkdir -p .medusa/server/src
-    cp -r src/lib .medusa/server/src/lib || echo "WARNING: Failed to copy src/lib"
+    cp -r ../src/api .medusa/server/src/api
 fi
 
-if [ -d "src/subscribers" ]; then
-    mkdir -p .medusa/server/src
-    cp -r src/subscribers .medusa/server/src/subscribers || echo "WARNING: Failed to copy src/subscribers"
-    echo "Subscribers directory copied"
-fi
-
-# Check what's in .medusa/server
-echo ""
-echo "=== Contents of .medusa/server ==="
-ls -la .medusa/server/
-echo ""
-
-# Check if medusa command exists
-echo "=== Checking medusa command ==="
-which medusa || echo "medusa command not found in PATH"
-which npx || echo "npx command not found in PATH"
-echo ""
-
-# Start Medusa with PORT environment variable
-echo "=== STARTING MEDUSA ON PORT $PORT ==="
+# Change to .medusa/server directory
 cd .medusa/server
 
-# Medusa should pick up PORT from environment
-echo "Starting medusa with PORT=$PORT environment variable..."
-exec npx medusa start 2>&1
+# Check BOTH locations for subscribers
+echo "=== Checking for subscribers ==="
+
+# Check original src/subscribers directory (where Medusa looks)
+if [ -d "../../src/subscribers" ]; then
+    echo "Checking original src/subscribers directory:"
+    ls -la ../../src/subscribers/ | grep "\.js$" || true
+
+    if [ -f "../../src/subscribers/auth-identity-created.js" ]; then
+        echo "✅ Found compiled subscriber in original location (../../src/subscribers/)"
+    fi
+fi
+
+# Also check .medusa/server/src/subscribers
+if [ -d "src/subscribers" ]; then
+    echo "Checking .medusa/server/src/subscribers directory:"
+    ls -la src/subscribers/ | grep "\.js$" || true
+
+    # Check if auth-identity-created.js has correct format
+    if [ -f "src/subscribers/auth-identity-created.js" ]; then
+        echo "Checking auth-identity-created.js format:"
+        grep -E "exports\.(default|config)" src/subscribers/auth-identity-created.js | head -5 || true
+        echo "✅ Subscribers are ready in .medusa/server"
+    fi
+else
+    echo "WARNING: No subscribers directory in .medusa/server!"
+    echo "Checking if we can recover..."
+
+    # Emergency fallback - try to compile if missing
+    if [ -f "../../src/scripts/compileSubscribers.js" ]; then
+        echo "Attempting emergency subscriber compilation..."
+        cd ../..
+        node src/scripts/compileSubscribers.js
+        cd .medusa/server
+
+        if [ -d "src/subscribers" ]; then
+            echo "Emergency compilation successful"
+            ls -la src/subscribers/
+        fi
+    fi
+fi
+
+# Start Medusa - it will use the PORT environment variable automatically
+echo "Starting Medusa on port ${PORT:-8080}..."
+exec npx medusa start
