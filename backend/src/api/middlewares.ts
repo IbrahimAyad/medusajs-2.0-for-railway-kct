@@ -1,6 +1,122 @@
 import { defineMiddlewares } from "@medusajs/medusa"
 import { MedusaRequest, MedusaResponse, MedusaNextFunction } from "@medusajs/framework"
+import { Modules } from "@medusajs/framework/utils"
 // import { authenticateAdmin } from "./middlewares/authenticate-admin" // DISABLED: Using Medusa v2 built-in admin auth
+
+/**
+ * Middleware to ensure authenticated users have proper customer linkage
+ * This fixes the 401 issue on /store/customers/me endpoint
+ */
+const ensureCustomerLinked = async (
+  req: MedusaRequest,
+  res: MedusaResponse,
+  next: MedusaNextFunction
+) => {
+  try {
+    // Skip if no auth context
+    const authContext = req as any
+
+    // Check various possible auth properties
+    const authUserId = authContext.auth_context?.actor_id ||
+                       authContext.auth?.actor_id ||
+                       authContext.user?.userId ||
+                       authContext.auth_identity_id
+
+    if (!authUserId) {
+      return next()
+    }
+
+    console.log(`🔐 Middleware: Auth user detected: ${authUserId}`)
+
+    const authService = req.scope.resolve(Modules.AUTH)
+    const customerService = req.scope.resolve(Modules.CUSTOMER)
+
+    try {
+      // Get auth identity
+      const authIdentity = await authService.retrieveAuthIdentity(authUserId)
+
+      if (!authIdentity) {
+        return next()
+      }
+
+      // Check if customer_id is in app_metadata
+      let customerId = authIdentity.app_metadata?.customer_id
+
+      if (!customerId) {
+        // Try to find customer by email
+        const email = authIdentity.provider_identities?.[0]?.entity_id
+
+        if (email) {
+          console.log(`📧 Looking for customer with email: ${email}`)
+          const [customers] = await customerService.listAndCountCustomers({
+            email: email
+          })
+
+          if (customers.length > 0) {
+            customerId = customers[0].id
+            console.log(`✅ Found customer: ${customerId}`)
+
+            // Update auth identity with customer_id
+            await authService.updateAuthIdentities([{
+              id: authIdentity.id,
+              app_metadata: {
+                ...authIdentity.app_metadata,
+                customer_id: customerId
+              }
+            }])
+            console.log(`🔗 Linked auth identity to customer`)
+          } else {
+            // Create customer
+            const customerData = {
+              email: email,
+              has_account: true
+            }
+
+            const createdCustomers = await customerService.createCustomers(customerData)
+            const customer = Array.isArray(createdCustomers) ? createdCustomers[0] : createdCustomers
+            customerId = customer.id
+
+            console.log(`✅ Created new customer: ${customerId}`)
+
+            // Update auth identity
+            await authService.updateAuthIdentities([{
+              id: authIdentity.id,
+              app_metadata: {
+                ...authIdentity.app_metadata,
+                customer_id: customerId
+              }
+            }])
+            console.log(`🔗 Linked auth identity to new customer`)
+          }
+        }
+      }
+
+      // Add customer_id to request context
+      if (customerId) {
+        authContext.auth_context = authContext.auth_context || {}
+        authContext.auth_context.customer_id = customerId
+
+        // Also set it in other possible locations
+        if (authContext.auth) {
+          authContext.auth.customer_id = customerId
+        }
+        if (authContext.user) {
+          authContext.user.customer_id = customerId
+        }
+
+        console.log(`✅ Customer ID ${customerId} added to request context`)
+      }
+
+    } catch (error) {
+      console.error("❌ Error in customer linking middleware:", error)
+    }
+
+    next()
+  } catch (error) {
+    console.error("❌ Middleware error:", error)
+    next()
+  }
+}
 
 // Middleware to fix Stripe amount calculation
 const fixStripeAmount = async (
@@ -105,6 +221,11 @@ export default defineMiddlewares({
     {
       matcher: "/store/checkout-status",
       middlewares: [],
+    },
+    // Apply customer linking middleware to all store endpoints
+    {
+      matcher: "/store/*",
+      middlewares: [ensureCustomerLinked],
     },
     // REMOVED: Custom admin authentication middleware - using Medusa v2 built-in auth
     // NOTE: Medusa v2 has built-in admin authentication that should not be overridden
