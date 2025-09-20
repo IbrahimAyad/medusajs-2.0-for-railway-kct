@@ -29,9 +29,12 @@ export const POST = async (
 
     // First, register the auth identity
     const authIdentity = await authService.register("emailpass", {
-      email,
-      password,
-    })
+      entity_id: email,
+      provider_metadata: {
+        email,
+        password
+      }
+    } as any)
 
     console.log(`✅ Auth identity registered for: ${email}`)
 
@@ -65,9 +68,11 @@ export const POST = async (
 
     // Authenticate and return token
     const authResult = await authService.authenticate("emailpass", {
-      email,
-      password,
-    })
+      entity_id: email,
+      provider_metadata: {
+        password
+      }
+    } as any)
 
     // Extract token from the response
     const token = (authResult as any).token || (authResult as any).jwt || authResult
