@@ -8,6 +8,7 @@ import {
   MedusaResponse,
 } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
+import jwt from "jsonwebtoken"
 
 export const GET = async (
   req: MedusaRequest,
@@ -16,10 +17,30 @@ export const GET = async (
   try {
     const authContext = req as any
     
-    // Get customer ID from auth context (set by middleware)
-    const customerId = authContext.auth_context?.customer_id || 
-                      authContext.auth?.customer_id ||
-                      authContext.user?.customer_id
+    // Try to get customer ID from auth context (set by middleware)
+    let customerId = authContext.auth_context?.customer_id || 
+                     authContext.auth?.customer_id ||
+                     authContext.user?.customer_id
+
+    // If no customer ID in context, try to extract from JWT token
+    if (!customerId) {
+      const authHeader = req.headers.authorization
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7)
+        
+        try {
+          // Decode JWT token (without verification for now, since we don't have the secret here)
+          const decoded = jwt.decode(token) as any
+          
+          console.log("🔍 Decoded JWT token:", JSON.stringify(decoded, null, 2))
+          
+          // Get customer_id from app_metadata
+          customerId = decoded?.app_metadata?.customer_id
+        } catch (error) {
+          console.error("Failed to decode JWT token:", error)
+        }
+      }
+    }
 
     if (!customerId) {
       return res.status(401).json({
