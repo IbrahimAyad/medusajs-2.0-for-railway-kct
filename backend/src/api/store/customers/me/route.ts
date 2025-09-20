@@ -29,7 +29,7 @@ export const GET = async (
         
         try {
           // Get JWT secret from environment
-          const secret = process.env.JWT_SECRET || "supersecret"
+          const secret = process.env.JWT_SECRET || "zef1v4cu2uojku5jlwq7mzo7g7n0lq8u"
           
           // Verify and decode JWT token
           const decoded = verifyJwtToken(token, {
