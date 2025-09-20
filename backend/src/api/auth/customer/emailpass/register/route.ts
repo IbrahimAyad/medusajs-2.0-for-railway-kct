@@ -8,6 +8,7 @@ import {
   MedusaResponse,
 } from "@medusajs/framework/http"
 import { Modules } from "@medusajs/framework/utils"
+import { generateJwtToken } from "@medusajs/framework/utils"
 
 export const POST = async (
   req: MedusaRequest,
@@ -62,20 +63,37 @@ export const POST = async (
       console.log(`✅ Created new customer: ${customer.id}`)
     }
 
-    // The auth identity will be linked via the subscriber
-    // For now, we just need to ensure the customer exists
-    console.log(`✅ Customer ready for linking: ${customer.id}`)
+    // Link the auth identity to the customer
+    try {
+      await authService.updateAuthIdentities([{
+        id: authIdentity.id,
+        app_metadata: {
+          customer_id: customer.id
+        }
+      }])
+      console.log(`✅ Linked auth identity to customer: ${customer.id}`)
+    } catch (linkError) {
+      console.error(`⚠️ Failed to link auth identity:`, linkError)
+    }
 
-    // Authenticate and return token
-    const authResult = await authService.authenticate("emailpass", {
-      entity_id: email,
-      provider_metadata: {
-        password
+    // Generate JWT token for the new user
+    const secret = process.env.JWT_SECRET || "supersecret"
+    const token = generateJwtToken(
+      {
+        actor_id: authIdentity.id,
+        actor_type: "customer",
+        auth_identity_id: authIdentity.id,
+        app_metadata: {
+          customer_id: customer.id
+        }
+      },
+      {
+        secret,
+        expiresIn: "7d"
       }
-    } as any)
+    )
 
-    // Extract token from the response
-    const token = (authResult as any).token || (authResult as any).jwt || authResult
+    console.log(`✅ Registration successful, JWT token generated for: ${email}`)
 
     return res.json({
       token: token,
