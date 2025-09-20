@@ -50,8 +50,7 @@ if (fs.existsSync(subscriberSrcPath)) {
     fs.mkdirSync(subscriberDestPath, { recursive: true });
   }
 
-  // Copy ONLY the three specific JavaScript files we compiled for auth
-  // Skip TypeScript files and other JS files to avoid conflicts
+  // Copy ALL JavaScript subscriber files
   const authSubscribers = [
     'auth-identity-created.js',
     'auth-password-registered.js',
@@ -63,17 +62,32 @@ if (fs.existsSync(subscriberSrcPath)) {
     const destFile = path.join(subscriberDestPath, file);
     if (fs.existsSync(srcFile)) {
       fs.copyFileSync(srcFile, destFile);
+      console.log(`  Copied ${file}`);
     }
   });
 
   console.log('Copied subscribers to .medusa/server/src/subscribers');
 
+  // Also copy to dist/subscribers for compatibility
+  const distPath = path.join(MEDUSA_SERVER_PATH, 'dist', 'subscribers');
+  if (!fs.existsSync(distPath)) {
+    fs.mkdirSync(distPath, { recursive: true });
+  }
+
+  authSubscribers.forEach(file => {
+    const srcFile = path.join(subscriberSrcPath, file);
+    const destFile = path.join(distPath, file);
+    if (fs.existsSync(srcFile)) {
+      fs.copyFileSync(srcFile, destFile);
+    }
+  });
+  console.log('Also copied to dist/subscribers for compatibility');
+
   // Verify the compiled files exist
   if (fs.existsSync(subscriberDestPath)) {
     const copiedFiles = fs.readdirSync(subscriberDestPath);
-    console.log(`Subscriber files (JS):`, copiedFiles.filter(f => f.endsWith('.js')));
-    console.log(`Subscriber files (TS):`, copiedFiles.filter(f => f.endsWith('.ts')));
-    console.log('IMPORTANT: JavaScript files in src/subscribers will be loaded by Medusa');
+    console.log(`Subscriber files in .medusa/server/src/subscribers:`, copiedFiles.filter(f => f.endsWith('.js')));
+    console.log('IMPORTANT: JavaScript files are ready to be loaded by Medusa');
   }
 }
 
