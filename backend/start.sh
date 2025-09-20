@@ -1,47 +1,85 @@
 #!/bin/bash
 
-# Run init-backend script first
-node src/scripts/init-backend.js
+# Exit on any error
+set -e
 
-# Debug: Show environment variables are available at runtime
-echo "=== RAILWAY PRODUCTION ENVIRONMENT CHECK ==="
-echo "NODE_ENV: $NODE_ENV"
-echo "PORT: $PORT"
-echo "Railway Domain: $RAILWAY_PUBLIC_DOMAIN_VALUE"
-echo ""
-echo "=== STRIPE CONFIGURATION ==="
-echo "STRIPE_API_KEY available: ${STRIPE_API_KEY:+Yes}"
-echo "STRIPE_WEBHOOK_SECRET available: ${STRIPE_WEBHOOK_SECRET:+Yes}"
-echo ""
-echo "=== S3/R2 CONFIGURATION ==="
-echo "S3_ACCESS_KEY_ID available: ${S3_ACCESS_KEY_ID:+Yes}"
-echo "S3_SECRET_ACCESS_KEY available: ${S3_SECRET_ACCESS_KEY:+Yes}"
-echo "S3_BUCKET: $S3_BUCKET"
-echo "S3_ENDPOINT: $S3_ENDPOINT"
-echo "S3_FILE_URL: $S3_FILE_URL"
-echo ""
+echo "=== STARTING RAILWAY BACKEND DEPLOYMENT ==="
+echo "Current directory: $(pwd)"
+echo "Contents of current directory:"
+ls -la
 
-# Copy necessary files to .medusa/server (these should already be there from build)
-if [ -f medusa-config.js ] && [ -d .medusa/server ]; then
-  echo "Copying configuration files..."
-  cp medusa-config.js .medusa/server/medusa-config.js 2>/dev/null
-
-  if [ -d src/lib ]; then
-    mkdir -p .medusa/server/src
-    cp -r src/lib .medusa/server/src/lib 2>/dev/null
-  fi
-
-  if [ -d src/subscribers ]; then
-    mkdir -p .medusa/server/src
-    cp -r src/subscribers .medusa/server/src/subscribers 2>/dev/null
-  fi
+# Check if we're in the right directory
+if [ ! -f "medusa-config.js" ]; then
+    echo "ERROR: medusa-config.js not found in current directory!"
+    exit 1
 fi
 
-echo "=== STARTING MEDUSA BACKEND ==="
+# Run init-backend script first
+echo "=== Running init-backend script ==="
+if [ -f "src/scripts/init-backend.js" ]; then
+    node src/scripts/init-backend.js || {
+        echo "ERROR: init-backend.js failed!"
+        exit 1
+    }
+else
+    echo "WARNING: init-backend.js not found, skipping..."
+fi
 
-# Export PORT for Medusa to use
+# Debug: Show environment variables
+echo ""
+echo "=== ENVIRONMENT CHECK ==="
+echo "NODE_ENV: $NODE_ENV"
+echo "PORT: ${PORT:-NOT SET}"
+echo "DATABASE_URL: ${DATABASE_URL:+[SET]}"
+echo "REDIS_URL: ${REDIS_URL:+[SET]}"
+echo "Railway Domain: $RAILWAY_PUBLIC_DOMAIN_VALUE"
+echo ""
+
+# Export PORT for Medusa
 export PORT=${PORT:-9000}
-echo "Starting Medusa on PORT: $PORT"
+echo "=== PORT CONFIGURATION ==="
+echo "PORT is set to: $PORT"
+echo ""
 
-# Start Medusa directly from the built directory
-cd .medusa/server && npx medusa start
+# Check if .medusa/server exists
+if [ ! -d ".medusa/server" ]; then
+    echo "ERROR: .medusa/server directory not found!"
+    echo "Build may have failed. Contents of current directory:"
+    ls -la
+    exit 1
+fi
+
+# Copy necessary files to .medusa/server
+echo "=== Copying configuration files ==="
+cp medusa-config.js .medusa/server/medusa-config.js || echo "WARNING: Failed to copy medusa-config.js"
+
+if [ -d "src/lib" ]; then
+    mkdir -p .medusa/server/src
+    cp -r src/lib .medusa/server/src/lib || echo "WARNING: Failed to copy src/lib"
+fi
+
+if [ -d "src/subscribers" ]; then
+    mkdir -p .medusa/server/src
+    cp -r src/subscribers .medusa/server/src/subscribers || echo "WARNING: Failed to copy src/subscribers"
+    echo "Subscribers directory copied"
+fi
+
+# Check what's in .medusa/server
+echo ""
+echo "=== Contents of .medusa/server ==="
+ls -la .medusa/server/
+echo ""
+
+# Check if medusa command exists
+echo "=== Checking medusa command ==="
+which medusa || echo "medusa command not found in PATH"
+which npx || echo "npx command not found in PATH"
+echo ""
+
+# Start Medusa with PORT environment variable
+echo "=== STARTING MEDUSA ON PORT $PORT ==="
+cd .medusa/server
+
+# Medusa should pick up PORT from environment
+echo "Starting medusa with PORT=$PORT environment variable..."
+exec npx medusa start 2>&1
