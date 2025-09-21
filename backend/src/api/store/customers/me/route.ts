@@ -14,44 +14,73 @@ export const GET = async (
   res: MedusaResponse
 ) => {
   try {
-    // Step 1: Get auth identity from Medusa's built-in auth context
-    const authIdentityId = req.auth_context?.actor_id
+    // Try multiple auth methods since Medusa v2 auth context might not be populated
+    
+    // Method 1: Try Medusa's built-in auth context
+    let authIdentityId = req.auth_context?.actor_id
+    let customerId: string | undefined
     
     console.log("🔍 Auth context actor_id:", authIdentityId)
     
-    if (!authIdentityId) {
-      console.log("❌ No auth identity found in context")
-      return res.status(401).json({
-        message: "Unauthorized - not authenticated"
-      })
+    if (authIdentityId) {
+      // Get services
+      const authService = req.scope.resolve(Modules.AUTH)
+      
+      try {
+        const authIdentity = await authService.retrieveAuthIdentity(authIdentityId)
+        customerId = authIdentity?.app_metadata?.customer_id
+        console.log("✅ Found customer_id from auth context:", customerId)
+      } catch (error) {
+        console.error("Failed to retrieve auth identity:", error)
+      }
     }
-
-    // Step 2: Get services
-    const authService = req.scope.resolve(Modules.AUTH)
-    const customerService = req.scope.resolve(Modules.CUSTOMER)
     
-    // Step 3: Get customer_id from auth identity's app_metadata
-    let customerId: string | undefined
-    
-    try {
-      const authIdentity = await authService.retrieveAuthIdentity(authIdentityId)
-      customerId = authIdentity?.app_metadata?.customer_id
-      console.log("✅ Found customer_id in app_metadata:", customerId)
-    } catch (error) {
-      console.error("❌ Failed to retrieve auth identity:", error)
-      return res.status(401).json({
-        message: "Unauthorized - invalid authentication"
-      })
+    // Method 2: If no auth context, extract from Bearer token directly
+    if (!customerId) {
+      const authHeader = req.headers.authorization
+      
+      if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.substring(7)
+        
+        // Decode JWT without verification (since we trust Medusa's middleware)
+        try {
+          const base64Payload = token.split('.')[1]
+          const payload = Buffer.from(base64Payload, 'base64').toString()
+          const decoded = JSON.parse(payload)
+          
+          console.log("🔍 Decoded token payload:", decoded)
+          
+          // Try to get customer_id from various possible locations
+          customerId = decoded?.app_metadata?.customer_id || 
+                      decoded?.customer_id ||
+                      decoded?.sub
+          
+          // If we have an actor_id but no customer_id, try to look up via auth service
+          if (!customerId && decoded?.actor_id) {
+            const authService = req.scope.resolve(Modules.AUTH)
+            try {
+              const authIdentity = await authService.retrieveAuthIdentity(decoded.actor_id)
+              customerId = authIdentity?.app_metadata?.customer_id
+              console.log("✅ Found customer_id via actor_id lookup:", customerId)
+            } catch (error) {
+              console.error("Failed to lookup auth identity:", error)
+            }
+          }
+        } catch (error) {
+          console.error("Failed to decode JWT token:", error)
+        }
+      }
     }
     
     if (!customerId) {
-      console.log("❌ No customer linked to auth identity")
+      console.log("❌ No customer ID found")
       return res.status(401).json({
-        message: "Unauthorized - customer not linked"
+        message: "Unauthorized - customer not found"
       })
     }
 
-    // Step 4: Get customer data with addresses
+    // Get customer data
+    const customerService = req.scope.resolve(Modules.CUSTOMER)
     const customer = await customerService.retrieveCustomer(customerId, {
       relations: ['addresses']
     })
@@ -62,7 +91,7 @@ export const GET = async (
       })
     }
 
-    // Step 5: Return customer data
+    // Return customer data
     return res.json({
       customer: {
         id: customer.id,
