@@ -29,11 +29,12 @@ export const POST = async (
     const customerService = req.scope.resolve(Modules.CUSTOMER)
 
     // First, register the auth identity
+    // Make sure password is explicitly a string
     const authIdentity = await authService.register("emailpass", {
       entity_id: email,
       provider_metadata: {
-        email,
-        password
+        email: String(email),
+        password: String(password)
       }
     } as any)
 
