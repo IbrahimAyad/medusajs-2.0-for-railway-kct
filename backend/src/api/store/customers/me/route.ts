@@ -34,7 +34,7 @@ export const GET = async (
 
     try {
       const authIdentity = await authService.retrieveAuthIdentity(authIdentityId)
-      customerId = authIdentity?.app_metadata?.customer_id
+      customerId = authIdentity?.app_metadata?.customer_id as string | undefined
       console.log("✅ Customer ID from app_metadata:", customerId)
     } catch (error) {
       console.error("Failed to retrieve auth identity:", error)
