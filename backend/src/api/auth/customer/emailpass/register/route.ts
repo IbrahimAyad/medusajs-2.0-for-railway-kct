@@ -28,13 +28,12 @@ export const POST = async (
     const authService = req.scope.resolve(Modules.AUTH)
     const customerService = req.scope.resolve(Modules.CUSTOMER)
 
-    // First, register the auth identity
-    // Make sure password is explicitly a string
+    // First, register the auth identity using SAME pattern as login
+    // The key difference: register expects password in provider_metadata
     const authIdentity = await authService.register("emailpass", {
       entity_id: email,
       provider_metadata: {
-        email: String(email),
-        password: String(password)
+        password  // Just password, not email and password
       }
     } as any)
 
@@ -69,6 +68,7 @@ export const POST = async (
       await authService.updateAuthIdentities([{
         id: authIdentity.id,
         app_metadata: {
+          ...authIdentity.app_metadata,
           customer_id: customer.id
         }
       }])
@@ -77,7 +77,7 @@ export const POST = async (
       console.error(`⚠️ Failed to link auth identity:`, linkError)
     }
 
-    // Generate JWT token for the new user
+    // Generate JWT token for the new user - SAME pattern as login
     const secret = process.env.JWT_SECRET || "supersecret"
     const token = generateJwtToken(
       {
