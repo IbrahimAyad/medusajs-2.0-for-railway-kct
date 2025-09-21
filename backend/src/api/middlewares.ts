@@ -1,6 +1,7 @@
 import { defineMiddlewares } from "@medusajs/medusa"
 import { MedusaRequest, MedusaResponse, MedusaNextFunction } from "@medusajs/framework"
 import { Modules } from "@medusajs/framework/utils"
+import { authenticate } from "@medusajs/framework/http"
 // import { authenticateAdmin } from "./middlewares/authenticate-admin" // DISABLED: Using Medusa v2 built-in admin auth
 
 /**
@@ -222,7 +223,12 @@ export default defineMiddlewares({
       matcher: "/store/checkout-status",
       middlewares: [],
     },
-    // Apply customer linking middleware to all store endpoints
+    // Use Medusa's built-in authenticate middleware for customer endpoints
+    {
+      matcher: "/store/customers/me",
+      middlewares: [authenticate("customer", ["bearer", "session"])],
+    },
+    // Apply customer linking middleware to other store endpoints (but not /customers/me)
     {
       matcher: "/store/*",
       middlewares: [ensureCustomerLinked],
